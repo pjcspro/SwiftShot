@@ -34,6 +34,8 @@ class GameLevel {
     private var levelNodeClone: SCNNode?
     private var lock = NSLock()
     
+    private(set) var lodScale: Float = 1.0
+    
     func load() {
         // have to do this
         lock.lock(); defer { lock.unlock() }
@@ -121,7 +123,7 @@ class GameLevel {
         levelNodeClone = nil
     }
     
-    func placeLevel(on node: SCNNode, gameScene: SCNScene) {
+    func placeLevel(on node: SCNNode, gameScene: SCNScene, boardScale: Float) {
         guard let activeLevel = activeLevel else { return }
         guard let scene = scene else { return }
         
@@ -133,5 +135,10 @@ class GameLevel {
         node.addChildNode(activeLevel)
         
         placed = true
+        
+        // the lod system doesn't honor the scaled camera,
+        // so have to fix this manually in fixLevelsOfDetail with inverse scale
+        // applied to the screenSpaceRadius
+        lodScale = normalizedScale * boardScale
     }
 }

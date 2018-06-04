@@ -366,9 +366,27 @@ class GameManager: NSObject {
     func addLevel(to node: SCNNode, gameBoard: GameBoard) {
         self.gameBoard = gameBoard
         
-        level.placeLevel(on: node, gameScene: scene)
+        level.placeLevel(on: node, gameScene: scene, boardScale: gameBoard.scale.x)
         
         updateRenderTransform()
+        
+        if let activeLevel = level.activeLevel {
+            fixLevelsOfDetail(activeLevel)
+        }
+    }
+    
+    func fixLevelsOfDetail(_ node: SCNNode) {
+        // set screenSpacePercent to 0 for high-poly lod always,
+        // or to much greater than 1 for low-poly lod always
+        let screenSpacePercent: Float = 0.15
+        var screenSpaceRadius = SCNNode.computeScreenSpaceRadius(screenSpacePercent: screenSpacePercent)
+        
+        // The lod system doesn't account for camera being scaled
+        // so do it ourselves.  Here we remove the scale.
+        screenSpaceRadius /= level.lodScale
+        
+        let showLOD = UserDefaults.standard.showLOD
+        node.fixLevelsOfDetail(screenSpaceRadius: screenSpaceRadius, showLOD: showLOD)
     }
     
     // call this if the level moves from AR changes or user moving/scaling it

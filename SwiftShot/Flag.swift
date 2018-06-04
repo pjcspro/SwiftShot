@@ -206,8 +206,7 @@ class MetalClothSimulator {
         clothNode.setupPaintColorMask(clothNode.geometry!, name: "flag_flagA")
         clothNode.setPaintColors()
         clothNode.fixNormalMaps()
-        clothNode.fixLevelsOfDetail()
-
+        
         clothData.append( ClothData(clothNode: clothNode, meshData: meshData) )
     }
     

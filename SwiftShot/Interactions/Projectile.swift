@@ -34,7 +34,13 @@ class Projectile: GameObject {
     var isAlive = false
     var team: TeamID = .none {
         didSet {
+            // we assume the geometry and lod are unique to geometry and lod here
             geometryNode?.geometry?.firstMaterial?.diffuse.contents = team.color
+            if let levelsOfDetail = geometryNode?.geometry?.levelsOfDetail {
+                for lod in levelsOfDetail {
+                    lod.geometry?.firstMaterial?.diffuse.contents = team.color
+                }
+            }
         }
     }
     
@@ -68,8 +74,8 @@ class Projectile: GameObject {
         let node = prototypeNode.clone()
         // geometry and materials are reference types, so here we
         // do a deep copy. that way, each projectile gets its own color.
-        node.geometry = prototypeNode.geometry?.copy() as? SCNGeometry
-        node.geometry?.firstMaterial = prototypeNode.geometry?.firstMaterial?.copy() as? SCNMaterial
+        node.copyGeometryAndMaterials()
+        
         guard let physicsNode = node.findNodeWithPhysicsBody(),
             let physicsBody = physicsNode.physicsBody else {
                 fatalError("Projectile node has no physics")

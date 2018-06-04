@@ -16,8 +16,7 @@ extension SCNNode {
     func fixMaterials() {
         // walk down the scenegraph and update all children
         fixNormalMaps()
-        fixLevelsOfDetail()
-        
+    
         // establish paint colors
         copyGeometryForPaintColors()
         setPaintColors()
@@ -61,19 +60,87 @@ extension SCNNode {
         }
     }
     
-    func fixLevelsOfDetail() {
+    // must copy geometry and materials to set unique data on both
+    // here we only want
+    static func copyGeometryAndMaterials(_ geometry: SCNGeometry) -> SCNGeometry {
+        if let geometryCopy = geometry.copy() as? SCNGeometry {
+            var materialsCopy = [SCNMaterial]()
+            for material in geometryCopy.materials {
+                if let materialCopy = material.copy() as? SCNMaterial {
+                    materialsCopy.append(materialCopy)
+                }
+            }
+            geometryCopy.materials = materialsCopy
+            return geometryCopy
+        }
+        return geometry
+    }
+    
+    func copyGeometryAndMaterials() {
+        // this copies the material, but not the lod
+        if let geometry = self.geometry {
+            self.geometry = SCNNode.copyGeometryAndMaterials(geometry)
+            
+            if let lods = geometry.levelsOfDetail {
+                var lodsNew = [SCNLevelOfDetail]()
+                for lod in lods {
+                    if let lodGeometry = lod.geometry {
+                        let lodGeometryCopy = SCNNode.copyGeometryAndMaterials(lodGeometry)
+                        
+                        lodsNew.append(SCNLevelOfDetail(geometry: lodGeometryCopy, screenSpaceRadius: lod.screenSpaceRadius))
+                    }
+                }
+                geometry.levelsOfDetail = lodsNew
+            }
+        }
+        
+        for child in childNodes {
+            child.copyGeometryAndMaterials()
+        }
+    }
+    
+    // for lod, set the radius based on a percentage of the screen size
+    static func computeScreenSpaceRadius(screenSpacePercent: Float) -> Float {
+        // Needs adjusted for screen size, and original bounds of shape
+        // eventually also look at physical size of device
+        let screenSize = UIScreen.main.nativeBounds // main.bounds
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        let minDimension = Float(min(screenWidth, screenHeight))
+        
+        // work in percentages of screen area for low/high-res devices
+        // 10% of screen size
+        let screenSpaceDiameter = screenSpacePercent * minDimension
+        return screenSpaceDiameter * 0.5
+    }
+    
+    func fixLevelsOfDetail(screenSpaceRadius: Float, showLOD: Bool) {
+        // find the boundingRadius of the node, and scale to that
         if let geometry = geometry, let lods = geometry.levelsOfDetail {
             var lodsNew = [SCNLevelOfDetail]()
             for lod in lods {
                 if let lodGeometry = lod.geometry {
-                    lodsNew.append(SCNLevelOfDetail(geometry: lodGeometry, screenSpaceRadius: 100))
+                    if showLOD {
+                        // visualize the lod
+                        let lodGeometryCopy = SCNNode.copyGeometryAndMaterials(lodGeometry)
+                        
+                        // override the emission
+                        // this is not removed currently
+                        for material in lodGeometryCopy.materials {
+                            material.emission.contents = UIColor.red
+                        }
+                        
+                        lodsNew.append(SCNLevelOfDetail(geometry: lodGeometryCopy, screenSpaceRadius: CGFloat(screenSpaceRadius)))
+                    } else {
+                        lodsNew.append(SCNLevelOfDetail(geometry: lodGeometry, screenSpaceRadius: CGFloat(screenSpaceRadius)))
+                    }
                 }
             }
             geometry.levelsOfDetail = lodsNew
         }
         
         for child in childNodes {
-            child.fixLevelsOfDetail()
+            child.fixLevelsOfDetail(screenSpaceRadius: screenSpaceRadius, showLOD: showLOD)
         }
     }
     

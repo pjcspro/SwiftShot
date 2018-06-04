@@ -41,6 +41,7 @@ struct UserDefaultsKeys {
     static let showClouds = "ShowClouds"
     static let showFlags = "ShowFlags"
     static let showRopeSimulation = "ShowRopeSimulation"
+    static let showLOD = "showLOD"
     
     static let musicVolume = "MusicVolume"
     static let effectsVolume = "EffectsVolume"
@@ -112,10 +113,16 @@ extension UserDefaults {
         set { set(newValue, forKey: UserDefaultsKeys.showSceneViewStats) }
     }
 
-    // this is a wireframe overlay
+    // this is a wireframe overlay for looking at poly-count (f.e. LOD)
     var showWireframe: Bool {
         get { return bool(forKey: UserDefaultsKeys.showWireframe) }
         set { set(newValue, forKey: UserDefaultsKeys.showWireframe) }
+    }
+    
+    // this turns shapes emissive channel red (set at level start)
+    var showLOD: Bool {
+        get { return bool(forKey: UserDefaultsKeys.showLOD) }
+        set { set(newValue, forKey: UserDefaultsKeys.showLOD) }
     }
     
     // this may need to be integer for 0, 2, 4x

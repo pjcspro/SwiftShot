@@ -13,7 +13,8 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
 
     private var catapults = [Int: Catapult]()
     
-    private var dummyCannonBall: SCNNode
+    // this is a ball that doesn't have physics
+    private var dummyBall: SCNNode
     
     var grabInteraction: GrabInteraction? {
         didSet {
@@ -26,7 +27,19 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
     
     required init(delegate: InteractionDelegate) {
         self.delegate = delegate
-        dummyCannonBall = SCNNode.loadSCNAsset(modelFileName: "projectiles_ball_8k")
+        dummyBall = SCNNode.loadSCNAsset(modelFileName: "projectiles_ball_8k")
+        
+        // stri the geometry out of a low-lod model, assume it doesn't have an lod
+        if let geometry = dummyBall.geometry {
+            let lod = SCNNode.loadSCNAsset(modelFileName: "projectiles_ball")
+            if let lodGeometry = lod.geometry {
+                lodGeometry.materials = geometry.materials
+                
+                // this radius will be replaced by fixLevelsOfDetail
+                // when the level is placed
+                geometry.levelsOfDetail = [SCNLevelOfDetail(geometry: lodGeometry, screenSpaceRadius: 100)]
+            }
+        }
     }
     
     func addCatapult(_ catapult: Catapult) {
@@ -39,7 +52,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
     private func setProjectileOnCatapult(_ catapult: Catapult, projectileType: ProjectileType) {
         guard let delegate = delegate else { fatalError("No delegate") }
         
-        let projectile = TrailBallProjectile(prototypeNode: dummyCannonBall.clone())
+        let projectile = TrailBallProjectile(prototypeNode: dummyBall.clone())
         projectile.isAlive = true
         projectile.team = catapult.teamID
         

@@ -20,6 +20,7 @@ class DeveloperSettingsTableViewController: UITableViewController {
     @IBOutlet weak var showFlags: UISwitch!
     @IBOutlet weak var showClouds: UISwitch!
     @IBOutlet weak var showRopeSimulation: UISwitch!
+    @IBOutlet weak var showLOD: UISwitch!
 
     // UI Settings
     @IBOutlet weak var disableInGameUISwitch: UISwitch!
@@ -73,9 +74,10 @@ class DeveloperSettingsTableViewController: UITableViewController {
         showFlags.isOn = defaults.showFlags
         showClouds.isOn = defaults.showClouds
         showRopeSimulation.isOn = defaults.showRopeSimulation
-
+        
         // happens here so the switches have been loaded from the storyboard
-        uiSwitches = [showARDebugSwitch, showRenderStatsSwitch, showTrackingStateSwitch, showWireframe,
+        uiSwitches = [showARDebugSwitch, showRenderStatsSwitch, showTrackingStateSwitch,
+                      showWireframe, showLOD,
                       showPhysicsDebugSwitch, showSettingsSwitch, showARRelocalizationHelp,
                       showNetworkDebugSwitch, showThermalStateSwitch]
         configureUISwitches()
@@ -99,6 +101,7 @@ class DeveloperSettingsTableViewController: UITableViewController {
         showRenderStatsSwitch.isOn = defaults.showSceneViewStats
         showTrackingStateSwitch.isOn = defaults.showTrackingState
         showWireframe.isOn = defaults.showWireframe
+        showLOD.isOn = defaults.showLOD
         showPhysicsDebugSwitch.isOn = defaults.showPhysicsDebug
         showSettingsSwitch.isOn = defaults.showSettingsInGame
         showARRelocalizationHelp.isOn = defaults.showARRelocalizationHelp
@@ -206,6 +209,9 @@ class DeveloperSettingsTableViewController: UITableViewController {
     @IBAction func showRopeSimulation(_ sender: UISwitch) {
         defaults.showRopeSimulation = sender.isOn
     }
+    @IBAction func showLOD(_ sender: UISwitch) {
+        defaults.showLOD = sender.isOn
+    }
     
     @IBAction func useAutofocus(_ sender: UISwitch) {
         defaults.autoFocus = sender.isOn
@@ -224,6 +230,7 @@ class DeveloperSettingsTableViewController: UITableViewController {
             defaults.showSettingsInGame = false
             defaults.showARRelocalizationHelp = false
             defaults.showNetworkDebug = false
+            defaults.showLOD = false
         }
         configureUISwitches()
     }
