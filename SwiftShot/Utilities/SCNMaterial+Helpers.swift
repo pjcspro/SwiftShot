@@ -16,3 +16,14 @@ extension SCNMaterial {
         lightingModel = .physicallyBased
     }
 }
+
+extension SCNMaterialProperty {
+    var simdContentsTransform: float4x4 {
+        get {
+            return float4x4(contentsTransform)
+        }
+        set(newValue) {
+            contentsTransform = SCNMatrix4(newValue)
+        }
+    }
+}

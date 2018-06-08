@@ -12,8 +12,6 @@ import simd
 import AVFoundation
 import os.signpost
 
-private let log = Log()
-
 protocol GameManagerDelegate: class {
     func manager(_ manager: GameManager, received: BoardSetupAction, from: Player)
     func manager(_ manager: GameManager, joiningPlayer player: Player)
@@ -195,8 +193,9 @@ class GameManager: NSObject {
         os_signpost(type: .begin, log: .render_loop, name: .process_command, signpostID: .render_loop,
                     "Action : %s", command.action.description)
         switch command.action {
-        case .gameAction:
-            interactionManager.handleGameCommandAll(self, gameCommand: command)
+        case .gameAction(let gameAction):
+            guard let player = command.player else { return }
+            interactionManager.handle(gameAction: gameAction, from: player)
         case .boardSetup(let boardAction):
             if let player = command.player {
                 delegate?.manager(self, received: boardAction, from: player)
@@ -333,28 +332,26 @@ class GameManager: NSObject {
     }
 
     func startGameMusic(from interaction: Interaction) {
-        log.debug("3-2-1-GO music effect is done, time to start the game music")
         startGameMusicEverywhere()
     }
 
     // Status for SceneViewController to query and display UI interaction
     func canGrabACatapult(cameraRay: Ray) -> Bool {
-        guard let catapultInteraction = interactionManager.interaction(of: CatapultInteraction.self) as? CatapultInteraction else {
+        guard let catapultInteraction = interactionManager.interaction(ofType: CatapultInteraction.self) else {
             return false
         }
         return catapultInteraction.canGrabAnyCatapult(cameraRay: cameraRay)
     }
     
     func displayWin() {
-        guard let victory = interactionManager.interaction(of: VictoryInteraction.self) as? VictoryInteraction else {
+        guard let victory = interactionManager.interaction(ofType: VictoryInteraction.self) else {
             fatalError("No Victory Effect")
         }
         victory.activateVictory()
     }
     
     func isCurrentPlayerGrabbingACatapult() -> Bool {
-        let interaction = interactionManager.interaction(of: GrabInteraction.self)
-        if let grabInteraction = interaction as? GrabInteraction,
+        if let grabInteraction = interactionManager.interaction(ofType: GrabInteraction.self),
             let grabbedGrabbable = grabInteraction.grabbedGrabbable,
             grabbedGrabbable as? Catapult != nil {
             return true
@@ -464,8 +461,8 @@ class GameManager: NSObject {
         tableBoxNode.simdPosition = float3(0.0, -height * 0.5 - 0.05, 0.0) // avoid z-fight with ShadowPlane
         
         // scale up the physics shape scale so that objects land on the shadow plane
-        let physicsShape = SCNPhysicsShape(geometry: tableBoxShape, options: [SCNPhysicsShape.Option.scale: 1.0025])
-        let physicsBody = SCNPhysicsBody(type: SCNPhysicsBodyType.static, shape: physicsShape)
+        let physicsShape = SCNPhysicsShape(geometry: tableBoxShape, options: [.scale: 1.0025])
+        let physicsBody = SCNPhysicsBody(type: .static, shape: physicsShape)
         physicsBody.contactTestBitMask = CollisionMask([.ball, .rigidBody]).rawValue
         tableBoxNode.physicsBody = physicsBody
         tableBoxNode.name = "table"
@@ -537,11 +534,6 @@ class GameManager: NSObject {
     private func configure(node: SCNNode, name: String, type: String, team: String?) {
         // For nodes with types, we create at most one gameObject, configured
         // based on the node type.
-        
-        // only report team blocks
-        if team != nil {
-            log.debug("configuring \(name) on team \(team!)")
-        }
         
         switch type {
         case "catapult":
@@ -618,6 +610,11 @@ class GameManager: NSObject {
                 
                 if let physicsNode = gameObject.physicsNode,
                     let physicsBody = physicsNode.physicsBody {
+                        physicsBody.angularDamping = 0.03
+                        physicsBody.damping = 0.03
+                        physicsBody.mass = 3
+                        physicsBody.collisionBitMask |= CollisionMask([.ball]).rawValue
+                    
                         let density = gameObject.density
                         if density > 0 {
                             physicsNode.calculateMassFromDensity(name: name, density: density)
@@ -873,7 +870,6 @@ class GameManager: NSObject {
             }
             let startWallTime = timeData.timestamps[0]
             let position = now - startWallTime
-            log.debug("handleStartGameMusic (either), playing music from start time \(position)")
             musicCoordinator.playMusic(name: "music_gameplay", startTime: position)
         } else {
             if isServer {
@@ -902,7 +898,6 @@ class GameManager: NSObject {
                 fatalError("expected to have serverTimestamps.count == 1")
             }
             let position = timeData.timestamps[0]
-            log.debug("handleStartGameMusic (either), playing music from start time \(position)")
             musicCoordinator.playMusic(name: "music_gameplay", startTime: position)
         } else {
             if isServer {
@@ -924,7 +919,6 @@ class GameManager: NSObject {
                 }
             } else {
                 // echo the same message back to the server
-                log.debug("handleStartGameMusic (client), sending action \(timeData) to player \(player)")
                 session.send(action: .startGameMusic(timeData), to: player)
             }
         }

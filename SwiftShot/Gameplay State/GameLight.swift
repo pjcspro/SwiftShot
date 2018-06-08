@@ -15,8 +15,6 @@ struct GameLightProps {
     var shadowMode: Int = 0
 }
 
-private let log = Log()
-
 class GameLight {
     private var props = GameLightProps()
     private var node: SCNNode
@@ -68,7 +66,7 @@ class GameLight {
             light.shadowSampleCount = 1
             
         default:
-            log.error("unknown shadow mode")
+            break
         }
         
         // when true, this reduces acne, but is causing shadow to separate

@@ -216,11 +216,13 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         // assign the catapult source to this ball
         if let physicsNode = newProjectile.physicsNode, let physBody = physicsNode.physicsBody {
             physicsNode.setValue(catapult.catapultID, forKey: "Source")
-            physBody.collisionBitMask = CollisionMask([.rigidBody, .glitterObject, .ball]).rawValue
+            physBody.collisionBitMask = CollisionMask([.rigidBody, .glitterObject]).rawValue
             if catapult.teamID == .blue {
                 physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
+                physBody.categoryBitMask |= CollisionMask.catapultBlue.rawValue
             } else {
                 physBody.collisionBitMask |= CollisionMask.catapultBlue.rawValue
+                physBody.categoryBitMask |= CollisionMask.catapultYellow.rawValue
             }
         }
     }

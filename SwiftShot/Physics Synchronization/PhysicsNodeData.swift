@@ -9,8 +9,6 @@ import Foundation
 import simd
 import SceneKit
 
-private let log = Log()
-
 private let positionCompressor = FloatCompressor(minValue: -80.0, maxValue: 80.0, bits: 16)
 private let orientationCompressor: FloatCompressor = {
     let range: Float = 1.0 / sqrt(2)

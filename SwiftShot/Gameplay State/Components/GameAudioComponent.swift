@@ -9,8 +9,6 @@ import Foundation
 import GameplayKit
 import AVFoundation
 
-private let log = Log()
-
 protocol GameAudioComponentDelegate: class {
     func gameAudioComponent(_ component: GameAudioComponent, didPlayCollisionEvent collisionEvent: CollisionAudioSampler.CollisionEvent)
 }

@@ -56,8 +56,6 @@ extension TeamID: BitStreamCodable {
     }
 }
 
-private let log = Log()
-
 public func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T: Comparable {
     return min(max(value, minValue), maxValue)
 }
@@ -142,7 +140,7 @@ class Catapult: GameObject, Grabbable {
     private(set) var isPulledTooFar = false
     
     // Last cameraInfo used to computed premature release (such as when other ball hit the catapult)
-    private(set) var lastCameraInfo = CameraInfo(transform: float4x4.identity, ray: Ray.zero)
+    private(set) var lastCameraInfo = CameraInfo(transform: .identity, ray: .zero)
 
     // highlight assistance
     var isVisible: Bool = false
@@ -300,8 +298,8 @@ class Catapult: GameObject, Grabbable {
         prongGeomNode.simdPivot = float4x4(translation: prongPivotShiftUp)
         prongGeomNode.simdPosition += prongPivotShiftUp
         
-        let baseShape = SCNPhysicsShape(node: baseGeomNode, options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.convexHull])
-        let prongShape = SCNPhysicsShape(node: prongGeomNode, options: [SCNPhysicsShape.Option.type: SCNPhysicsShape.ShapeType.convexHull])
+        let baseShape = SCNPhysicsShape(node: baseGeomNode, options: [.type: SCNPhysicsShape.ShapeType.convexHull])
+        let prongShape = SCNPhysicsShape(node: prongGeomNode, options: [.type: SCNPhysicsShape.ShapeType.convexHull])
         let identityMatrix = SCNMatrix4Identity as NSValue
         let compoundShape = SCNPhysicsShape(shapes: [baseShape, prongShape], transforms: [identityMatrix, identityMatrix])
         node.physicsBody?.physicsShape = compoundShape
@@ -316,7 +314,6 @@ class Catapult: GameObject, Grabbable {
         placeholder.parent!.replaceChildNode(placeholder, with: node)
         
         node.name = "catapult"
-        log.info("Catapult placeholder node \(placeholder.name!) replaced with \(node.name!)")
         
         return node
     }
@@ -333,6 +330,9 @@ class Catapult: GameObject, Grabbable {
         // have team id established
         base.setPaintColors()
         
+        // correct for the pivot point to place catapult flat on ground
+        base.position.y -= 0.13
+        
         // highlight setup
         highlightObject = node.childNode(withName: "Highlight", recursively: true)
         if highlightObject != nil {
@@ -348,17 +348,8 @@ class Catapult: GameObject, Grabbable {
             let color = material.diffuse.contents as? UIColor {
             highlightColor = color
         }
-        // they should only have y orientation, nothing in x or z
-        // current scene files have the catapults with correct orientation, but the
-        // eulerAngles are different - x and z are both π, y is within epsilon of 0
-        // That's from bad decomposition of the matrix.  Need to restore the eulerAngles from the source.
-        // Especially if we have animations tied to the euler angles.
-        if abs(node.eulerAngles.x) > 0.001 || abs(node.eulerAngles.z) > 0.001 {
-            log.error("Catapult can only have y rotation applied")
-        }
     
         // where to place the ball so it sits on the strap
-        
         guard let catapultStrap = base.childNode(withName: "catapultStrap", recursively: true) else {
             fatalError("No node with name catapultStrap")
         }
@@ -398,8 +389,10 @@ class Catapult: GameObject, Grabbable {
         if let physicsNode = physicsNode, let physBody = physicsNode.physicsBody {
             if teamID == .blue {
                 physBody.categoryBitMask = CollisionMask.catapultBlue.rawValue
+                physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
             } else if teamID == .yellow {
                 physBody.categoryBitMask = CollisionMask.catapultYellow.rawValue
+                physBody.collisionBitMask |= CollisionMask.catapultBlue.rawValue
             }
         }
     }
@@ -520,12 +513,12 @@ class Catapult: GameObject, Grabbable {
             return
         }
         let position = base.presentation.simdWorldPosition
-        let speed = simd_length((position - lastPositionNonNil) / Float(GameTime.deltaTime))
+        let speed = length((position - lastPositionNonNil) / Float(GameTime.deltaTime))
         lastPosition = position
         
         // Base below table?
         // Base tilted? base's up vector must maintain some amount of y to be determined as stable
-        let baseUp = simd_normalize(base.presentation.simdTransform.columns.1)
+        let baseUp = normalize(base.presentation.simdTransform.columns.1)
         if position.y < -1.0 || fabs(baseUp.y) < minStableTiltBaseUpY {
             // Switch to knocked mode
             if !isCatapultKnocked {
@@ -545,8 +538,7 @@ class Catapult: GameObject, Grabbable {
     
     // When a user has control of a slingshot, no other player can grab it.
     func serverGrab(cameraRay: Ray) {
-        guard !isGrabbed else { log.error("Trying to grab catapult with player"); return }
-        log.debug("(Server) Catapult\(catapultID) grabbed by player")
+        guard !isGrabbed else { return } // Trying to grab catapult with player
 
         // do slingshot grab
         if let slingComponent = base.gameObject?.component(ofType: SlingshotComponent.self) {
@@ -555,7 +547,6 @@ class Catapult: GameObject, Grabbable {
     }
     
     func onGrabStart() {
-        log.debug("(Player) Catapult\(catapultID) grabbed by player")
         
         // do local effects/haptics if this event was generated by the current player
         delegate?.catapultDidBeginGrab(self)
@@ -711,7 +702,7 @@ class Catapult: GameObject, Grabbable {
     // As players move, track the stretch of the sling.
     func move(cameraInfo: CameraInfo) {
         // move actions can be processed only after the catapult has been released
-        guard isGrabbed else { log.error("trying to move before grabbing catapult"); return }
+        guard isGrabbed else { return } // trying to move before grabbing catapult
         
         lastCameraInfo = cameraInfo
         let targetBallPosition = computeBallPosition(cameraInfo)
@@ -751,7 +742,6 @@ class Catapult: GameObject, Grabbable {
         ballCanBeGrabbed = false
         
         // update local information for current player if that is what is pulling the catapult
-        log.debug("Catapult\(catapultID) launched")
 
         // start the launch animation
         rope.launchBall()
@@ -837,7 +827,6 @@ class Catapult: GameObject, Grabbable {
             let timeElapsed = GameTime.time - lastLaunchTime
             var timeForCooldown = props.cooldownTime - props.growAnimationTime - props.dropAnimationTime
             if timeForCooldown < 0.01 {
-                log.error("cooldown time needs to be long enough to play animations")
                 timeForCooldown = 0.0
             }
             let startCooldownAnimation = timeElapsed > timeForCooldown

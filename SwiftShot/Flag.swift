@@ -31,13 +31,13 @@ struct ClothData {
 }
 
 class ClothSimMetalNode {
-    var geometry: SCNGeometry
+    let geometry: SCNGeometry
     
-    var vb1: MTLBuffer
-    var vb2: MTLBuffer
-    var normalBuffer: MTLBuffer
-    var normalWorkBuffer: MTLBuffer
-    var vertexCount: Int
+    let vb1: MTLBuffer
+    let vb2: MTLBuffer
+    let normalBuffer: MTLBuffer
+    let normalWorkBuffer: MTLBuffer
+    let vertexCount: Int
     
     var velocityBuffers = [MTLBuffer]()
     
@@ -86,8 +86,8 @@ class ClothSimMetalNode {
                                               options: [.cpuCacheModeWriteCombined])
         
         let vertexSource = SCNGeometrySource(buffer: vertexBuffer1!,
-                                             vertexFormat: MTLVertexFormat.float3,
-                                             semantic: SCNGeometrySource.Semantic.vertex,
+                                             vertexFormat: .float3,
+                                             semantic: .vertex,
                                              vertexCount: vertices.count,
                                              dataOffset: 0,
                                              dataStride: MemoryLayout<float3>.size)
@@ -100,8 +100,8 @@ class ClothSimMetalNode {
                                                  options: [.cpuCacheModeWriteCombined])
         
         let normalSource = SCNGeometrySource(buffer: normalBuffer!,
-                                             vertexFormat: MTLVertexFormat.float3,
-                                             semantic: SCNGeometrySource.Semantic.normal,
+                                             vertexFormat: .float3,
+                                             semantic: .normal,
                                              vertexCount: normals.count,
                                              dataOffset: 0,
                                              dataStride: MemoryLayout<float3>.size)
@@ -111,18 +111,13 @@ class ClothSimMetalNode {
                                          options: [.cpuCacheModeWriteCombined])
         
         let uvSource = SCNGeometrySource(buffer: uvBuffer!,
-                                         vertexFormat: MTLVertexFormat.float2,
-                                         semantic: SCNGeometrySource.Semantic.texcoord,
+                                         vertexFormat: .float2,
+                                         semantic: .texcoord,
                                          vertexCount: uvs.count,
                                          dataOffset: 0,
                                          dataStride: MemoryLayout<float2>.size)
         
-        let indexData = Data(bytes: indices, count: MemoryLayout<UInt32>.size * indices.count)
-        let indexElement = SCNGeometryElement(data: indexData,
-                                              primitiveType: SCNGeometryPrimitiveType.triangles,
-                                              primitiveCount: indices.count / 3,
-                                              bytesPerIndex: MemoryLayout<UInt32>.size)
-        
+        let indexElement = SCNGeometryElement(indices: indices, primitiveType: .triangles)
         let geo = SCNGeometry(sources: [vertexSource, normalSource, uvSource], elements: [indexElement])
         
         // velocity buffers
@@ -149,14 +144,14 @@ class ClothSimMetalNode {
 class MetalClothSimulator {
     let device: MTLDevice
     
-    var commandQueue: MTLCommandQueue
-    var defaultLibrary: MTLLibrary
-    var functionClothSim: MTLFunction
-    var functionNormalUpdate: MTLFunction
-    var functionNormalSmooth: MTLFunction
-    var pipelineStateClothSim: MTLComputePipelineState
-    var pipelineStateNormalUpdate: MTLComputePipelineState
-    var pipelineStateNormalSmooth: MTLComputePipelineState
+    let commandQueue: MTLCommandQueue
+    let defaultLibrary: MTLLibrary
+    let functionClothSim: MTLFunction
+    let functionNormalUpdate: MTLFunction
+    let functionNormalSmooth: MTLFunction
+    let pipelineStateClothSim: MTLComputePipelineState
+    let pipelineStateNormalUpdate: MTLComputePipelineState
+    let pipelineStateNormalSmooth: MTLComputePipelineState
 
     let width: uint = 32
     let height: uint = 20
@@ -188,16 +183,14 @@ class MetalClothSimulator {
         
         guard let flag = node.childNode(withName: "flagStaticWave", recursively: true) else { return }
         
-        let bvMin = flag.boundingBox.min
-        let bvMax = flag.boundingBox.max
-        let existingFlagBV = SCNVector3Make(bvMax.x - bvMin.x, bvMax.y - bvMin.y, bvMax.z - bvMin.z)
+        let boundingBox = flag.simdBoundingBox
+        let existingFlagBV = boundingBox.max - boundingBox.min
+        let rescaleToMatchSizeMatrix = float4x4(scale: existingFlagBV.x / Float(width))
         
-        let scale = existingFlagBV.x / Float(width)
-        let rescaleToMatchSizeMatrix = SCNMatrix4Scale(SCNMatrix4Identity, scale, scale, scale)
+        let rotation = simd_quatf(angle: .pi / 2, axis: float3(1, 0, 0))
+        let localTransform = rescaleToMatchSizeMatrix * float4x4(rotation)
         
-        let localTransform = SCNMatrix4Rotate(rescaleToMatchSizeMatrix, Float(Float.pi / 2), 1, 0, 0)
-        
-        clothNode.transform = SCNMatrix4Mult(localTransform, flag.transform)
+        clothNode.simdTransform = flag.simdTransform * localTransform
         
         clothNode.geometry?.firstMaterial = flag.geometry?.firstMaterial
         clothNode.geometry?.firstMaterial?.isDoubleSided = true

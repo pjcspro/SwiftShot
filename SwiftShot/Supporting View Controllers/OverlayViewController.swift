@@ -8,8 +8,6 @@ View controller for in-game 2D overlay UI.
 import UIKit
 import AVFoundation
 
-private let log = Log()
-
 protocol OverlayViewControllerDelegate: class {
     func overlayViewController(_ overlayViewController: UIViewController, didPressStartSoloGameButton: UIButton)
     func overlayViewController(_ overlayViewController: UIViewController, didSelect game: GameSession)
@@ -58,16 +56,13 @@ class OverlayViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if UserDefaults.standard.gameRoomMode {
-            log.debug("Will start beacon ranging")
             proximityManager.start()
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        log.info("segue!")
         guard let segueIdentifier = segue.identifier,
             let segueType = GameSegue(rawValue: segueIdentifier) else {
-                log.error("unknown segue \(String(describing: segue.identifier))")
                 return
         }
         

@@ -16,10 +16,13 @@ class InteractionManager {
         let classIdentifier = ObjectIdentifier(type(of: interaction)).hashValue
         interactions[classIdentifier] = interaction
     }
-    
-    func interaction(of type: AnyClass) -> Interaction? {
-        let classIdentifier = ObjectIdentifier(type).hashValue
-        return interactions[classIdentifier]
+
+    func interaction<InteractionType>(ofType interactionClass: InteractionType.Type) -> InteractionType? where InteractionType: Interaction {
+        let classIdentifier = ObjectIdentifier(interactionClass).hashValue
+        if let result = interactions[classIdentifier] as? InteractionType {
+            return result
+        }
+        return nil
     }
     
     func removeAllInteractions() {
@@ -32,11 +35,9 @@ class InteractionManager {
         }
     }
 
-    func handleGameCommandAll(_ gameManager: GameManager, gameCommand: GameCommand) {
+    func handle(gameAction: GameAction, from player: Player) {
         for interaction in interactions.values {
-            if case .gameAction(let gameAction) = gameCommand.action, let player = gameCommand.player {
-                interaction.handle(gameAction: gameAction, player: player)
-            }
+            interaction.handle(gameAction: gameAction, player: player)
         }
     }
     
@@ -54,5 +55,4 @@ class InteractionManager {
             interaction.didCollision(node: nodeB, otherNode: nodeA, pos: pos, impulse: impulse)
         }
     }
-    
 }

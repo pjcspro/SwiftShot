@@ -8,8 +8,6 @@ Utilities for compact serialization of data structures for network transmission.
 import Foundation
 import simd
 
-private let log = Log()
-
 enum BitStreamError: Error {
     case tooShort
     case encodingError

@@ -7,8 +7,6 @@ Manages playback and volume of music.
 
 import AVFoundation
 
-private let log = Log()
-
 class MusicCoordinator: NSObject {
 
     enum MusicState {
@@ -129,8 +127,6 @@ class MusicCoordinator: NSObject {
             stopMusic(player: currentMusicPlayer)
         }
 
-        log.debug("playMusic '\(name)' startTime=\(startTime)")
-
         switch player.state {
         case .playing:
             // Nothing to do
@@ -174,11 +170,10 @@ class MusicCoordinator: NSObject {
 
     func stopMusic(player: MusicPlayer, fadeOut: TimeInterval = MusicCoordinator.defaultFadeOut) {
         if player.state == .playing {
-            log.debug("stopMusic '\(player.name)'")
             player.state = .stopping
             let audioPlayer = player.audioPlayer
             audioPlayer.setVolume(0.0, fadeDuration: fadeOut)
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + fadeOut) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + fadeOut) {
                 if player.state == .stopping {
                     audioPlayer.stop()
                     player.state = .stopped

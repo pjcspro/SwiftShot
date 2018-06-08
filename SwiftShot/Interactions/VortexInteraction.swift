@@ -12,8 +12,6 @@ protocol VortexActivationDelegate: class {
     func vortexDidActivate(_ vortex: VortexInteraction)
 }
 
-private let log = Log()
-
 class VortexInteraction: Interaction, LeverInteractionDelegate {
     weak var delegate: InteractionDelegate?
     weak var vortexActivationDelegate: VortexActivationDelegate?
@@ -99,7 +97,7 @@ class VortexInteraction: Interaction, LeverInteractionDelegate {
             delegate.serverDispatchActionToAll(gameAction: .oneHitKOPrepareAnimation)
 
             if let sfxCoordinator = sfxCoordinator {
-                sfxCoordinator.playAudioFile(name: "vortex_03", volume: 0.5, loop: false)
+                sfxCoordinator.playAudioFile(name: "vortex_04", volume: 0.5, loop: false)
             }
             if let musicCoordinator = musicCoordinator {
                 musicCoordinator.stopCurrentMusic(fadeOut: 2.0)

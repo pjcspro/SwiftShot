@@ -11,8 +11,6 @@ import ARKit
 import AVFoundation
 import os.signpost
 
-private let log = Log()
-
 class GameViewController: UIViewController {
     enum SessionState {
         case setup
@@ -139,8 +137,6 @@ class GameViewController: UIViewController {
     var sessionState: SessionState = .setup {
         didSet {
             guard oldValue != sessionState else { return }
-
-            log.info("session state changed to \(sessionState)")
             configureView()
             configureARSession()
         }
@@ -282,8 +278,6 @@ class GameViewController: UIViewController {
         // 0, 2, 4 on iOS, 8, 16x on macOS
         sceneView.antialiasingMode = UserDefaults.standard.antialiasingMode ? .multisampling4X : .none
         
-        log.info("antialiasing set to: " + (UserDefaults.standard.antialiasingMode ? "4x" : "none"))
-        
         if let localizedInstruction = sessionState.localizedInstruction {
             instructionLabel.isHidden = false
             instructionLabel.text = localizedInstruction
@@ -321,7 +315,6 @@ class GameViewController: UIViewController {
         switch sessionState {
         case .setup:
             // in setup
-            log.info("AR session paused")
             sceneView.session.pause()
             return
         case .lookingForSurface, .waitingForBoard:
@@ -338,7 +331,7 @@ class GameViewController: UIViewController {
             // so no change to the running session
             return
         case .localizingToBoard:
-            guard let targetWorldMap = targetWorldMap else { log.error("should have had a world map"); return }
+            guard let targetWorldMap = targetWorldMap else { return } // should have had a world map
             configuration.initialWorldMap = targetWorldMap
             configuration.planeDetection = [.horizontal]
             options = [.resetTracking, .removeExistingAnchors]
@@ -359,8 +352,6 @@ class GameViewController: UIViewController {
         
         // Turning light estimation off to test PBR on SceneKit file
         configuration.isLightEstimationEnabled = false
-        
-        log.info("configured AR session")
         sceneView.session.run(configuration, options: options)
     }
 
@@ -470,10 +461,8 @@ class GameViewController: UIViewController {
         case .boardLocation(let location):
             switch location {
             case .worldMapData(let data):
-                log.info("Received WorldMap data. Size: \(data.count)")
                 loadWorldMap(from: data)
             case .manual:
-                log.info("Received a manual board placement")
                 sessionState = .lookingForSurface
             }
         case .requestBoardLocation:
@@ -486,7 +475,6 @@ class GameViewController: UIViewController {
         do {
             let uncompressedData = try archivedData.decompressed()
             guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: uncompressedData) else {
-                log.error("The WorldMap received couldn't be read")
                 DispatchQueue.main.async {
                     self.showAlert(title: "An error occured while loading the WorldMap (Failed to read)")
                     self.sessionState = .setup
@@ -499,7 +487,6 @@ class GameViewController: UIViewController {
                 self.sessionState = .localizingToBoard
             }
         } catch {
-            log.error("The WorldMap received couldn't be decompressed")
             DispatchQueue.main.async {
                 self.showAlert(title: "An error occured while loading the WorldMap (Failed to decompress)")
                 self.sessionState = .setup
@@ -557,8 +544,6 @@ class GameViewController: UIViewController {
             fatalError("gameManager not initialized")
         }
         
-        log.info("Setting up level")
-        
         if gameBoard.anchor == nil {
             let boardSize = CGSize(width: CGFloat(gameBoard.scale.x), height: CGFloat(gameBoard.scale.x * gameBoard.aspectRatio))
             gameBoard.anchor = BoardAnchor(transform: normalize(gameBoard.simdTransform), size: boardSize)
@@ -593,21 +578,14 @@ class GameViewController: UIViewController {
     }
 
     func sendWorldTo(peer: Player) {
-        guard let gameManager = gameManager, gameManager.isServer else { log.error("i'm not the server"); return }
+        guard let gameManager = gameManager, gameManager.isServer else { return }
 
         switch UserDefaults.standard.boardLocatingMode {
         case .worldMap:
-            log.info("generating worldmap for \(peer)")
             getCurrentWorldMapData { data, error in
-                if let error = error {
-                    log.error("didn't work! \(error)")
-                    return
-                }
-                guard let data = data else { log.error("no data!"); return }
-                log.info("got a compressed map, sending to \(peer)")
+                guard error == nil, let data = data else { return }
                 let location = GameBoardLocation.worldMapData(data)
                 DispatchQueue.main.async {
-                    log.info("sending worldmap to \(peer)")
                     gameManager.send(boardAction: .boardLocation(location), to: peer)
                 }
             }
@@ -617,10 +595,8 @@ class GameViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        log.info("segue!")
         guard let segueIdentifier = segue.identifier,
             let segueType = GameSegue(rawValue: segueIdentifier) else {
-                log.error("unknown segue \(String(describing: segue.identifier))")
                 return
         }
         
@@ -843,7 +819,6 @@ extension GameViewController: GameManagerDelegate {
         // connected client.
         if musicCoordinator.currentMusicPlayer?.name == "music_gameplay" {
             let musicTime = musicCoordinator.currentMusicTime()
-            log.debug("music play position = \(musicTime)")
             if musicTime >= 0 {
                 manager.startGameMusic(for: player)
             }

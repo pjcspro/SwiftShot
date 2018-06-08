@@ -8,8 +8,6 @@ Convenience extension for various game-specific functionality on SCNNode.
 import Foundation
 import SceneKit
 
-private let log = Log()
-
 /**
  * Protect animation on SCNTransaction from multiple threads, can be nested too.
  * Nested transactions all start at the same time as their enclosing scope
@@ -213,7 +211,6 @@ extension SCNNode {
             fatalError("model \(modelFileName) has no child nodes")
         }
         if nodeRef.childNodes.count > 1 {
-            log.error("model \(modelFileName) should have a single root node")
         }
         
         // walk down the scenegraph and update all children

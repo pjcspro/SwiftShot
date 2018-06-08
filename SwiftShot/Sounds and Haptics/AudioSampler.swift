@@ -14,7 +14,6 @@ class AudioSampler {
     let node: SCNNode
     let audioNode: AUSamplerNode
     let audioPlayer: SCNAudioPlayer
-    let log = Log()
     let presetUrl: URL
 
     // serial queue for loading the sampler presets at background priority
@@ -40,7 +39,6 @@ class AudioSampler {
             do {
                 try self.audioNode.loadPreset(at: presetUrl)
             } catch {
-                self.log.error("Failed to load preset. Error = \(error)")
             }
 
             sfxCoordinator.attachSampler(self, to: node)
@@ -51,20 +49,18 @@ class AudioSampler {
     }
 
     func after(_ interval: TimeInterval = 1.0, f: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + interval, execute: f)
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: f)
     }
 
     func reloadPreset() {
         do {
             try audioNode.loadPreset(at: presetUrl)
         } catch {
-            log.error("Failed to load preset. Error = \(error)")
         }
     }
     
     func play(note: UInt8, velocity: UInt8, autoStop: Bool = true) {
         guard loaded.condition == 1 else {
-            log.warn("Cannot play because loading is not complete")
             return
         }
 

@@ -8,9 +8,8 @@ Manages playback of sound effects.
 import SceneKit
 import AVFoundation
 
-private let log = Log()
 private let preloadAudioFiles = [
-    "vortex_03",
+    "vortex_04",
     "catapult_highlight_on_02",
     "catapult_highlight_off_02"
 ]
@@ -77,13 +76,10 @@ class SFXCoordinator: NSObject {
 
     @objc
     private func handleRouteChange(_ notification: Notification) {
-        log.error("AVAudioSession.routeChangeNotification, info: \(String(describing: notification.userInfo))")
         loadQueue.async {
-            log.error("Reloading AudioSamplers...")
             for sampler in self.audioSamplers {
                 sampler.reloadPreset()
             }
-            log.error("done reloading AudioSamplers.")
         }
     }
 
@@ -125,7 +121,6 @@ class SFXCoordinator: NSObject {
         // but we connect it manually to the AVAudioEnvironmentNode that we
         // get passed to us. This comes from ARSCNView in GameSceneViewController.
         guard let engine = audioEnvironment.engine else {
-            log.error("ERROR: Missing audio engine from audio environment!")
             return
         }
         let audioNode = audioSampler.audioNode
@@ -138,7 +133,6 @@ class SFXCoordinator: NSObject {
 
     func removeAllAudioSamplers() {
         guard let engine = audioEnvironment.engine else {
-            log.error("no audio engine")
             return
         }
         
@@ -208,7 +202,7 @@ class SFXCoordinator: NSObject {
         playerQueue.sync {
             if let player = audioPlayers[name] {
                 player.setVolume(0.0, fadeDuration: fadeDur)
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + fadeDur) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + fadeDur) {
                     player.stop()
                 }
             }
@@ -294,7 +288,6 @@ class SFXCoordinator: NSObject {
     }
 
     func playCatapultBreak(catapult: Catapult, vortex: Bool) {
-        log.debug("play catapult break for catapultID = \(catapult.catapultID)")
 
         var shouldPlay = true
         if vortex {

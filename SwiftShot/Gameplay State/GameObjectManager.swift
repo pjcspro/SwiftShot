@@ -8,8 +8,6 @@ Manages objects that need synchronized updating.
 import Foundation
 import SceneKit
 
-private let log = Log()
-
 class GameObjectManager {
     
     // MARK: - Block Management

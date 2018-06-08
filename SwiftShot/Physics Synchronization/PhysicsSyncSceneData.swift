@@ -9,8 +9,6 @@ import Foundation
 import simd
 import SceneKit
 
-private let log = Log()
-
 protocol PhysicsSyncSceneDataDelegate: class {
     func hasNetworkDelayStatusChanged(hasNetworkDelay: Bool)
     func spawnProjectile(objectIndex: Int) -> Projectile
@@ -118,7 +116,6 @@ class PhysicsSyncSceneData {
             
         } else {
             shouldRefillPackets = true
-            log.info("out of packets")
             
             // Update network delay status used to display in sceneViewController
             if !hasNetworkDelay {
@@ -228,7 +225,6 @@ class PhysicsSyncSceneData {
                 ((lastPacketNumberRead - packetNumber) > PhysicsSyncData.halfMaxPacketNumber) {
                 break
             } else {
-                log.error("Packet out of order")
                 packetQueue.removeFirst()
             }
         }

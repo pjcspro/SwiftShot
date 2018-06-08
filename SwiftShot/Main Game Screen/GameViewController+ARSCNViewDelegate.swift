@@ -7,8 +7,6 @@ ARSCNViewDelegate methods for the Game Scene View Controller.
 
 import ARKit
 
-private let log = Log()
-
 extension GameViewController: ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
@@ -37,7 +35,6 @@ extension GameViewController: ARSCNViewDelegate {
     }
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
-        log.info("camera tracking state changed to \(camera.trackingState)")
         DispatchQueue.main.async {
             self.trackingStateLabel.text = "\(camera.trackingState)"
         }
@@ -51,21 +48,19 @@ extension GameViewController: ARSCNViewDelegate {
             
             // Fade in the board if previously hidden
             if gameBoard.isHidden {
-                gameBoard.opacity = 0.0
+                gameBoard.opacity = 1.0
                 gameBoard.isHidden = false
-                gameBoard.runAction(.fadeIn(duration: 0.6))
             }
             
             // Fade in the level if previously hidden
-            if renderRoot.isHidden {
-                renderRoot.opacity = 0.0
-                renderRoot.isHidden = false
-                renderRoot.runAction(.fadeIn(duration: 0.6))
+            if renderRoot.opacity == 0.0 {
+                renderRoot.opacity = 1.0
+                assert(!renderRoot.isHidden)
             }
         case .limited:
             // Hide the game board and level if tracking is limited
             gameBoard.isHidden = true
-            renderRoot.isHidden = true
+            renderRoot.opacity = 0.0
         default:
             break
         }
@@ -88,18 +83,13 @@ extension GameViewController: ARSCNViewDelegate {
     }
     
     func sessionWasInterrupted(_ session: ARSession) {
-        log.info("[sessionWasInterrupted] --  \(sessionState)")
         
         // Inform the user that the session has been interrupted
         isSessionInterrupted = true
         
         // Hide game board and level
         gameBoard.isHidden = true
-        renderRoot.isHidden = true
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        log.info("[sessionInterruptionEnded] --  \(sessionState)")
+        renderRoot.opacity = 0.0
     }
     
     func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {

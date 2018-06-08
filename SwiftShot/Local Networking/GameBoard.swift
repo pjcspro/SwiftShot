@@ -190,16 +190,16 @@ class GameBoard: SCNNode {
     
     private func orientToPlane(_ planeAnchor: ARPlaneAnchor, camera: ARCamera) {
         // Get board rotation about y
-        simdOrientation = simd_quaternion(planeAnchor.transform)
+        simdOrientation = simd_quatf(planeAnchor.transform)
         var boardAngle = simdEulerAngles.y
         
         // If plane is longer than deep, rotate 90 degrees
         if planeAnchor.extent.x > planeAnchor.extent.z {
-            boardAngle += Float.pi / 2
+            boardAngle += .pi / 2
         }
         
         // Normalize angle to closest 180 degrees to camera angle
-        boardAngle = boardAngle.normalizedAngle(forMinimalRotationTo: camera.eulerAngles.y, increment: Float.pi)
+        boardAngle = boardAngle.normalizedAngle(forMinimalRotationTo: camera.eulerAngles.y, increment: .pi)
         
         rotate(to: boardAngle)
     }
@@ -207,8 +207,8 @@ class GameBoard: SCNNode {
     private func rotate(to angle: Float) {
         // Avoid interpolating between angle flips of 180 degrees
         let previouAngle = recentRotationAngles.reduce(0, { $0 + $1 }) / Float(recentRotationAngles.count)
-        if abs(angle - previouAngle) > Float.pi / 2 {
-            recentRotationAngles = recentRotationAngles.map { $0.normalizedAngle(forMinimalRotationTo: angle, increment: Float.pi) }
+        if abs(angle - previouAngle) > .pi / 2 {
+            recentRotationAngles = recentRotationAngles.map { $0.normalizedAngle(forMinimalRotationTo: angle, increment: .pi) }
         }
         
         // Average using several most recent rotation angles.
@@ -289,8 +289,9 @@ class GameBoard: SCNNode {
         if let plane = fillPlane.geometry as? SCNPlane {
             let length = 1 - 2 * BorderSegment.thickness
             plane.height = length * CGFloat(aspectRatio)
-            plane.firstMaterial?.diffuse.contentsTransform = SCNMatrix4MakeScale(40, 40 * aspectRatio, 1)
-            plane.firstMaterial?.emission.contentsTransform = SCNMatrix4MakeScale(40, 40 * aspectRatio, 1)
+            let textureScale = float4x4(scale: float3(40, 40 * aspectRatio, 1))
+            plane.firstMaterial?.diffuse.simdContentsTransform = textureScale
+            plane.firstMaterial?.emission.simdContentsTransform = textureScale
         }
         isBorderOpen = false
     }
@@ -305,7 +306,7 @@ class GameBoard: SCNNode {
         
         SCNTransaction.animate(duration: GameBoard.animationDuration / 4, animations: {
         
-            SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+            SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeOut)
             self.borderNode.opacity = 1.0
             for segment in self.borderSegments {
                 segment.open()
@@ -313,7 +314,7 @@ class GameBoard: SCNNode {
             
             // Add a scale/bounce animation.
             SCNTransaction.animate(duration: GameBoard.animationDuration / 4, animations: {
-                SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeOut)
                 self.simdScale = float3(GameBoard.minimumScale)
             })
         }, completion: {
@@ -335,11 +336,11 @@ class GameBoard: SCNNode {
         
         // Close animation
         SCNTransaction.animate(duration: GameBoard.animationDuration / 2, animations: {
-            SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+            SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeOut)
             borderNode.opacity = 0.99
         }, completion: {
             SCNTransaction.animate(duration: GameBoard.animationDuration / 4, animations: {
-                SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeOut)
                 for segment in self.borderSegments {
                     segment.close()
                 }
@@ -366,9 +367,10 @@ class GameBoard: SCNNode {
         
         let material = plane.firstMaterial!
         material.diffuse.contents = UIImage(named: "gameassets.scnassets/textures/grid.png")
-        material.diffuse.contentsTransform = SCNMatrix4MakeScale(40, 40 * aspectRatio, 1)
+        let textureScale = float4x4(scale: float3(40, 40 * aspectRatio, 1))
+        material.diffuse.simdContentsTransform = textureScale
         material.emission.contents = UIImage(named: "gameassets.scnassets/textures/grid.png")
-        material.emission.contentsTransform = SCNMatrix4MakeScale(40, 40 * aspectRatio, 1)
+        material.emission.simdContentsTransform = textureScale
         material.diffuse.wrapS = .repeat
         material.diffuse.wrapT = .repeat
         material.isDoubleSided = true

@@ -8,8 +8,6 @@ Convenience extension for setting shader modifier parameters on SCNMaterial or S
 import Foundation
 import SceneKit
 
-private let log = Log()
-
 extension SCNShadable where Self: NSObject {
     // https://developer.apple.com/documentation/scenekit/scnshadable#1654834
     // Some of these can be animated inside of an SCNTransaction.

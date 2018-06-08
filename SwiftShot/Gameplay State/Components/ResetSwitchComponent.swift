@@ -63,7 +63,7 @@ class ResetSwitchComponent: GKComponent, HighlightableComponent {
     
     // MARK: - HighlightableComponent
     func shouldHighlight(camera: Ray) -> Bool {
-        let cameraToButtonDistance = simd_length(leverObj.simdWorldPosition - camera.position)
+        let cameraToButtonDistance = length(leverObj.simdWorldPosition - camera.position)
         if cameraToButtonDistance > leverHighlightDistance {
             return false
         }

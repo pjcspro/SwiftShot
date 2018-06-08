@@ -176,9 +176,9 @@ class DeveloperSettingsTableViewController: UITableViewController {
                                                     message:
                 NSLocalizedString("Please go to Settings and enable location services for SwiftShot to look for nearby beacons",
                                   comment: "Steps the user can take to activate beacon"),
-                                                    preferredStyle: UIAlertController.Style.alert)
+                                                    preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: ""),
-                                                    style: UIAlertAction.Style.default, handler: nil))
+                                                    style: .default, handler: nil))
             self.present(alertController, animated: true, completion: nil)
             defaults.gameRoomMode = false
             gameRoomModeSwitch.setOn(false, animated: true)

@@ -7,8 +7,6 @@ View controller for user settings.
 
 import UIKit
 
-private let log = Log()
-
 class UserSettingsTableViewController: UITableViewController {
     @IBOutlet weak var playerNameTextField: UITextField!
     @IBOutlet weak var spectatorSwitch: UISwitch!
@@ -71,7 +69,6 @@ class UserSettingsTableViewController: UITableViewController {
     func updateSelectedLevel() {
         let selectedLevel = UserDefaults.standard.selectedLevel
         selectedLevelLabel.text = selectedLevel.name
-        log.debug("Selected level: \(selectedLevel.name)")
     }
 }
 

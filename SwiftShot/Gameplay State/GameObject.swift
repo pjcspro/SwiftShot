@@ -9,8 +9,6 @@ import Foundation
 import SceneKit
 import GameplayKit
 
-private let log = Log()
-
 struct CollisionMask: OptionSet {
     let rawValue: Int
     
@@ -223,7 +221,7 @@ class GameObject: GKEntity {
             case "density":
                 updateDensity(value: value)
             default:
-                log.warn("Unknown component \(key)")
+                continue
             }
         }
     }
@@ -264,7 +262,6 @@ class GameObject: GKEntity {
         guard let resetSwitch = value as? Bool,
             resetSwitch,
             let leverObj = objectRootNode.childNode(withName: "resetSwitch_lever", recursively: true) else {
-                log.error("Missing resetSwitchOnLever")
                 return
         }
         addComponent(ResetSwitchComponent(entity: self, lever: leverObj))
@@ -337,7 +334,6 @@ class GameObject: GKEntity {
                     gameDefs = dictionary
                 }
             } catch {
-                log.error("Error!! Unable to parse \(file).json with \(error)")
             }
         }
         

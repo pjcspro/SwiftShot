@@ -39,13 +39,13 @@ extension OSLog {
 extension OSSignpostID {
     // Custom signpost ids for signposts. Same id can be used for signposts that aren't concurrent with each other
     // Signpost ids for signposts related loading/starting a game
-    static let preload_assets = OSSignpostID(log: OSLog.preload_assets)
-    static let setup_level = OSSignpostID(log: OSLog.setup_level)
+    static let preload_assets = OSSignpostID(log: .preload_assets)
+    static let setup_level = OSSignpostID(log: .setup_level)
 
     // Signpost ids for signposts related to scenekit render loop
-    static let render_loop = OSSignpostID(log: OSLog.render_loop)
+    static let render_loop = OSSignpostID(log: .render_loop)
 
     // Signpost ids for signposts related to networking
-    static let network_data_sent = OSSignpostID(log: OSLog.network_data_sent)
-    static let network_data_received = OSSignpostID(log: OSLog.network_data_received)
+    static let network_data_sent = OSSignpostID(log: .network_data_sent)
+    static let network_data_received = OSSignpostID(log: .network_data_received)
 }

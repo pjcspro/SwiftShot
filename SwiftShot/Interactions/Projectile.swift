@@ -60,9 +60,9 @@ class Projectile: GameObject {
         ballShape.materials = [SCNMaterial(diffuse: UIColor.white)]
         let node = SCNNode(geometry: ballShape)
         let physicsShape = SCNPhysicsShape(node: node, options: nil)
-        let physicsBody = SCNPhysicsBody(type: SCNPhysicsBodyType.dynamic, shape: physicsShape)
+        let physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
         physicsBody.contactTestBitMask = CollisionMask([.rigidBody, .glitterObject, .triggerVolume]).rawValue
-        physicsBody.categoryBitMask = CollisionMask([.ball, .rigidBody, .phantom]).rawValue
+        physicsBody.categoryBitMask = CollisionMask([.ball]).rawValue
         node.physicsBody = physicsBody
         
         super.init(node: node, index: nil, gamedefs: [String: Any]())
@@ -82,7 +82,7 @@ class Projectile: GameObject {
         }
         
         physicsBody.contactTestBitMask = CollisionMask([.rigidBody, .glitterObject, .triggerVolume]).rawValue
-        physicsBody.categoryBitMask = CollisionMask([.ball, .rigidBody, .phantom]).rawValue
+        physicsBody.categoryBitMask = CollisionMask([.ball]).rawValue
         
         super.init(node: node, index: index, gamedefs: gamedefs)
         self.physicsNode = physicsNode
@@ -109,7 +109,6 @@ class Projectile: GameObject {
             physicsBody.simdVelocityFactor = float3(1.0, 1.0, 1.0)
             physicsBody.simdAngularVelocityFactor = float3(1.0, 1.0, 1.0)
             physicsBody.simdVelocity = velocity.vector
-            
             physicsNode.name = "ball"
             physicsNode.simdWorldPosition = velocity.origin
             physicsBody.resetTransform()
