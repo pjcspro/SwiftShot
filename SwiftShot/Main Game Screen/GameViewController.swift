@@ -137,6 +137,8 @@ class GameViewController: UIViewController {
     var sessionState: SessionState = .setup {
         didSet {
             guard oldValue != sessionState else { return }
+
+            os_log(type: .info, "session state changed to %s", "\(sessionState)")
             configureView()
             configureARSession()
         }
@@ -278,6 +280,8 @@ class GameViewController: UIViewController {
         // 0, 2, 4 on iOS, 8, 16x on macOS
         sceneView.antialiasingMode = UserDefaults.standard.antialiasingMode ? .multisampling4X : .none
         
+        os_log(type: .info, "antialiasing set to: %s", UserDefaults.standard.antialiasingMode ? "4x" : "none")
+        
         if let localizedInstruction = sessionState.localizedInstruction {
             instructionLabel.isHidden = false
             instructionLabel.text = localizedInstruction
@@ -315,6 +319,7 @@ class GameViewController: UIViewController {
         switch sessionState {
         case .setup:
             // in setup
+            os_log(type: .info, "AR session paused")
             sceneView.session.pause()
             return
         case .lookingForSurface, .waitingForBoard:
@@ -331,7 +336,7 @@ class GameViewController: UIViewController {
             // so no change to the running session
             return
         case .localizingToBoard:
-            guard let targetWorldMap = targetWorldMap else { return } // should have had a world map
+            guard let targetWorldMap = targetWorldMap else { os_log(type: .error, "should have had a world map"); return }
             configuration.initialWorldMap = targetWorldMap
             configuration.planeDetection = [.horizontal]
             options = [.resetTracking, .removeExistingAnchors]
@@ -352,6 +357,8 @@ class GameViewController: UIViewController {
         
         // Turning light estimation off to test PBR on SceneKit file
         configuration.isLightEstimationEnabled = false
+        
+        os_log(type: .info, "configured AR session")
         sceneView.session.run(configuration, options: options)
     }
 
@@ -461,8 +468,10 @@ class GameViewController: UIViewController {
         case .boardLocation(let location):
             switch location {
             case .worldMapData(let data):
+                os_log(type: .info, "Received WorldMap data. Size: %d", data.count)
                 loadWorldMap(from: data)
             case .manual:
+                os_log(type: .info, "Received a manual board placement")
                 sessionState = .lookingForSurface
             }
         case .requestBoardLocation:
@@ -475,6 +484,7 @@ class GameViewController: UIViewController {
         do {
             let uncompressedData = try archivedData.decompressed()
             guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: uncompressedData) else {
+                os_log(type: .error, "The WorldMap received couldn't be read")
                 DispatchQueue.main.async {
                     self.showAlert(title: "An error occured while loading the WorldMap (Failed to read)")
                     self.sessionState = .setup
@@ -487,6 +497,7 @@ class GameViewController: UIViewController {
                 self.sessionState = .localizingToBoard
             }
         } catch {
+            os_log(type: .error, "The WorldMap received couldn't be decompressed")
             DispatchQueue.main.async {
                 self.showAlert(title: "An error occured while loading the WorldMap (Failed to decompress)")
                 self.sessionState = .setup
@@ -544,6 +555,8 @@ class GameViewController: UIViewController {
             fatalError("gameManager not initialized")
         }
         
+        os_log(type: .info, "Setting up level")
+        
         if gameBoard.anchor == nil {
             let boardSize = CGSize(width: CGFloat(gameBoard.scale.x), height: CGFloat(gameBoard.scale.x * gameBoard.aspectRatio))
             gameBoard.anchor = BoardAnchor(transform: normalize(gameBoard.simdTransform), size: boardSize)
@@ -559,6 +572,7 @@ class GameViewController: UIViewController {
         GameTime.setLevelStartTime()
         gameManager.start()
         gameManager.addLevel(to: renderRoot, gameBoard: gameBoard)
+        gameManager.restWorld()
 
         if !UserDefaults.standard.disableInGameUI {
             teamACatapultImages.forEach { $0.isHidden = false }
@@ -578,14 +592,21 @@ class GameViewController: UIViewController {
     }
 
     func sendWorldTo(peer: Player) {
-        guard let gameManager = gameManager, gameManager.isServer else { return }
+        guard let gameManager = gameManager, gameManager.isServer else { os_log(type: .error, "i'm not the server"); return }
 
         switch UserDefaults.standard.boardLocatingMode {
         case .worldMap:
+            os_log(type: .info, "generating worldmap for %s", "\(peer)")
             getCurrentWorldMapData { data, error in
-                guard error == nil, let data = data else { return }
+                if let error = error {
+                    os_log(type: .error, "didn't work! %s", "\(error)")
+                    return
+                }
+                guard let data = data else { os_log(type: .error, "no data!"); return }
+                os_log(type: .info, "got a compressed map, sending to %s", "\(peer)")
                 let location = GameBoardLocation.worldMapData(data)
                 DispatchQueue.main.async {
+                    os_log(type: .info, "sending worldmap to %s", "\(peer)")
                     gameManager.send(boardAction: .boardLocation(location), to: peer)
                 }
             }
@@ -595,8 +616,10 @@ class GameViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        os_log(type: .info, "segue!")
         guard let segueIdentifier = segue.identifier,
             let segueType = GameSegue(rawValue: segueIdentifier) else {
+                os_log(type: .error, "unknown segue %s", String(describing: segue.identifier))
                 return
         }
         
@@ -819,6 +842,7 @@ extension GameViewController: GameManagerDelegate {
         // connected client.
         if musicCoordinator.currentMusicPlayer?.name == "music_gameplay" {
             let musicTime = musicCoordinator.currentMusicTime()
+            os_log(type: .debug, "music play position = %f", musicTime)
             if musicTime >= 0 {
                 manager.startGameMusic(for: player)
             }

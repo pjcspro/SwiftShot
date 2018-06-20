@@ -42,8 +42,7 @@ class GameSession: NSObject {
 
     init(myself: Player, asServer: Bool, location: GameTableLocation?, host: Player) {
         self.myself = myself
-        let encryptionPreference: MCEncryptionPreference = UserDefaults.standard.useEncryption ? .required : .none
-        self.session = MCSession(peer: myself.peerID, securityIdentity: nil, encryptionPreference: encryptionPreference)
+        self.session = MCSession(peer: myself.peerID, securityIdentity: nil, encryptionPreference: .required)
         self.isServer = asServer
         self.location = location
         self.host = host
@@ -54,6 +53,8 @@ class GameSession: NSObject {
     // for use when acting as game server
     func startAdvertising() {
         guard serviceAdvertiser == nil else { return } // already advertising
+
+        os_log(type: .info, "ADVERTISING %@", myself.peerID)
         let discoveryInfo: [String: String]?
         if let location = location {
             discoveryInfo = [locationKey: String(location.identifier)]
@@ -69,6 +70,7 @@ class GameSession: NSObject {
     }
 
     func stopAdvertising() {
+        os_log(type: .info, "stop advertising")
         serviceAdvertiser?.stopAdvertisingPeer()
         serviceAdvertiser = nil
     }
@@ -96,7 +98,7 @@ class GameSession: NSObject {
                             "%d Bytes Sent", bytes)
             }
         } catch {
-            // ignore error
+            os_log(type: .error, "sending failed: %s", "\(error)")
         }
     }
 
@@ -119,7 +121,7 @@ class GameSession: NSObject {
                             "%d Bytes Sent", bytes)
             }
         } catch {
-            // ignore error
+            os_log(type: .error, "sending failed: %s", "\(error)")
         }
     }
 
@@ -131,18 +133,22 @@ class GameSession: NSObject {
         let fileName = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try data.write(to: fileName)
         session.sendResource(at: fileName, withName: "Action", toPeer: peer) { error in
-            guard error == nil else {
+            if let error = error {
+                os_log(type: .error, "sending failed: %s", "\(error)")
                 return
             }
+            os_log(type: .info, "send succeeded, removing temp file")
             do {
                 try FileManager.default.removeItem(at: fileName)
             } catch {
+                os_log(type: .error, "removing failed: %s", "\(error)")
             }
         }
     }
 
     func receive(data: Data, from peerID: MCPeerID) {
         guard let player = peers.first(where: { $0.peerID == peerID }) else {
+            os_log(type: .info, "peer %@ unknown!", peerID)
             return
         }
         do {
@@ -160,6 +166,7 @@ class GameSession: NSObject {
                             "%d Bytes Sent from %d", bytes, peerID)
             }
         } catch {
+            os_log(type: .error, "deserialization error: %s", "\(error)")
         }
     }
 }
@@ -167,6 +174,7 @@ class GameSession: NSObject {
 /// - Tag: GameSession-MCSessionDelegate
 extension GameSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        os_log(type: .info, "peer %@ state is now %d", peerID, state.rawValue)
         let player = Player(peerID: peerID)
         switch state {
         case .connected:
@@ -185,17 +193,22 @@ extension GameSession: MCSessionDelegate {
     }
 
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        // this app doesn't use streams.
+        os_log(type: .info, "peer %@ sent a stream named %s", peerID, streamName)
     }
 
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        // this app doesn't use named resources.
+        os_log(type: .info, "peer %@ started sending a resource named %s", peerID, resourceName)
     }
 
     func session(_ session: MCSession,
                  didFinishReceivingResourceWithName resourceName: String,
                  fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        guard error == nil, let url = localURL else { return }
+        os_log(type: .info, "peer %@ finished sending a resource named %s", peerID, resourceName)
+        if let error = error {
+            os_log(type: .error, "failed to receive resource: %s", "\(error)")
+            return
+        }
+        guard let url = localURL else { os_log(type: .error, "what what no url?"); return }
 
         do {
             // .mappedIfSafe makes the initializer attempt to map the file directly into memory
@@ -206,6 +219,7 @@ extension GameSession: MCSessionDelegate {
             // removing the file is done by the session, so long as we're done with it before the
             // delegate method returns.
         } catch {
+            os_log(type: .error, "dealing with resource failed: %s", "\(error)")
         }
     }
 }
@@ -215,6 +229,7 @@ extension GameSession: MCNearbyServiceAdvertiserDelegate {
                     didReceiveInvitationFromPeer peerID: MCPeerID,
                     withContext context: Data?,
                     invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        os_log(type: .info, "got request from %@, accepting!", peerID)
         invitationHandler(true, session)
     }
 }

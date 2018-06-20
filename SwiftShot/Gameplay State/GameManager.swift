@@ -144,6 +144,7 @@ class GameManager: NSObject {
     }
     
     func unload() {
+        physicsWorld.contactDelegate = nil
         levelNode.removeFromParentNode()
     }
     
@@ -332,6 +333,7 @@ class GameManager: NSObject {
     }
 
     func startGameMusic(from interaction: Interaction) {
+        os_log(type: .debug, "3-2-1-GO music effect is done, time to start the game music")
         startGameMusicEverywhere()
     }
 
@@ -535,6 +537,11 @@ class GameManager: NSObject {
         // For nodes with types, we create at most one gameObject, configured
         // based on the node type.
         
+        // only report team blocks
+        if team != nil {
+            os_log(type: .debug, "configuring %s on team %s", name, team!)
+        }
+        
         switch type {
         case "catapult":
             // replaces the placeholder node with a working catapult
@@ -613,6 +620,8 @@ class GameManager: NSObject {
                         physicsBody.angularDamping = 0.03
                         physicsBody.damping = 0.03
                         physicsBody.mass = 3
+                        physicsBody.linearSleepingThreshold = 1.0
+                        physicsBody.angularSleepingThreshold = 1.0
                         physicsBody.collisionBitMask |= CollisionMask([.ball]).rawValue
                     
                         let density = gameObject.density
@@ -620,6 +629,9 @@ class GameManager: NSObject {
                             physicsNode.calculateMassFromDensity(name: name, density: density)
                         }
                         physicsBody.resetTransform()
+                        if physicsBody.allowsResting {
+                            physicsBody.setResting(true)
+                        }
                 }
             }
         
@@ -641,6 +653,18 @@ class GameManager: NSObject {
         }
     }
     
+    // set the world at rest
+    func restWorld() {
+        for gameObject in gameObjects {
+            if let physicsNode = gameObject.physicsNode,
+                let physBody = physicsNode.physicsBody,
+                gameObject != tableBoxObject,
+                physBody.allowsResting {
+                physBody.setResting(true)
+            }
+        }
+    }
+
     private func postUpdateHierarchy(_ node: SCNNode) {
         if let nameRestore = node.value(forKey: "nameRestore") as? String {
             node.name = nameRestore
@@ -870,6 +894,7 @@ class GameManager: NSObject {
             }
             let startWallTime = timeData.timestamps[0]
             let position = now - startWallTime
+            os_log(type: .debug, "handleStartGameMusic (either), playing music from start time %d", position)
             musicCoordinator.playMusic(name: "music_gameplay", startTime: position)
         } else {
             if isServer {

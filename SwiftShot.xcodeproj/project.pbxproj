@@ -185,8 +185,6 @@
 		44F2B33420BC7432008974CA /* ThresholdRotationGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThresholdRotationGestureRecognizer.swift; sourceTree = "<group>"; };
 		44F2B33B20BC74BA008974CA /* CGPoint+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Helpers.swift"; sourceTree = "<group>"; };
 		44F2B33E20BC756F008974CA /* GameViewController+Gestures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameViewController+Gestures.swift"; sourceTree = "<group>"; };
-		4C6D95104C6B905000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		4EE306504EE3116000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		7458E8552094067F00240E81 /* GameObjectComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameObjectComponent.swift; sourceTree = "<group>"; };
 		746412F820B5D0190083A866 /* ResetSwitchComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSwitchComponent.swift; sourceTree = "<group>"; };
 		7467F65420AA3F5A00B6A306 /* ConstrainHierarchyComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstrainHierarchyComponent.swift; sourceTree = "<group>"; };
@@ -250,6 +248,8 @@
 		E302C54E20B80C80001F3417 /* SCNPlane+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNPlane+Helpers.swift"; sourceTree = "<group>"; };
 		E31309A6208F820900E7C7B2 /* LevelSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectorViewController.swift; sourceTree = "<group>"; };
 		E318B43320A24B2700308AC6 /* ProximityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityManager.swift; sourceTree = "<group>"; };
+		F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		F6FB4EF0F6FA269000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Flag.swift; path = ../Flag.swift; sourceTree = "<group>"; };
 		FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Flag.metal; path = ../Flag.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -383,23 +383,6 @@
 			path = "Gesture Recognizers";
 			sourceTree = "<group>";
 		};
-		4C6B89C04C6B899000000001 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				4C6D95104C6B905000000001 /* SampleCode.xcconfig */,
-			);
-			name = Configuration;
-			sourceTree = "<group>";
-		};
-		4EE2E1D04EE2E1A000000001 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				4EE306504EE3116000000001 /* LICENSE.txt */,
-			);
-			name = LICENSE;
-			path = LICENSE;
-			sourceTree = "<group>";
-		};
 		74E40327209287A100884DE8 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -457,8 +440,8 @@
 				D0066D4B2057259600A7E863 /* SwiftShotTests */,
 				D0066D332057259500A7E863 /* Products */,
 				91AD762420AF5E2F0049A0EF /* Tools */,
-				4C6B89C04C6B899000000001 /* Configuration */,
-				4EE2E1D04EE2E1A000000001 /* LICENSE */,
+				F6D30320F6B2644000000001 /* Configuration */,
+				F6F877D0F6F877A000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -574,6 +557,23 @@
 				E302C54C20B7A6CC001F3417 /* GameLevel.swift */,
 			);
 			path = "Local Networking";
+			sourceTree = "<group>";
+		};
+		F6D30320F6B2644000000001 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		F6F877D0F6F877A000000001 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				F6FB4EF0F6FA269000000001 /* LICENSE.txt */,
+			);
+			name = LICENSE;
+			path = LICENSE;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -703,7 +703,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./undeploy_png.sh xcode ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/gameassets.scnassets/textures/\n";
+			shellScript = "./undeploy_png.sh xcode \"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/gameassets.scnassets/textures/\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -851,7 +851,7 @@
 /* Begin XCBuildConfiguration section */
 		D0066D4F2057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -887,6 +887,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = "*.metal";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -913,7 +914,7 @@
 		};
 		D0066D502057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -949,6 +950,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*]" = "*.metal";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -969,7 +971,7 @@
 		};
 		D0066D522057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -996,7 +998,7 @@
 		};
 		D0066D532057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1022,7 +1024,7 @@
 		};
 		D0066D552057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1047,7 +1049,7 @@
 		};
 		D0066D562057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6D95104C6B905000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

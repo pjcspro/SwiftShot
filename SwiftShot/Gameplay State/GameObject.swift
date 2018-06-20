@@ -8,6 +8,7 @@ Entity class for game objects with customizable components.
 import Foundation
 import SceneKit
 import GameplayKit
+import os.log
 
 struct CollisionMask: OptionSet {
     let rawValue: Int
@@ -221,7 +222,7 @@ class GameObject: GKEntity {
             case "density":
                 updateDensity(value: value)
             default:
-                continue
+                os_log(type: .info, "Unknown component %s", key)
             }
         }
     }
@@ -262,6 +263,7 @@ class GameObject: GKEntity {
         guard let resetSwitch = value as? Bool,
             resetSwitch,
             let leverObj = objectRootNode.childNode(withName: "resetSwitch_lever", recursively: true) else {
+                os_log(type: .error, "Missing resetSwitchOnLever")
                 return
         }
         addComponent(ResetSwitchComponent(entity: self, lever: leverObj))
@@ -334,6 +336,7 @@ class GameObject: GKEntity {
                     gameDefs = dictionary
                 }
             } catch {
+                os_log(type: .error, "Error!! Unable to parse %s.json with %s", file, "\(error)")
             }
         }
         

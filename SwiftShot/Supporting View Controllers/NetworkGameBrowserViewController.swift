@@ -6,6 +6,7 @@ View controller for finding network games.
 */
 
 import UIKit
+import os.log
 
 class NetworkGameBrowserViewController: UIViewController {
 
@@ -41,6 +42,7 @@ class NetworkGameBrowserViewController: UIViewController {
 
     func joinGame(_ game: NetworkGame) {
         guard let session = browser?.join(game: game) else {
+            os_log(type: .error, "could not join game")
             return
         }
         guard let parent = parent as? OverlayViewController else { fatalError("unexpected parent") }
@@ -52,6 +54,7 @@ class NetworkGameBrowserViewController: UIViewController {
 // MARK: - GameBrowserDelegate
 extension NetworkGameBrowserViewController: GameBrowserDelegate {
     func gameBrowser(_ browser: GameBrowser, sawGames games: [NetworkGame]) {
+        os_log(type: .info, "saw %d games!", games.count)
         
         if UserDefaults.standard.gameRoomMode, let location = proximityManager?.closestLocation {
             self.games = games.filter { $0.location == location }

@@ -8,6 +8,7 @@ Container for scene-level physics sync data.
 import Foundation
 import simd
 import SceneKit
+import os.log
 
 protocol PhysicsSyncSceneDataDelegate: class {
     func hasNetworkDelayStatusChanged(hasNetworkDelay: Bool)
@@ -116,6 +117,7 @@ class PhysicsSyncSceneData {
             
         } else {
             shouldRefillPackets = true
+            os_log(type: .info, "out of packets")
             
             // Update network delay status used to display in sceneViewController
             if !hasNetworkDelay {
@@ -225,6 +227,7 @@ class PhysicsSyncSceneData {
                 ((lastPacketNumberRead - packetNumber) > PhysicsSyncData.halfMaxPacketNumber) {
                 break
             } else {
+                os_log(type: .error, "Packet out of order")
                 packetQueue.removeFirst()
             }
         }

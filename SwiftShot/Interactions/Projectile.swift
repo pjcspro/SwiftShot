@@ -112,6 +112,7 @@ class Projectile: GameObject {
             physicsNode.name = "ball"
             physicsNode.simdWorldPosition = velocity.origin
             physicsBody.resetTransform()
+            physicsBody.continuousCollisionDetectionThreshold = 0.001
         } else {
             fatalError("Projectile not setup")
         }

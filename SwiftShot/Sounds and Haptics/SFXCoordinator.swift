@@ -7,6 +7,7 @@ Manages playback of sound effects.
 
 import SceneKit
 import AVFoundation
+import os.log
 
 private let preloadAudioFiles = [
     "vortex_04",
@@ -76,10 +77,13 @@ class SFXCoordinator: NSObject {
 
     @objc
     private func handleRouteChange(_ notification: Notification) {
+        os_log(type: .error, "AVAudioSession.routeChangeNotification, info: %s", String(describing: notification.userInfo))
         loadQueue.async {
+            os_log(type: .error, "Reloading AudioSamplers...")
             for sampler in self.audioSamplers {
                 sampler.reloadPreset()
             }
+            os_log(type: .error, "done reloading AudioSamplers.")
         }
     }
 
@@ -121,6 +125,7 @@ class SFXCoordinator: NSObject {
         // but we connect it manually to the AVAudioEnvironmentNode that we
         // get passed to us. This comes from ARSCNView in GameSceneViewController.
         guard let engine = audioEnvironment.engine else {
+            os_log(type: .error, "ERROR: Missing audio engine from audio environment!")
             return
         }
         let audioNode = audioSampler.audioNode
@@ -133,6 +138,7 @@ class SFXCoordinator: NSObject {
 
     func removeAllAudioSamplers() {
         guard let engine = audioEnvironment.engine else {
+            os_log(type: .error, "no audio engine")
             return
         }
         
@@ -288,6 +294,7 @@ class SFXCoordinator: NSObject {
     }
 
     func playCatapultBreak(catapult: Catapult, vortex: Bool) {
+        os_log(type: .info, "play catapult break for catapultID = %d", catapult.catapultID)
 
         var shouldPlay = true
         if vortex {

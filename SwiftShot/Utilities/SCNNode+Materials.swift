@@ -7,6 +7,7 @@ Convenience extension for updating SCNNode geometry and materials after loading.
 
 import Foundation
 import SceneKit
+import os.log
 
 // helpers for updating geometry and materials after loading
 extension SCNNode {
@@ -273,6 +274,7 @@ extension SCNNode {
         let texturePath = "gameassets.scnassets/textures/\(paintMask).ktx"
         
         if name.contains("catapult") {
+            os_log(type: .debug, "visited %s for texture", name)
         }
         
         let surfaceScript = """

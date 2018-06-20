@@ -7,6 +7,7 @@ Convenience extension for various game-specific functionality on SCNNode.
 
 import Foundation
 import SceneKit
+import os.log
 
 /**
  * Protect animation on SCNTransaction from multiple threads, can be nested too.
@@ -211,6 +212,7 @@ extension SCNNode {
             fatalError("model \(modelFileName) has no child nodes")
         }
         if nodeRef.childNodes.count > 1 {
+            os_log(type: .error, "model %s should have a single root node", modelFileName)
         }
         
         // walk down the scenegraph and update all children

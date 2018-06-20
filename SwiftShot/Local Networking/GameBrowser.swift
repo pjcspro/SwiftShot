@@ -7,6 +7,7 @@ Finds games in progress on the local network.
 
 import Foundation
 import MultipeerConnectivity
+import os.log
 
 struct SwiftShotGameService {
     static let playerService = "swiftshot-p"
@@ -37,10 +38,12 @@ class GameBrowser: NSObject {
     }
 
     func start() {
+        os_log(type: .info, "looking for peers")
         serviceBrowser.startBrowsingForPeers()
     }
 
     func stop() {
+        os_log(type: .info, "stopping the search for peers")
         serviceBrowser.stopBrowsingForPeers()
     }
 
@@ -55,7 +58,9 @@ class GameBrowser: NSObject {
 /// - Tag: GameBrowser-MCNearbyServiceBrowserDelegate
 extension GameBrowser: MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
+        os_log(type: .info, "found peer %@", peerID)
         guard peerID != myself.peerID else {
+            os_log(type: .info, "found myself, ignoring")
             return
         }
         DispatchQueue.main.async {
@@ -77,6 +82,7 @@ extension GameBrowser: MCNearbyServiceBrowserDelegate {
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
+        os_log(type: .info, "lost peer id %@", peerID)
         DispatchQueue.main.async {
             self.games = self.games.filter { $0.host.peerID != peerID }
             self.delegate?.gameBrowser(self, sawGames: Array(self.games))
