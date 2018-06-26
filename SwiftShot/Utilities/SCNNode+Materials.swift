@@ -274,7 +274,7 @@ extension SCNNode {
         let texturePath = "gameassets.scnassets/textures/\(paintMask).ktx"
         
         if name.contains("catapult") {
-            os_log(type: .debug, "visited %s for texture", name)
+            os_log(.debug, "visited %s for texture", name)
         }
         
         let surfaceScript = """

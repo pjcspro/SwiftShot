@@ -191,7 +191,7 @@ class GameManager: NSObject {
 
     // MARK: - inbound from network
     private func process(command: GameCommand) {
-        os_signpost(type: .begin, log: .render_loop, name: .process_command, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .process_command, signpostID: .render_loop,
                     "Action : %s", command.action.description)
         switch command.action {
         case .gameAction(let gameAction):
@@ -209,7 +209,7 @@ class GameManager: NSObject {
                 handleStartGameMusic(timeData, from: player)
             }
         }
-        os_signpost(type: .end, log: .render_loop, name: .process_command, signpostID: .render_loop,
+        os_signpost(.end, log: .render_loop, name: .process_command, signpostID: .render_loop,
                     "Action : %s", command.action.description)
     }
     
@@ -313,7 +313,7 @@ class GameManager: NSObject {
     }
 
     private func syncPhysics() {
-        os_signpost(type: .begin, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
                     "Physics sync started")
         if isNetworked && physicsSyncData.isInitialized {
             if isServer {
@@ -323,7 +323,7 @@ class GameManager: NSObject {
                 physicsSyncData.updateFromReceivedData()
             }
         }
-        os_signpost(type: .end, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
+        os_signpost(.end, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
                     "Physics sync finished")
         
     }
@@ -333,7 +333,7 @@ class GameManager: NSObject {
     }
 
     func startGameMusic(from interaction: Interaction) {
-        os_log(type: .debug, "3-2-1-GO music effect is done, time to start the game music")
+        os_log(.debug, "3-2-1-GO music effect is done, time to start the game music")
         startGameMusicEverywhere()
     }
 
@@ -539,7 +539,7 @@ class GameManager: NSObject {
         
         // only report team blocks
         if team != nil {
-            os_log(type: .debug, "configuring %s on team %s", name, team!)
+            os_log(.debug, "configuring %s on team %s", name, team!)
         }
         
         switch type {
@@ -894,7 +894,7 @@ class GameManager: NSObject {
             }
             let startWallTime = timeData.timestamps[0]
             let position = now - startWallTime
-            os_log(type: .debug, "handleStartGameMusic (either), playing music from start time %d", position)
+            os_log(.debug, "handleStartGameMusic (either), playing music from start time %d", position)
             musicCoordinator.playMusic(name: "music_gameplay", startTime: position)
         } else {
             if isServer {

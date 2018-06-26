@@ -35,15 +35,18 @@ class GameBrowser: NSObject {
         self.serviceBrowser = MCNearbyServiceBrowser(peer: myself.peerID, serviceType: SwiftShotGameService.playerService)
         super.init()
         self.serviceBrowser.delegate = self
+        #if INTERNAL
+        self.serviceBrowser.isAWDLDisabled = true
+        #endif
     }
 
     func start() {
-        os_log(type: .info, "looking for peers")
+        os_log(.info, "looking for peers")
         serviceBrowser.startBrowsingForPeers()
     }
 
     func stop() {
-        os_log(type: .info, "stopping the search for peers")
+        os_log(.info, "stopping the search for peers")
         serviceBrowser.stopBrowsingForPeers()
     }
 
@@ -58,9 +61,9 @@ class GameBrowser: NSObject {
 /// - Tag: GameBrowser-MCNearbyServiceBrowserDelegate
 extension GameBrowser: MCNearbyServiceBrowserDelegate {
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
-        os_log(type: .info, "found peer %@", peerID)
+        os_log(.info, "found peer %@", peerID)
         guard peerID != myself.peerID else {
-            os_log(type: .info, "found myself, ignoring")
+            os_log(.info, "found myself, ignoring")
             return
         }
         DispatchQueue.main.async {
@@ -82,7 +85,7 @@ extension GameBrowser: MCNearbyServiceBrowserDelegate {
     }
 
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        os_log(type: .info, "lost peer id %@", peerID)
+        os_log(.info, "lost peer id %@", peerID)
         DispatchQueue.main.async {
             self.games = self.games.filter { $0.host.peerID != peerID }
             self.delegate?.gameBrowser(self, sawGames: Array(self.games))

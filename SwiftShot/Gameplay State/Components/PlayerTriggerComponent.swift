@@ -31,7 +31,7 @@ class PlayerTriggerComponent: GKComponent, CollisionHandlerComponent {
            sourceIndex != catIndex { // don't allow to shoot self
             if let physicsNode = otherNode.findNodeWithPhysicsBody(), let physicsBody = physicsNode.physicsBody {
                 let vel = physicsBody.simdVelocity
-                os_log(type: .debug, "hit vel: %f %f %f", vel.x, vel.y, vel.z)
+                os_log(.debug, "hit vel: %f %f %f", vel.x, vel.y, vel.z)
                 let hitInfo = HitCatapult(catapultID: catIndex, justKnockedout: true, vortex: false)
                 manager.queueAction(gameAction: .catapultKnockOut(hitInfo)) // tell myself
                 manager.send(gameAction: .catapultKnockOut(hitInfo)) // tell everyone else

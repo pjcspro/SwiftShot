@@ -48,13 +48,16 @@ class GameSession: NSObject {
         self.host = host
         super.init()
         self.session.delegate = self
+        #if INTERNAL
+        self.session.isAWDLDisabled = true
+        #endif
     }
 
     // for use when acting as game server
     func startAdvertising() {
         guard serviceAdvertiser == nil else { return } // already advertising
 
-        os_log(type: .info, "ADVERTISING %@", myself.peerID)
+        os_log(.info, "ADVERTISING %@", myself.peerID)
         let discoveryInfo: [String: String]?
         if let location = location {
             discoveryInfo = [locationKey: String(location.identifier)]
@@ -65,12 +68,15 @@ class GameSession: NSObject {
                                                    discoveryInfo: discoveryInfo,
                                                    serviceType: SwiftShotGameService.playerService)
         advertiser.delegate = self
+        #if INTERNAL
+        advertiser.isAWDLDisabled = true
+        #endif
         advertiser.startAdvertisingPeer()
         serviceAdvertiser = advertiser
     }
 
     func stopAdvertising() {
-        os_log(type: .info, "stop advertising")
+        os_log(.info, "stop advertising")
         serviceAdvertiser?.stopAdvertisingPeer()
         serviceAdvertiser = nil
     }
@@ -90,15 +96,15 @@ class GameSession: NSObject {
             let peerIds = peers.map { $0.peerID }
             try session.send(data, toPeers: peerIds, with: .reliable)
             if action.description != "physics" {
-                 os_signpost(type: .event, log: .network_data_sent, name: .network_action_sent, signpostID: .network_data_sent,
+                 os_signpost(.event, log: .network_data_sent, name: .network_action_sent, signpostID: .network_data_sent,
                              "Action : %s", action.description)
             } else {
                 let bytes = Int32(exactly: data.count) ?? Int32.max
-                os_signpost(type: .event, log: .network_data_sent, name: .network_physics_sent, signpostID: .network_data_sent,
+                os_signpost(.event, log: .network_data_sent, name: .network_physics_sent, signpostID: .network_data_sent,
                             "%d Bytes Sent", bytes)
             }
         } catch {
-            os_log(type: .error, "sending failed: %s", "\(error)")
+            os_log(.error, "sending failed: %s", "\(error)")
         }
     }
 
@@ -113,15 +119,15 @@ class GameSession: NSObject {
                 try sendSmall(data: data, to: player.peerID)
             }
             if action.description != "physics" {
-                os_signpost(type: .event, log: .network_data_sent, name: .network_action_sent, signpostID: .network_data_sent,
+                os_signpost(.event, log: .network_data_sent, name: .network_action_sent, signpostID: .network_data_sent,
                             "Action : %s", action.description)
             } else {
                 let bytes = Int32(exactly: data.count) ?? Int32.max
-                os_signpost(type: .event, log: .network_data_sent, name: .network_physics_sent, signpostID: .network_data_sent,
+                os_signpost(.event, log: .network_data_sent, name: .network_physics_sent, signpostID: .network_data_sent,
                             "%d Bytes Sent", bytes)
             }
         } catch {
-            os_log(type: .error, "sending failed: %s", "\(error)")
+            os_log(.error, "sending failed: %s", "\(error)")
         }
     }
 
@@ -134,21 +140,21 @@ class GameSession: NSObject {
         try data.write(to: fileName)
         session.sendResource(at: fileName, withName: "Action", toPeer: peer) { error in
             if let error = error {
-                os_log(type: .error, "sending failed: %s", "\(error)")
+                os_log(.error, "sending failed: %s", "\(error)")
                 return
             }
-            os_log(type: .info, "send succeeded, removing temp file")
+            os_log(.info, "send succeeded, removing temp file")
             do {
                 try FileManager.default.removeItem(at: fileName)
             } catch {
-                os_log(type: .error, "removing failed: %s", "\(error)")
+                os_log(.error, "removing failed: %s", "\(error)")
             }
         }
     }
 
     func receive(data: Data, from peerID: MCPeerID) {
         guard let player = peers.first(where: { $0.peerID == peerID }) else {
-            os_log(type: .info, "peer %@ unknown!", peerID)
+            os_log(.info, "peer %@ unknown!", peerID)
             return
         }
         do {
@@ -157,16 +163,16 @@ class GameSession: NSObject {
             let command = GameCommand(player: player, action: action)
             delegate?.gameSession(self, received: command)
             if action.description != "physics" {
-                os_signpost(type: .event, log: .network_data_received, name: .network_action_received, signpostID: .network_data_received,
+                os_signpost(.event, log: .network_data_received, name: .network_action_received, signpostID: .network_data_received,
                             "Action : %s", action.description)
             } else {
                 let peerID = Int32(truncatingIfNeeded: peerID.displayName.hashValue)
                 let bytes = Int32(exactly: data.count) ?? Int32.max
-                os_signpost(type: .event, log: .network_data_received, name: .network_physics_received, signpostID: .network_data_received,
+                os_signpost(.event, log: .network_data_received, name: .network_physics_received, signpostID: .network_data_received,
                             "%d Bytes Sent from %d", bytes, peerID)
             }
         } catch {
-            os_log(type: .error, "deserialization error: %s", "\(error)")
+            os_log(.error, "deserialization error: %s", "\(error)")
         }
     }
 }
@@ -174,7 +180,7 @@ class GameSession: NSObject {
 /// - Tag: GameSession-MCSessionDelegate
 extension GameSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        os_log(type: .info, "peer %@ state is now %d", peerID, state.rawValue)
+        os_log(.info, "peer %@ state is now %d", peerID, state.rawValue)
         let player = Player(peerID: peerID)
         switch state {
         case .connected:
@@ -193,22 +199,22 @@ extension GameSession: MCSessionDelegate {
     }
 
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        os_log(type: .info, "peer %@ sent a stream named %s", peerID, streamName)
+        os_log(.info, "peer %@ sent a stream named %s", peerID, streamName)
     }
 
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        os_log(type: .info, "peer %@ started sending a resource named %s", peerID, resourceName)
+        os_log(.info, "peer %@ started sending a resource named %s", peerID, resourceName)
     }
 
     func session(_ session: MCSession,
                  didFinishReceivingResourceWithName resourceName: String,
                  fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        os_log(type: .info, "peer %@ finished sending a resource named %s", peerID, resourceName)
+        os_log(.info, "peer %@ finished sending a resource named %s", peerID, resourceName)
         if let error = error {
-            os_log(type: .error, "failed to receive resource: %s", "\(error)")
+            os_log(.error, "failed to receive resource: %s", "\(error)")
             return
         }
-        guard let url = localURL else { os_log(type: .error, "what what no url?"); return }
+        guard let url = localURL else { os_log(.error, "what what no url?"); return }
 
         do {
             // .mappedIfSafe makes the initializer attempt to map the file directly into memory
@@ -219,7 +225,7 @@ extension GameSession: MCSessionDelegate {
             // removing the file is done by the session, so long as we're done with it before the
             // delegate method returns.
         } catch {
-            os_log(type: .error, "dealing with resource failed: %s", "\(error)")
+            os_log(.error, "dealing with resource failed: %s", "\(error)")
         }
     }
 }
@@ -229,7 +235,7 @@ extension GameSession: MCNearbyServiceAdvertiserDelegate {
                     didReceiveInvitationFromPeer peerID: MCPeerID,
                     withContext context: Data?,
                     invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        os_log(type: .info, "got request from %@, accepting!", peerID)
+        os_log(.info, "got request from %@, accepting!", peerID)
         invitationHandler(true, session)
     }
 }

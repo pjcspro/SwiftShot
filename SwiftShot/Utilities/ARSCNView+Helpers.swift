@@ -11,7 +11,7 @@ import os.log
 extension ARSCNView {
     func createScreenshot(interfaceOrientation: UIDeviceOrientation) -> UIImage? {
         guard let frame = session.currentFrame else {
-            os_log(type: .error, "Error: Failed to create a screenshot - no current ARFrame exists.")
+            os_log(.error, "Error: Failed to create a screenshot - no current ARFrame exists.")
             return nil
         }
         

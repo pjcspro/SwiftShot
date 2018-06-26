@@ -138,7 +138,7 @@ class GameViewController: UIViewController {
         didSet {
             guard oldValue != sessionState else { return }
 
-            os_log(type: .info, "session state changed to %s", "\(sessionState)")
+            os_log(.info, "session state changed to %s", "\(sessionState)")
             configureView()
             configureARSession()
         }
@@ -280,7 +280,7 @@ class GameViewController: UIViewController {
         // 0, 2, 4 on iOS, 8, 16x on macOS
         sceneView.antialiasingMode = UserDefaults.standard.antialiasingMode ? .multisampling4X : .none
         
-        os_log(type: .info, "antialiasing set to: %s", UserDefaults.standard.antialiasingMode ? "4x" : "none")
+        os_log(.info, "antialiasing set to: %s", UserDefaults.standard.antialiasingMode ? "4x" : "none")
         
         if let localizedInstruction = sessionState.localizedInstruction {
             instructionLabel.isHidden = false
@@ -319,7 +319,7 @@ class GameViewController: UIViewController {
         switch sessionState {
         case .setup:
             // in setup
-            os_log(type: .info, "AR session paused")
+            os_log(.info, "AR session paused")
             sceneView.session.pause()
             return
         case .lookingForSurface, .waitingForBoard:
@@ -336,7 +336,7 @@ class GameViewController: UIViewController {
             // so no change to the running session
             return
         case .localizingToBoard:
-            guard let targetWorldMap = targetWorldMap else { os_log(type: .error, "should have had a world map"); return }
+            guard let targetWorldMap = targetWorldMap else { os_log(.error, "should have had a world map"); return }
             configuration.initialWorldMap = targetWorldMap
             configuration.planeDetection = [.horizontal]
             options = [.resetTracking, .removeExistingAnchors]
@@ -358,7 +358,7 @@ class GameViewController: UIViewController {
         // Turning light estimation off to test PBR on SceneKit file
         configuration.isLightEstimationEnabled = false
         
-        os_log(type: .info, "configured AR session")
+        os_log(.info, "configured AR session")
         sceneView.session.run(configuration, options: options)
     }
 
@@ -468,10 +468,10 @@ class GameViewController: UIViewController {
         case .boardLocation(let location):
             switch location {
             case .worldMapData(let data):
-                os_log(type: .info, "Received WorldMap data. Size: %d", data.count)
+                os_log(.info, "Received WorldMap data. Size: %d", data.count)
                 loadWorldMap(from: data)
             case .manual:
-                os_log(type: .info, "Received a manual board placement")
+                os_log(.info, "Received a manual board placement")
                 sessionState = .lookingForSurface
             }
         case .requestBoardLocation:
@@ -484,7 +484,7 @@ class GameViewController: UIViewController {
         do {
             let uncompressedData = try archivedData.decompressed()
             guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: uncompressedData) else {
-                os_log(type: .error, "The WorldMap received couldn't be read")
+                os_log(.error, "The WorldMap received couldn't be read")
                 DispatchQueue.main.async {
                     self.showAlert(title: "An error occured while loading the WorldMap (Failed to read)")
                     self.sessionState = .setup
@@ -497,7 +497,7 @@ class GameViewController: UIViewController {
                 self.sessionState = .localizingToBoard
             }
         } catch {
-            os_log(type: .error, "The WorldMap received couldn't be decompressed")
+            os_log(.error, "The WorldMap received couldn't be decompressed")
             DispatchQueue.main.async {
                 self.showAlert(title: "An error occured while loading the WorldMap (Failed to decompress)")
                 self.sessionState = .setup
@@ -506,7 +506,7 @@ class GameViewController: UIViewController {
     }
     
     func preloadLevel() {
-        os_signpost(type: .begin, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
+        os_signpost(.begin, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
                     "Preloading assets started")
 
         let main = DispatchQueue.main
@@ -531,10 +531,10 @@ class GameViewController: UIViewController {
                         // preparing a scene compiles shaders
                         self.sceneView.prepare([scene], completionHandler: { success in
                             if success {
-                                os_signpost(type: .end, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
+                                os_signpost(.end, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
                                             "Preloading assets succeeded")
                             } else {
-                                os_signpost(type: .end, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
+                                os_signpost(.end, log: .preload_assets, name: .preload_assets, signpostID: .preload_assets,
                                             "Preloading assets failed")
                             }
                         })
@@ -555,7 +555,7 @@ class GameViewController: UIViewController {
             fatalError("gameManager not initialized")
         }
         
-        os_log(type: .info, "Setting up level")
+        os_log(.info, "Setting up level")
         
         if gameBoard.anchor == nil {
             let boardSize = CGSize(width: CGFloat(gameBoard.scale.x), height: CGFloat(gameBoard.scale.x * gameBoard.aspectRatio))
@@ -564,7 +564,7 @@ class GameViewController: UIViewController {
         }
         gameBoard.hideBorder()
 
-        os_signpost(type: .begin, log: .setup_level, name: .setup_level, signpostID: .setup_level,
+        os_signpost(.begin, log: .setup_level, name: .setup_level, signpostID: .setup_level,
                     "Setting up Level")
 
         sessionState = .gameInProgress
@@ -587,26 +587,26 @@ class GameViewController: UIViewController {
             }
         }
 
-        os_signpost(type: .end, log: .setup_level, name: .setup_level, signpostID: .setup_level,
+        os_signpost(.end, log: .setup_level, name: .setup_level, signpostID: .setup_level,
                     "Finished Setting Up Level")
     }
 
     func sendWorldTo(peer: Player) {
-        guard let gameManager = gameManager, gameManager.isServer else { os_log(type: .error, "i'm not the server"); return }
+        guard let gameManager = gameManager, gameManager.isServer else { os_log(.error, "i'm not the server"); return }
 
         switch UserDefaults.standard.boardLocatingMode {
         case .worldMap:
-            os_log(type: .info, "generating worldmap for %s", "\(peer)")
+            os_log(.info, "generating worldmap for %s", "\(peer)")
             getCurrentWorldMapData { data, error in
                 if let error = error {
-                    os_log(type: .error, "didn't work! %s", "\(error)")
+                    os_log(.error, "didn't work! %s", "\(error)")
                     return
                 }
-                guard let data = data else { os_log(type: .error, "no data!"); return }
-                os_log(type: .info, "got a compressed map, sending to %s", "\(peer)")
+                guard let data = data else { os_log(.error, "no data!"); return }
+                os_log(.info, "got a compressed map, sending to %s", "\(peer)")
                 let location = GameBoardLocation.worldMapData(data)
                 DispatchQueue.main.async {
-                    os_log(type: .info, "sending worldmap to %s", "\(peer)")
+                    os_log(.info, "sending worldmap to %s", "\(peer)")
                     gameManager.send(boardAction: .boardLocation(location), to: peer)
                 }
             }
@@ -616,10 +616,10 @@ class GameViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        os_log(type: .info, "segue!")
+        os_log(.info, "segue!")
         guard let segueIdentifier = segue.identifier,
             let segueType = GameSegue(rawValue: segueIdentifier) else {
-                os_log(type: .error, "unknown segue %s", String(describing: segue.identifier))
+                os_log(.error, "unknown segue %s", String(describing: segue.identifier))
                 return
         }
         
@@ -677,9 +677,9 @@ extension GameViewController: SCNSceneRendererDelegate {
     // https://developer.apple.com/documentation/scenekit/scnscenerendererdelegate
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        os_signpost(type: .begin, log: .render_loop, name: .render_loop, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .render_loop, signpostID: .render_loop,
                     "Render loop started")
-        os_signpost(type: .begin, log: .render_loop, name: .logic_update, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .logic_update, signpostID: .render_loop,
                     "Game logic update started")
         
         if let gameManager = self.gameManager, gameManager.isInitialized {
@@ -731,12 +731,12 @@ extension GameViewController: SCNSceneRendererDelegate {
             }
         }
 
-        os_signpost(type: .end, log: .render_loop, name: .logic_update, signpostID: .render_loop,
+        os_signpost(.end, log: .render_loop, name: .logic_update, signpostID: .render_loop,
                     "Game logic update finished")
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didApplyConstraintsAtTime time: TimeInterval) {
-        os_signpost(type: .begin, log: .render_loop, name: .post_constraints_update, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .post_constraints_update, signpostID: .render_loop,
                     "Post constraints update started")
         if let gameManager = gameManager, gameManager.isInitialized {
             // scale up/down the camera to render space
@@ -754,12 +754,12 @@ extension GameViewController: SCNSceneRendererDelegate {
             }
         }
 
-       os_signpost(type: .end, log: .render_loop, name: .post_constraints_update, signpostID: .render_loop,
+       os_signpost(.end, log: .render_loop, name: .post_constraints_update, signpostID: .render_loop,
                    "Post constraints update finished")
     }
 
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        os_signpost(type: .begin, log: .render_loop, name: .render_scene, signpostID: .render_loop,
+        os_signpost(.begin, log: .render_loop, name: .render_scene, signpostID: .render_loop,
                     "Rendering scene started")
     }
 
@@ -776,9 +776,9 @@ extension GameViewController: SCNSceneRendererDelegate {
             gameManager.scaleCameraToSimulation()
         }
 
-        os_signpost(type: .end, log: .render_loop, name: .render_scene, signpostID: .render_loop,
+        os_signpost(.end, log: .render_loop, name: .render_scene, signpostID: .render_loop,
                     "Rendering scene finished")
-        os_signpost(type: .end, log: .render_loop, name: .render_loop, signpostID: .render_loop,
+        os_signpost(.end, log: .render_loop, name: .render_loop, signpostID: .render_loop,
                     "Render loop finished")
     }
     
@@ -842,7 +842,7 @@ extension GameViewController: GameManagerDelegate {
         // connected client.
         if musicCoordinator.currentMusicPlayer?.name == "music_gameplay" {
             let musicTime = musicCoordinator.currentMusicTime()
-            os_log(type: .debug, "music play position = %f", musicTime)
+            os_log(.debug, "music play position = %f", musicTime)
             if musicTime >= 0 {
                 manager.startGameMusic(for: player)
             }

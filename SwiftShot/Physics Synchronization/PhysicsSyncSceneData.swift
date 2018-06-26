@@ -117,7 +117,7 @@ class PhysicsSyncSceneData {
             
         } else {
             shouldRefillPackets = true
-            os_log(type: .info, "out of packets")
+            os_log(.info, "out of packets")
             
             // Update network delay status used to display in sceneViewController
             if !hasNetworkDelay {
@@ -227,7 +227,7 @@ class PhysicsSyncSceneData {
                 ((lastPacketNumberRead - packetNumber) > PhysicsSyncData.halfMaxPacketNumber) {
                 break
             } else {
-                os_log(type: .error, "Packet out of order")
+                os_log(.error, "Packet out of order")
                 packetQueue.removeFirst()
             }
         }

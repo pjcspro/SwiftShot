@@ -19,7 +19,7 @@
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.apple.swiftshot.worldmap</string>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER).worldmap</string>
 			</array>
 		</dict>
 	</array>
@@ -83,7 +83,7 @@
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
-			<string>com.example.apple-samplecode.swiftshot.worldmap</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).worldmap</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>

@@ -212,7 +212,7 @@ extension SCNNode {
             fatalError("model \(modelFileName) has no child nodes")
         }
         if nodeRef.childNodes.count > 1 {
-            os_log(type: .error, "model %s should have a single root node", modelFileName)
+            os_log(.error, "model %s should have a single root node", modelFileName)
         }
         
         // walk down the scenegraph and update all children

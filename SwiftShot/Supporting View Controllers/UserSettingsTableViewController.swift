@@ -70,7 +70,7 @@ class UserSettingsTableViewController: UITableViewController {
     func updateSelectedLevel() {
         let selectedLevel = UserDefaults.standard.selectedLevel
         selectedLevelLabel.text = selectedLevel.name
-        os_log(type: .debug, "Selected level: %s", selectedLevel.name)
+        os_log(.debug, "Selected level: %s", selectedLevel.name)
     }
 }
 

@@ -128,7 +128,7 @@ class MusicCoordinator: NSObject {
             stopMusic(player: currentMusicPlayer)
         }
 
-        os_log(type: .debug, "playMusic '%s' startTime=%f", name, startTime)
+        os_log(.debug, "playMusic '%s' startTime=%f", name, startTime)
 
         switch player.state {
         case .playing:
@@ -173,7 +173,7 @@ class MusicCoordinator: NSObject {
 
     func stopMusic(player: MusicPlayer, fadeOut: TimeInterval = MusicCoordinator.defaultFadeOut) {
         if player.state == .playing {
-            os_log(type: .debug, "stopMusic '%s'", player.name)
+            os_log(.debug, "stopMusic '%s'", player.name)
             player.state = .stopping
             let audioPlayer = player.audioPlayer
             audioPlayer.setVolume(0.0, fadeDuration: fadeOut)

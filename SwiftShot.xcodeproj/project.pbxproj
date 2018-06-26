@@ -206,6 +206,8 @@
 		91D8090320AD01D200861E97 /* CatapultAudioSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatapultAudioSampler.swift; sourceTree = "<group>"; };
 		91E5C7E920AD393E00161B8F /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 		91F67F6F20BC86010044BC24 /* MusicCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicCoordinator.swift; sourceTree = "<group>"; };
+		BADBD560BADC93A000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		BD566300BD56636000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		C422F5BF20B5F84500CB0A8D /* iPhone_X_Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhone_X_Landscape.png; sourceTree = "<group>"; };
 		C422F5C220B5F84500CB0A8D /* iPhone_Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhone_Portrait.png; sourceTree = "<group>"; };
 		C422F5C320B5F84500CB0A8D /* iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPad.png; sourceTree = "<group>"; };
@@ -248,8 +250,6 @@
 		E302C54E20B80C80001F3417 /* SCNPlane+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNPlane+Helpers.swift"; sourceTree = "<group>"; };
 		E31309A6208F820900E7C7B2 /* LevelSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectorViewController.swift; sourceTree = "<group>"; };
 		E318B43320A24B2700308AC6 /* ProximityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityManager.swift; sourceTree = "<group>"; };
-		F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		F6FB4EF0F6FA269000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Flag.swift; path = ../Flag.swift; sourceTree = "<group>"; };
 		FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Flag.metal; path = ../Flag.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -406,6 +406,23 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		BADC8250BADC912000000001 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				BADBD560BADC93A000000001 /* SampleCode.xcconfig */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		BD569B40BD569B1000000001 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				BD566300BD56636000000001 /* LICENSE.txt */,
+			);
+			name = LICENSE;
+			path = LICENSE;
+			sourceTree = "<group>";
+		};
 		C422F5BC20B5F82F00CB0A8D /* Launch Screens */ = {
 			isa = PBXGroup;
 			children = (
@@ -440,8 +457,8 @@
 				D0066D4B2057259600A7E863 /* SwiftShotTests */,
 				D0066D332057259500A7E863 /* Products */,
 				91AD762420AF5E2F0049A0EF /* Tools */,
-				F6D30320F6B2644000000001 /* Configuration */,
-				F6F877D0F6F877A000000001 /* LICENSE */,
+				BADC8250BADC912000000001 /* Configuration */,
+				BD569B40BD569B1000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -470,6 +487,7 @@
 				D0A2FA23207BD05B00BC221C /* Utilities */,
 				117E8A8C20BF50DB00040314 /* Resources */,
 				23D44A1020BFEBB200D971A1 /* Signposts */,
+				D0665AEC20E1962F0021D083,
 			);
 			path = SwiftShot;
 			sourceTree = "<group>";
@@ -559,23 +577,6 @@
 			path = "Local Networking";
 			sourceTree = "<group>";
 		};
-		F6D30320F6B2644000000001 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */,
-			);
-			name = Configuration;
-			sourceTree = "<group>";
-		};
-		F6F877D0F6F877A000000001 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				F6FB4EF0F6FA269000000001 /* LICENSE.txt */,
-			);
-			name = LICENSE;
-			path = LICENSE;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -634,6 +635,9 @@
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1000;
 						TestTargetID = D0066D312057259500A7E863;
+					};
+					FD4E4B6E20AA284500AE8296 = {
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -851,7 +855,7 @@
 /* Begin XCBuildConfiguration section */
 		D0066D4F2057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -914,7 +918,7 @@
 		};
 		D0066D502057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -971,7 +975,7 @@
 		};
 		D0066D522057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -998,7 +1002,7 @@
 		};
 		D0066D532057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1024,7 +1028,7 @@
 		};
 		D0066D552057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1049,7 +1053,7 @@
 		};
 		D0066D562057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F6D342A0F6D2A25000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = BADBD560BADC93A000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1065,6 +1069,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.SwiftShotTests${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "SwiftShot/Internal/SwiftShot-internal-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftShot.app/SwiftShot";

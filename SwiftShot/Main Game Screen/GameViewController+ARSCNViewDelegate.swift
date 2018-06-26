@@ -36,7 +36,7 @@ extension GameViewController: ARSCNViewDelegate {
     }
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
-        os_log(type: .info, "camera tracking state changed to %s", "\(camera.trackingState)")
+        os_log(.info, "camera tracking state changed to %s", "\(camera.trackingState)")
         DispatchQueue.main.async {
             self.trackingStateLabel.text = "\(camera.trackingState)"
         }
@@ -85,7 +85,7 @@ extension GameViewController: ARSCNViewDelegate {
     }
     
     func sessionWasInterrupted(_ session: ARSession) {
-        os_log(type: .info, "[sessionWasInterrupted] --  %s", "\(sessionState)")
+        os_log(.info, "[sessionWasInterrupted] --  %s", "\(sessionState)")
         
         // Inform the user that the session has been interrupted
         isSessionInterrupted = true
@@ -96,7 +96,7 @@ extension GameViewController: ARSCNViewDelegate {
     }
     
     func sessionInterruptionEnded(_ session: ARSession) {
-        os_log(type: .info, "[sessionInterruptionEnded] --  %s", "\(sessionState)")
+        os_log(.info, "[sessionInterruptionEnded] --  %s", "\(sessionState)")
     }
     
     func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {

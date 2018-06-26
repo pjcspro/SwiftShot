@@ -40,7 +40,7 @@ class AudioSampler {
             do {
                 try self.audioNode.loadPreset(at: presetUrl)
             } catch {
-                os_log(type: .error, "Failed to load preset. Error = %s", "\(error)")
+                os_log(.error, "Failed to load preset. Error = %s", "\(error)")
             }
 
             sfxCoordinator.attachSampler(self, to: node)
@@ -58,13 +58,13 @@ class AudioSampler {
         do {
             try audioNode.loadPreset(at: presetUrl)
         } catch {
-            os_log(type: .error, "Failed to load preset. Error = %s", "\(error)")
+            os_log(.error, "Failed to load preset. Error = %s", "\(error)")
         }
     }
     
     func play(note: UInt8, velocity: UInt8, autoStop: Bool = true) {
         guard loaded.condition == 1 else {
-            os_log(type: .error, "Cannot play because loading is not complete")
+            os_log(.error, "Cannot play because loading is not complete")
             return
         }
 

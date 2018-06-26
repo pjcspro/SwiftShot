@@ -67,7 +67,7 @@ class GameLight {
             light.shadowSampleCount = 1
             
         default:
-            os_log(type: .error, "unknown shadow mode")
+            os_log(.error, "unknown shadow mode")
         }
         
         // when true, this reduces acne, but is causing shadow to separate
