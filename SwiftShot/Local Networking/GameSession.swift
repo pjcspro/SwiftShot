@@ -48,9 +48,6 @@ class GameSession: NSObject {
         self.host = host
         super.init()
         self.session.delegate = self
-        #if INTERNAL
-        self.session.isAWDLDisabled = true
-        #endif
     }
 
     // for use when acting as game server
@@ -68,9 +65,6 @@ class GameSession: NSObject {
                                                    discoveryInfo: discoveryInfo,
                                                    serviceType: SwiftShotGameService.playerService)
         advertiser.delegate = self
-        #if INTERNAL
-        advertiser.isAWDLDisabled = true
-        #endif
         advertiser.startAdvertisingPeer()
         serviceAdvertiser = advertiser
     }

@@ -32,6 +32,7 @@ class GameObject: GKEntity {
     var usePredefinedPhysics = false
     var isBlockObject = true
     var density: Float = 0.0
+    var isAlive: Bool
 
     static var indexCounter = 0
     var index = 0
@@ -41,10 +42,11 @@ class GameObject: GKEntity {
     static func resetIndexCounter() {
         indexCounter = 0
     }
-    
+
     // init with index that can be used to replace an old node
-    init(node: SCNNode, index: Int?, gamedefs: [String: Any]) {
+    init(node: SCNNode, index: Int?, gamedefs: [String: Any], alive: Bool = true) {
         objectRootNode = node
+        self.isAlive = alive
         
         if let index = index {
             self.index = index
@@ -226,7 +228,7 @@ class GameObject: GKEntity {
             }
         }
     }
-    
+
     // help correct for hitches if needed
     func setupSmoothPhysics(value: Any) {
         if let doSmooth = value as? Bool, doSmooth, let geom = geometryNode, let phys = physicsNode {
@@ -372,5 +374,37 @@ class GameObject: GKEntity {
         }
         
         return result
+    }
+
+    // MARK: - Runtime methods
+    func disable() {
+        isAlive = false
+        physicsNode?.removeAllParticleSystems()
+        objectRootNode.removeFromParentNode()
+        removeComponent(ofType: RemoveWhenFallenComponent.self)
+    }
+
+    func apply(physicsData nodeData: PhysicsNodeData, isHalfway: Bool) {
+        guard let node = physicsNode else { return }
+        // if we're not alive, avoid applying physics updates.
+        // this will allow objects on clients to get culled properly
+        guard isAlive else { return }
+        if isHalfway {
+            node.simdWorldPosition = (nodeData.position + node.simdWorldPosition) * 0.5
+            node.simdOrientation = simd_slerp(node.simdOrientation, nodeData.orientation, 0.5)
+        } else {
+            node.simdWorldPosition = nodeData.position
+            node.simdOrientation = nodeData.orientation
+        }
+
+        if let physicsBody = node.physicsBody {
+            physicsBody.resetTransform()
+            physicsBody.simdVelocity = nodeData.velocity
+            physicsBody.simdAngularVelocity = nodeData.angularVelocity
+        }
+    }
+
+    func generatePhysicsData() -> PhysicsNodeData? {
+        return physicsNode.map { PhysicsNodeData(node: $0, alive: isAlive) }
     }
 }

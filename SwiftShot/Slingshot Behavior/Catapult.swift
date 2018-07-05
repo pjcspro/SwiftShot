@@ -45,15 +45,26 @@ enum TeamID: Int {
 
 extension TeamID: BitStreamCodable {
     func encode(to bitStream: inout WritableBitStream) {
-        bitStream.appendUInt32(UInt32(rawValue), numberOfBits: 2)
+        switch self {
+        case .none:
+            bitStream.appendBool(false)
+        case .blue:
+            bitStream.appendBool(true)
+            bitStream.appendBool(false)
+        case .yellow:
+            bitStream.appendBool(true)
+            bitStream.appendBool(true)
+        }
     }
 
     init(from bitStream: inout ReadableBitStream) throws {
-        let rawValue = try bitStream.readUInt32(numberOfBits: 2)
-        guard let myself = TeamID(rawValue: Int(rawValue)) else {
-            throw BitStreamError.encodingError
+        let hasTeam = try bitStream.readBool()
+        if hasTeam {
+            let isYellow = try bitStream.readBool()
+            self = isYellow ? .yellow : .blue
+        } else {
+            self = .none
         }
-        self = myself
     }
 }
 
@@ -863,5 +874,11 @@ class Catapult: GameObject, Grabbable {
                 projectile?.simdWorldPosition = ballOriginInactiveBelow.presentation.simdWorldPosition
             }
         }
+    }
+
+    override func apply(physicsData nodeData: PhysicsNodeData, isHalfway: Bool) {
+        // for catapults, we only apply physics updates when we're not grabbed.
+        guard !isGrabbed else { return }
+        super.apply(physicsData: nodeData, isHalfway: isHalfway)
     }
 }

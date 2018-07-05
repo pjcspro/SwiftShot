@@ -63,9 +63,7 @@ class GameObjectPool {
     }
     
     func despawnProjectile(_ projectile: Projectile) {
-        projectile.isAlive = false
-        projectile.physicsNode?.removeAllParticleSystems()
-        projectile.objectRootNode.removeFromParentNode()
+        projectile.disable()
     }
     
     func createPoolObjects(delegate: GameObjectPoolDelegate) {
@@ -78,15 +76,18 @@ class GameObjectPool {
     
     func createProjectile(for projectileType: ProjectileType, index: Int?) -> Projectile {
         guard let delegate = delegate else { fatalError("No Delegate") }
-        
+
+        let projectile: Projectile
         switch projectileType {
         case .cannonball:
-            return TrailBallProjectile(prototypeNode: cannonball, index: index, gamedefs: delegate.gamedefinitions)
+            projectile = TrailBallProjectile(prototypeNode: cannonball, index: index, gamedefs: delegate.gamedefinitions)
         // Add other projectile types here as needed
         case .chicken:
-            return ChickenProjectile(prototypeNode: chicken, index: index, gamedefs: delegate.gamedefinitions)
+            projectile = ChickenProjectile(prototypeNode: chicken, index: index, gamedefs: delegate.gamedefinitions)
         default:
             fatalError("Trying to get .none projectile")
         }
+        projectile.addComponent(RemoveWhenFallenComponent())
+        return projectile
     }
 }

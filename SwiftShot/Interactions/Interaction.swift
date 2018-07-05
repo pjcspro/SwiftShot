@@ -34,15 +34,11 @@ protocol InteractionDelegate: class {
     func removeTableBoxNodeFromLevel()
     
     func addNodeToLevel(_ node: SCNNode)
-    func addNodeToPhysicsSync(_ node: SCNNode)
     func spawnProjectile() -> Projectile
     func createProjectile() -> Projectile // Create projectile without putting it into a pool, useful for using it to show when catapult gets pulled
     func gameObjectPoolCount() -> Int
     func removeAllPhysicsBehaviors()
-    
-    func addCatapultPhysicsIgnoreNodeToLevel(_ node: SCNNode, catapultID: Int)
-    func ignorePhysicsOnCatapult(_ catapultID: Int)
-    func stopIgnoringPhysicsOnCatapult()
+
     func addInteraction(_ interaction: Interaction)
     
     func dispatchActionToServer(gameAction: GameAction)

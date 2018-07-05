@@ -10,7 +10,7 @@ import Foundation
 struct PhysicsSyncData {
     var packetNumber: Int
     var nodeData: [PhysicsNodeData]
-    var projectileData: [PhysicsPoolNodeData]
+    var projectileData: [PhysicsNodeData]
     var soundData: [CollisionSoundData]
     
     static let packetNumberBits = 12 // 12 bits represents packetNumber reset every minute
@@ -54,7 +54,7 @@ extension PhysicsSyncData: BitStreamCodable {
         let projectileCount = Int(try bitStream.readUInt32(numberOfBits: PhysicsSyncData.nodeCountBits))
         projectileData = []
         for _ in 0..<projectileCount {
-            projectileData.append(try PhysicsPoolNodeData(from: &bitStream))
+            projectileData.append(try PhysicsNodeData(from: &bitStream))
         }
         
         let soundCount = Int(try bitStream.readUInt32(numberOfBits: PhysicsSyncData.nodeCountBits))

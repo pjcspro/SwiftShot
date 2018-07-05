@@ -35,12 +35,14 @@ class PhysicsSyncDataTests: XCTestCase {
     func testPhysicsPacket() throws {
         var nodeData = PhysicsNodeData()
         nodeData.isMoving = true
+        nodeData.isAlive = true
         nodeData.orientation = simd_quatf(ix: 1, iy: 1, iz: 1, r: 2)
 
         let nodes = [PhysicsNodeData](repeating: nodeData, count: 154)
 
-        let poolData = PhysicsPoolNodeData(isAlive: true, team: .yellow, nodeData: nodeData)
-        let pools = [PhysicsPoolNodeData](repeating: poolData, count: 30)
+        var poolData = nodeData
+        poolData.teamID = .yellow
+        let pools = [PhysicsNodeData](repeating: poolData, count: 30)
 
         let packet = PhysicsSyncData(packetNumber: 0, nodeData: nodes, projectileData: pools, soundData: [])
         let action = Action.physics(packet)

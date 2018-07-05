@@ -102,7 +102,7 @@ class TrailBallProjectile: Projectile {
     override func onDidApplyConstraints(renderer: SCNSceneRenderer) {
         let frameSkips = 3
         guard (GameTime.frameCount + index) % frameSkips == 0 else { return }
-        guard let physicsNode = physicsNode, isAlive else { return }
+        guard let physicsNode = physicsNode else { return }
         
         if worldPositions.count > (maxTrailPositions / frameSkips) {
             removeVerticesPair()

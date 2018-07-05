@@ -35,9 +35,6 @@ class GameBrowser: NSObject {
         self.serviceBrowser = MCNearbyServiceBrowser(peer: myself.peerID, serviceType: SwiftShotGameService.playerService)
         super.init()
         self.serviceBrowser.delegate = self
-        #if INTERNAL
-        self.serviceBrowser.isAWDLDisabled = true
-        #endif
     }
 
     func start() {

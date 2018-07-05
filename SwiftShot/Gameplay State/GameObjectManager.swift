@@ -43,10 +43,14 @@ class GameObjectManager {
     }
     
     // MARK: - Shared Management
-    
-    func update() {
-        for projectile in projectiles where projectile.isAlive {
+    func update(deltaTime: TimeInterval, isServer: Bool) {
+        for projectile in projectiles {
             projectile.update()
+            for component in projectile.components {
+                if let updateableCompoent = component as? UpdatableComponent {
+                    updateableCompoent.update(deltaTime: deltaTime, isServer: isServer)
+                }
+            }
         }
     }
 

@@ -221,15 +221,11 @@ class GameManager: NSObject {
         processTouches()
         syncPhysics()
         
-        // removeFallenNodes only run once every 6 frames since it was found to be heavy on performance
-        if GameTime.frameCount % 6 == 0 {
-            removeFallenNodes(node: levelNode)
-        }
 #if !targetEnvironment(simulator)
         flagSimulation.update(levelNode)
 #endif
         
-        gameObjectManager.update()
+        gameObjectManager.update(deltaTime: timeDelta, isServer: isServer)
 
         for entity in gameObjects {
             for component in entity.components where component is UpdatableComponent {
@@ -473,36 +469,6 @@ class GameManager: NSObject {
         let tableObject = initGameObject(for: tableBoxNode)
         return tableObject
     }
-    
-    // MARK: - Remove Out of Bound Nodes
-
-    // go through whole scene to remove objects that are far away
-    private func removeFallenNodes(node: SCNNode) {
-        // remove this node if we have to and make it invisible, but don't delete it and mess up the networking indices
-        if shouldRemove(node: node) {
-            node.removeFromParentNode()
-        } else {    // if we didn't move then check children
-            for child in node.childNodes {
-                removeFallenNodes(node: child)
-            }
-        }
-    }
-    
-    // logic to check if we should really remove a node or not
-    private func shouldRemove(node: SCNNode) -> Bool {
-        // Only remove dynamic node
-        guard node.physicsBody?.type == .dynamic else { return false }
-        
-        // check past min/max bounds
-        // the border was chosen experimentally to see what feels good
-        let minBounds = float3(-80.0, -10.0, -80.0) // -10.0 represents 1.0 meter high table
-        let maxBounds = float3(80.0, 1000.0, 80.0)
-        let position = node.presentation.simdWorldPosition
-        
-        // this is only checking position, but bounds could be offset or bigger
-        return min(position, minBounds) != minBounds ||
-               max(position, maxBounds) != maxBounds
-    }
 
     // MARK: - Initialize Game Functions
     private func teamName(for node: SCNNode) -> String? {
@@ -559,9 +525,10 @@ class GameManager: NSObject {
             catapults.append(catapult)
 
             catapult.updateProps()
-            
-            physicsSyncData.addCatapultIgnoreNode(node: catapult.base, catapultID: catapult.catapultID)
-            
+            catapult.addComponent(RemoveWhenFallenComponent())
+
+            physicsSyncData.addObject(catapult)
+
         case "ShadowPlane":
             // don't add a game object, but don't visit it either
             return
@@ -636,12 +603,13 @@ class GameManager: NSObject {
             }
         
             // add to network synchronization code
-            if let physicsNode = gameObject.physicsNode {
-                physicsSyncData.addNode(node: physicsNode)
+            if gameObject.physicsNode != nil {
+                physicsSyncData.addObject(gameObject)
                 
                 if gameObject.isBlockObject {
                     gameObjectManager.addBlockObject(block: gameObject)
                 }
+                gameObject.addComponent(RemoveWhenFallenComponent())
             }
             
             if gameObject.categorize {
@@ -1040,11 +1008,7 @@ extension GameManager: InteractionDelegate {
     func addNodeToLevel(_ node: SCNNode) {
         levelNode.addChildNode(node)
     }
-    
-    func addNodeToPhysicsSync(_ node: SCNNode) {
-        physicsSyncData.addNode(node: node)
-    }
-    
+
     func spawnProjectile() -> Projectile {
         let projectile = gameObjectPool.spawnProjectile()
         physicsSyncData.replaceProjectile(projectile)
@@ -1060,20 +1024,7 @@ extension GameManager: InteractionDelegate {
     }
     
     func gameObjectPoolCount() -> Int { return gameObjectPool.initialPoolCount }
-    
-    func addCatapultPhysicsIgnoreNodeToLevel(_ node: SCNNode, catapultID: Int) {
-        levelNode.addChildNode(node)
-        physicsSyncData.addCatapultIgnoreNode(node: node, catapultID: catapultID)
-    }
-    
-    func ignorePhysicsOnCatapult(_ catapultID: Int) {
-        physicsSyncData.ignoreDataForCatapult(catapultID: catapultID)
-    }
-    
-    func stopIgnoringPhysicsOnCatapult() {
-        physicsSyncData.stopIgnoringDataForCatapult()
-    }
-    
+
     func dispatchActionToServer(gameAction: GameAction) {
         if isServer {
             queueAction(gameAction: gameAction)

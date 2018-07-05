@@ -58,7 +58,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         
         guard let physicsNode = projectile.physicsNode else { fatalError("Projectile has no physicsNode") }
         physicsNode.physicsBody = nil
-        delegate.addCatapultPhysicsIgnoreNodeToLevel(physicsNode, catapultID: catapult.catapultID)
+        delegate.addNodeToLevel(physicsNode)
 
         catapult.setProjectileType(projectileType: projectileType, projectile: projectile.objectRootNode)
     }
@@ -91,8 +91,6 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         
         // Empty grabbedCatapult if this catapult was grabbed by player
         if let grabbedCatapult = grabInteraction.grabbedGrabbable as? Catapult, grabbedCatapult.catapultID == catapultID {
-            guard let delegate = delegate else { fatalError("No delegate") }
-            delegate.stopIgnoringPhysicsOnCatapult()
             grabInteraction.grabbedGrabbable = nil
         }
     }
@@ -119,14 +117,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
     }
     
     func onGrabStart(grabbable: Grabbable, cameraInfo: CameraInfo, player: Player) {
-        guard let delegate = delegate else { fatalError("No Delegate") }
         guard let catapult = grabbable as? Catapult else { return }
-        
-        // If this isn't server, we should ignore the physics data from the server for this player's catapult,
-        // and use the information calculated on this player's device instead (to prevent lag)
-        if !delegate.isServer {
-            delegate.ignorePhysicsOnCatapult(catapult.catapultID)
-        }
         
         catapult.onGrabStart()
     }

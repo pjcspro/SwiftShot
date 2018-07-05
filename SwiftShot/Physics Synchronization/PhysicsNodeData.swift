@@ -28,7 +28,9 @@ private let orientationDeltaToConsiderNotMoving: Float = 0.002
 
 /// - Tag: PhysicsNodeData
 struct PhysicsNodeData: CustomStringConvertible {
+    var isAlive = true
     var isMoving = false
+    var teamID = TeamID.none
     var position = float3()
     var orientation = simd_quatf()
     var velocity = float3()
@@ -42,8 +44,9 @@ struct PhysicsNodeData: CustomStringConvertible {
 }
 
 extension PhysicsNodeData {
-    init(node: SCNNode) {
-        isMoving = false
+    init(node: SCNNode, alive: Bool, team: TeamID = .none) {
+        isAlive = alive
+        teamID = team
         let newPosition = node.presentation.simdWorldPosition
         let newOrientation = node.presentation.simdOrientation
 
@@ -68,7 +71,10 @@ extension PhysicsNodeData {
 
 extension PhysicsNodeData: BitStreamCodable {
     func encode(to bitStream: inout WritableBitStream) {
+        bitStream.appendBool(isAlive)
+        if !isAlive { return }
         bitStream.appendBool(isMoving)
+        teamID.encode(to: &bitStream)
 
         // Position
         positionCompressor.write(position, to: &bitStream)
@@ -111,8 +117,10 @@ extension PhysicsNodeData: BitStreamCodable {
     }
 
     init(from bitStream: inout ReadableBitStream) throws {
+        isAlive = try bitStream.readBool()
+        if !isAlive { return }
         isMoving = try bitStream.readBool()
-
+        teamID = try TeamID(from: &bitStream)
         // Position
         position = try positionCompressor.readFloat3(from: &bitStream)
 

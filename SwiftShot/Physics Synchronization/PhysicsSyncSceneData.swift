@@ -23,12 +23,12 @@ class PhysicsSyncSceneData {
     private let lock = NSLock() // need thread protection because add used in main thread, while pack used in render update thread
 
     // Non-projectile sync
-    private var nodeList = [SCNNode]()
+    private var objectList = [GameObject]()
     private var nodeDataList = [PhysicsNodeData]()
     
     // Projectile sync
     private var projectileList = [Projectile]()
-    private var projectileDataList = [PhysicsPoolNodeData]()
+    private var projectileDataList = [PhysicsNodeData]()
     
     // Sound sync
     private var soundDataList = [CollisionSoundData]()
@@ -52,23 +52,28 @@ class PhysicsSyncSceneData {
     
     // Put up a packet number to make sure that packets are in order
     private var lastPacketNumberRead = 0
-    
-    func addNode(node: SCNNode) {
+
+    func addObject(_ object: GameObject) {
+        guard let data = object.generatePhysicsData() else { return }
         lock.lock() ; defer { lock.unlock() }
-        nodeList.append(node)
-        nodeDataList.append(PhysicsNodeData(node: node))
+        objectList.append(object)
+        nodeDataList.append(data)
     }
 
     func generateData() -> PhysicsSyncData {
         lock.lock() ; defer { lock.unlock() }
         // Update Data of normal nodes
-        for index in 0..<nodeList.count {
-            nodeDataList[index] = PhysicsNodeData(node: nodeList[index])
+        for index in 0..<objectList.count {
+            if let data = objectList[index].generatePhysicsData() {
+                nodeDataList[index] = data
+            }
         }
 
         // Update Data of projectiles in the pool
         for (index, projectile) in projectileList.enumerated() {
-            projectileDataList[index] = PhysicsPoolNodeData(projectile: projectile)
+            if let data = projectile.generatePhysicsData() {
+                projectileDataList[index] = data
+            }
         }
 
         // Packet number is used to determined the order of sync data.
@@ -98,14 +103,14 @@ class PhysicsSyncSceneData {
         if let oldestData = packetQueue.first {
             // Case when running out of data: Use one packet for two frames
             if justUpdatedHalfway {
-                updateNodeFromData(isHalfway: false)
+                updateObjectsFromData(isHalfway: false)
                 justUpdatedHalfway = false
             } else if packetQueue.count <= packetCountToSlowDataUsage {
                 if !justUpdatedHalfway {
                     apply(packet: oldestData)
                     packetQueue.removeFirst()
 
-                    updateNodeFromData(isHalfway: true)
+                    updateObjectsFromData(isHalfway: true)
                     justUpdatedHalfway = true
                 }
                 
@@ -157,40 +162,32 @@ class PhysicsSyncSceneData {
         }
         soundDataList.removeAll()
 
-        updateNodeFromData(isHalfway: false)
+        updateObjectsFromData(isHalfway: false)
     }
 
-    private func updateNodeFromData(isHalfway: Bool) {
+    private func updateObjectsFromData(isHalfway: Bool) {
         // Update Nodes
-        let nodeCount = min(nodeList.count, nodeDataList.count)
-        for index in 0..<nodeCount {
-            // Ignore any specified indices
-            if currentIgnoreList.contains(index) {
-                continue
-            }
-            
-            updateNode(nodeList[index], with: nodeDataList[index], isHalfway: isHalfway)
+        let objectCount = min(objectList.count, nodeDataList.count)
+        for index in 0..<objectCount where nodeDataList[index].isAlive {
+            objectList[index].apply(physicsData: nodeDataList[index], isHalfway: isHalfway)
         }
         
         guard let delegate = delegate else { fatalError("No delegate") }
         
         for arrayIndex in 0..<projectileList.count {
             var projectile = projectileList[arrayIndex]
-            let projectileData = projectileDataList[arrayIndex]
-            
+            let nodeData = projectileDataList[arrayIndex]
+
             // If the projectile must be spawned, spawn it.
-            if projectileData.isAlive {
+            if nodeData.isAlive {
                 // Spawn the projectile if it is exists on the other side, but not here
                 if !projectile.isAlive {
                     projectile = delegate.spawnProjectile(objectIndex: projectile.index)
-                    projectile.team = projectileData.team
+                    projectile.team = nodeData.teamID
                     projectileList[arrayIndex] = projectile
                 }
-                
-                guard let node = projectile.physicsNode else { fatalError("Projectile \(projectile.index) has no physicsNode") }
-                let nodeData = projectileData.nodeData
-                
-                updateNode(node, with: nodeData, isHalfway: isHalfway)
+
+                projectile.apply(physicsData: nodeData, isHalfway: isHalfway)
             } else {
                 // Despawn the projectile if it was despawned on the other side
                 if projectile.isAlive {
@@ -200,23 +197,7 @@ class PhysicsSyncSceneData {
         }
         
     }
-    
-    private func updateNode(_ node: SCNNode, with nodeData: PhysicsNodeData, isHalfway: Bool) {
-        if isHalfway {
-            node.simdWorldPosition = (nodeData.position + node.simdWorldPosition) * 0.5
-            node.simdOrientation = simd_slerp(node.simdOrientation, nodeData.orientation, 0.5)
-        } else {
-            node.simdWorldPosition = nodeData.position
-            node.simdOrientation = nodeData.orientation
-        }
-        
-        if let physicsBody = node.physicsBody {
-            physicsBody.resetTransform()
-            physicsBody.simdVelocity = nodeData.velocity
-            physicsBody.simdAngularVelocity = nodeData.angularVelocity
-        }
-    }
-    
+
     private func discardOutOfOrderData() {
         // Discard data that are out of order
         while let oldestData = packetQueue.first {
@@ -232,48 +213,14 @@ class PhysicsSyncSceneData {
             }
         }
     }
-    
-    struct CatapultIgnoreInfo {
-        var catapultID: Int
-        var ignoreIndices: [Int]
-    }
-    
-    // Keep the information on what indices belong to a catapultID
-    private var catapultIgnoreInfoDict = [Int: CatapultIgnoreInfo]()
-    private var currentIgnoreList = [Int]()
-    
-    // Put the nodeList index of this node into catapult's ignore list, so that we can ignore these nodes for a particular catapult
-    func addCatapultIgnoreNode(node: SCNNode, catapultID: Int) {
-        lock.lock() ; defer { lock.unlock() }
-        nodeList.append(node)
-        nodeDataList.append(PhysicsNodeData(node: node))
-        
-        // Create the CatapultIgnoreInfo if there isn't already one
-        if catapultIgnoreInfoDict[catapultID] == nil {
-            catapultIgnoreInfoDict[catapultID] = CatapultIgnoreInfo(catapultID: catapultID, ignoreIndices: [Int]())
-        }
-    
-        let ignoreIndex = nodeList.count - 1
-        catapultIgnoreInfoDict[catapultID]?.ignoreIndices.append(ignoreIndex)
-    }
 
-    func ignoreDataForCatapult(catapultID: Int) {
-        lock.lock() ; defer { lock.unlock() }
-        guard let catapultIgnoreInfo = catapultIgnoreInfoDict[catapultID] else { fatalError("No catapult ignore info for \(catapultID)") }
-        currentIgnoreList = catapultIgnoreInfo.ignoreIndices
-    }
-    
-    func stopIgnoringDataForCatapult() {
-        lock.lock() ; defer { lock.unlock() }
-        currentIgnoreList.removeAll()
-    }
-    
     // MARK: - Projectile Sync
     
     func addProjectile(_ projectile: Projectile) {
+        guard let data = projectile.generatePhysicsData() else { return }
         lock.lock() ; defer { lock.unlock() }
         projectileList.append(projectile)
-        projectileDataList.append(PhysicsPoolNodeData(projectile: projectile))
+        projectileDataList.append(data)
     }
 
     func replaceProjectile(_ projectile: Projectile) {
