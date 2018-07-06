@@ -152,7 +152,7 @@ class Catapult: GameObject, Grabbable {
     private(set) var isPulledTooFar = false
     
     // Last cameraInfo used to computed premature release (such as when other ball hit the catapult)
-    private(set) var lastCameraInfo = CameraInfo(transform: .identity, ray: .zero)
+    private(set) var lastCameraInfo = CameraInfo(transform: .identity)
 
     // highlight assistance
     var isVisible: Bool = false

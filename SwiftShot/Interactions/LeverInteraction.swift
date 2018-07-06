@@ -43,11 +43,11 @@ class LeverInteraction: Interaction {
         }
         self.interactionToActivate = interactionToActivate
     }
-    
-    func handleTouch(type: TouchType, hitInfo: GameRayCastHitInfo) {
+
+    func handleTouch(_ type: TouchType, camera: Ray) {
         if type == .began {
             guard let highlightedSwitch = highlightedSwitch else { return }
-            startLeverHoldCameraPosition = hitInfo.ray().position
+            startLeverHoldCameraPosition = camera.position
             startLeverEulerX = highlightedSwitch.angle
             activeSwitch = highlightedSwitch
         } else if type == .ended {

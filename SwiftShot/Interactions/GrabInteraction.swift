@@ -53,10 +53,10 @@ class GrabInteraction: Interaction {
         grabbables[currentIndex] = grabbable
         currentIndex += 1
     }
-    
-    func handleTouch(type: TouchType, hitInfo: GameRayCastHitInfo) {
+
+    func handleTouch(_ type: TouchType, camera: Ray) {
         if type == .began {
-            if grabbableToGrab(cameraRay: hitInfo.ray()) != nil {
+            if grabbableToGrab(cameraRay: camera) != nil {
                 isTouching = true
             }
         } else if type == .ended {

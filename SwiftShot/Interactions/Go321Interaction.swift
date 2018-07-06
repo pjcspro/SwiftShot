@@ -80,8 +80,8 @@ class Go321Interaction: Interaction {
         go123.simdWorldTransform = transform
         go123.simdScale = scale
     }
-    
-    func handleTouch(type: TouchType, hitInfo: GameRayCastHitInfo) {
-        
+
+    func handleTouch(_ type: TouchType, camera: Ray) {
+
     }
 }

@@ -152,18 +152,20 @@ extension Ray: BitStreamCodable {
 
 struct CameraInfo {
     var transform: float4x4
-    var ray: Ray
+    var ray: Ray {
+        let position = transform.translation
+        let direction = normalize((transform * float4(0, 0, -1, 0)).xyz)
+        return Ray(position: position, direction: direction)
+    }
 }
 
 extension CameraInfo: BitStreamCodable {
     init(from bitStream: inout ReadableBitStream) throws {
-        transform = try float4x4(from: &bitStream)
-        ray = try Ray(from: &bitStream)
+        self.init(transform: try float4x4(from: &bitStream))
     }
 
     func encode(to bitStream: inout WritableBitStream) {
         transform.encode(to: &bitStream)
-        ray.encode(to: &bitStream)
     }
 }
 
@@ -199,26 +201,6 @@ extension InteractionState: BitStreamCodable {
 
     func encode(to bitStream: inout WritableBitStream) {
         bitStream.appendUInt32(UInt32(rawValue), numberOfBits: 2)
-    }
-}
-
-struct ManipulationData {
-    var state: InteractionState
-    var ray: Ray
-    var hitName: String
-}
-
-extension ManipulationData: BitStreamCodable {
-    init(from bitStream: inout ReadableBitStream) throws {
-        state = try InteractionState(from: &bitStream)
-        ray = try Ray(from: &bitStream)
-        hitName = try String(from: &bitStream)
-    }
-
-    func encode(to bitStream: inout WritableBitStream) throws {
-        state.encode(to: &bitStream)
-        ray.encode(to: &bitStream)
-        try hitName.encode(to: &bitStream)
     }
 }
 
@@ -324,7 +306,6 @@ extension LeverMove: BitStreamCodable {
 
 /// - Tag: GameAction
 enum GameAction {
-    case pickup(ManipulationData)
     case oneHitKOPrepareAnimation
     
     case tryGrab(GrabInfo)
@@ -341,7 +322,6 @@ enum GameAction {
     case leverMove(LeverMove)
 
     private enum CodingKeys: UInt32, CaseIterable {
-        case pickup
         case oneHitKOAnimate
         
         case tryGrab
@@ -365,9 +345,6 @@ extension GameAction: BitStreamCodable {
             throw BitStreamError.encodingError
         }
         switch key {
-        case .pickup:
-            let data = try ManipulationData(from: &bitStream)
-            self = .pickup(data)
         case .oneHitKOAnimate:
             self = .oneHitKOPrepareAnimation
             
@@ -406,9 +383,6 @@ extension GameAction: BitStreamCodable {
 
     func encode(to bitStream: inout WritableBitStream) throws {
         switch self {
-        case .pickup(let data):
-            bitStream.appendEnum(CodingKeys.pickup)
-            try data.encode(to: &bitStream)
         case .oneHitKOPrepareAnimation:
             bitStream.appendEnum(CodingKeys.oneHitKOAnimate)
         case .tryGrab(let data):

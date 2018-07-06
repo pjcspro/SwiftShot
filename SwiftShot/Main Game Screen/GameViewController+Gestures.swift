@@ -14,16 +14,13 @@ extension GameViewController: UIGestureRecognizerDelegate {
     @IBAction func handleTap(_ gesture: UITapGestureRecognizer) {
         guard gesture.state == .ended else { return }
         
-        let location = gesture.location(in: sceneView)
-        
         switch sessionState {
         case .placingBoard, .adjustingBoard:
             if !gameBoard.isBorderHidden {
                 sessionState = .setupLevel
             }
         case .gameInProgress:
-            let info = rayCastHitInfo(forTouch: location)
-            gameManager?.handleTouch(type: .tapped, hit: info)
+            gameManager?.handleTouch(.tapped)
         default:
             break
         }
@@ -91,48 +88,21 @@ extension GameViewController: UIGestureRecognizerDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let location = touches.first?.location(in: sceneView) else { return }
-        touch(type: .began, location: location)
+        touch(type: .began)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let location = touches.first?.location(in: sceneView) else { return }
-        touch(type: .ended, location: location)
+        touch(type: .ended)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let location = touches.first?.location(in: sceneView) else { return }
-        touch(type: .ended, location: location)
+        touch(type: .ended)
     }
-    
-    private func touch(type: TouchType, location: CGPoint) {
-        let info = rayCastHitInfo(forTouch: location)
-        gameManager?.handleTouch(type: type, hit: info)
+
+    private func touch(type: TouchType) {
+        gameManager?.handleTouch(type)
     }
-    
-    private func rayCastHitInfo(forTouch location: CGPoint) -> (GameRayCastHitInfo) {
-        
-        let rayCastDistance: Float = 50.0
-        let pointX = Float(location.x)
-        let pointY = Float(location.y)
-        
-        guard let gameManager = self.gameManager else {
-            // return a dummy object
-            return GameRayCastHitInfo(position: float3(), direction: float3(0, 0, 1), hits: [])
-        }
-        
-        var origin = sceneView.unprojectPoint(float3(pointX, pointY, 0.0))
-        var farPoint = sceneView.unprojectPoint(float3(pointX, pointY, 0.999))
-        origin = gameManager.renderSpacePositionToSimulationSpace(pos: origin)
-        farPoint = gameManager.renderSpacePositionToSimulationSpace(pos: farPoint)
-    
-        let direction = normalize(farPoint - origin)
-        let destination = direction * rayCastDistance + origin
-        let sceneHits = sceneView.scene.rootNode.hitTestWithSegment(from: origin, to: destination, options: nil)
-        
-        return GameRayCastHitInfo(position: origin, direction: direction, hits: sceneHits)
-    }
-    
+
     func gestureRecognizer(_ first: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith second: UIGestureRecognizer) -> Bool {
         if first is UIRotationGestureRecognizer && second is UIPinchGestureRecognizer {
             return true

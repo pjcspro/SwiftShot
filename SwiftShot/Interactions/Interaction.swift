@@ -9,16 +9,6 @@ import Foundation
 import SceneKit
 import ARKit
 
-struct GameRayCastHitInfo {
-    var position: float3
-    var direction: float3
-    var hits: [SCNHitTestResult]
-    
-    func ray() -> Ray {
-        return Ray(position: position, direction: direction)
-    }
-}
-
 enum InteractionState: Int, Codable {
     case began, update, ended
 }
@@ -62,7 +52,7 @@ protocol Interaction: class {
     func update(cameraInfo: CameraInfo)
     
     // MARK: - Handle Inputs
-    func handleTouch(type: TouchType, hitInfo: GameRayCastHitInfo)
+    func handleTouch(_ type: TouchType, camera: Ray)
 
     // MARK: - Handle Action
     func handle(gameAction: GameAction, player: Player)

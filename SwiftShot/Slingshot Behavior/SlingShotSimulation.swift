@@ -57,7 +57,7 @@ class SlingShotSimulation: NSObject {
     var restPose: SlingShotPose {
         return computedRestPose.value
     }
-    private lazy var computedRestPose = ComputedValue<SlingShotPose> {
+    private lazy var computedRestPose = ComputedValue<SlingShotPose> { [unowned self] in
         
         let data = SlingShotPose()
         
@@ -132,7 +132,7 @@ class SlingShotSimulation: NSObject {
     private var tangentPositionL: float3 {
         return computedTangentPositionL.value
     }
-    private lazy var computedTangentPositionL = ComputedValue<float3> {
+    private lazy var computedTangentPositionL = ComputedValue<float3> { [unowned self] in
         return self.tangentPosition(self.fixturePositionL)
     }
 
@@ -140,7 +140,7 @@ class SlingShotSimulation: NSObject {
     private var tangentPositionR: float3 {
         return computedTangentPositionR.value
     }
-    private lazy var computedTangentPositionR = ComputedValue<float3> {
+    private lazy var computedTangentPositionR = ComputedValue<float3> { [unowned self] in
         return self.tangentPosition(self.fixturePositionR)
     }
 
@@ -148,7 +148,7 @@ class SlingShotSimulation: NSObject {
     private var centerPosition: float3 {
         return computedCenterPosition.value
     }
-    private lazy var computedCenterPosition = ComputedValue<float3> {
+    private lazy var computedCenterPosition = ComputedValue<float3> { [unowned self] in
         let direction = cross(self.upVector, self.tangentPositionR - self.tangentPositionL)
         return self.ballPosition - normalize(direction) * 1.25 * self.ballRadius
     }
@@ -157,7 +157,7 @@ class SlingShotSimulation: NSObject {
     private var betaAngle: Float {
         return computedBetaAngle.value
     }
-    private lazy var computedBetaAngle = ComputedValue<Float> {
+    private lazy var computedBetaAngle = ComputedValue<Float> { [unowned self] in
         let d = normalize(self.ballPosition - self.centerPosition)
         let t = normalize(self.tangentPositionL - self.ballPosition)
         return 2.0 * simd_quatf(from: d, to: t).angle
@@ -167,7 +167,7 @@ class SlingShotSimulation: NSObject {
     var inputPose: SlingShotPose {
         return computedInputPose.value
     }
-    private lazy var computedInputPose = ComputedValue<SlingShotPose>(computeInputPose)
+    private lazy var computedInputPose = ComputedValue<SlingShotPose> { [unowned self] in self.computeInputPose() }
     private func computeInputPose() -> SlingShotPose {
         // note the -1 here differs from other usage
         let data = SlingShotPose()

@@ -12,6 +12,19 @@ import simd
 import AVFoundation
 import os.signpost
 
+struct GameState {
+    var teamACatapults = 0
+    var teamBCatapults = 0
+
+    mutating func add(_ catapult: Catapult) {
+        switch catapult.teamID {
+        case .yellow: teamACatapults += 1
+        case .blue: teamBCatapults += 1
+        default: break
+        }
+    }
+}
+
 protocol GameManagerDelegate: class {
     func manager(_ manager: GameManager, received: BoardSetupAction, from: Player)
     func manager(_ manager: GameManager, joiningPlayer player: Player)
@@ -21,6 +34,7 @@ protocol GameManagerDelegate: class {
     func managerDidStartGame(_ manager: GameManager)
     func managerDidWinGame(_ manager: GameManager)
     func manager(_ manager: GameManager, hasNetworkDelay: Bool)
+    func manager(_ manager: GameManager, updated gameState: GameState)
 }
 
 /// - Tag: GameManager
@@ -29,7 +43,7 @@ class GameManager: NSObject {
     // actions coming from the main thread/UI layer
     struct TouchEvent {
         var type: TouchType
-        var hit: GameRayCastHitInfo
+        var camera: Ray
     }
     
     // interactions with the scene must be on the main thread
@@ -55,8 +69,10 @@ class GameManager: NSObject {
     }
     // don't execute any code from SCNView renderer until this is true
     private(set) var isInitialized = false
-    
-    private var hasBeenWon: Bool = false
+
+    // progress of the game
+    private(set) var gameState = GameState()
+
     private var gamedefs: [String: Any]
     private var gameObjects = Set<GameObject>()      // keep track of all of our entities here
     private var gameCamera: GameCamera?
@@ -91,16 +107,6 @@ class GameManager: NSObject {
 
     let isNetworked: Bool
     let isServer: Bool
-
-    var teamANumCatapultsDisabled: Int {
-        catapultsLock.lock(); defer { catapultsLock.unlock() }
-        return catapults.filter { $0.teamID == .yellow && $0.disabled }.count
-    }
-    
-    var teamBNumCatapultsDisabled: Int {
-        catapultsLock.lock(); defer { catapultsLock.unlock() }
-        return catapults.filter { $0.teamID == .blue && $0.disabled }.count
-    }
 
     init(sceneView: SCNView, level: GameLevel, session: GameSession?,
          audioEnvironment: AVAudioEnvironmentNode, musicCoordinator: MusicCoordinator) {
@@ -167,12 +173,13 @@ class GameManager: NSObject {
     }
 
     // MARK: - processing touches
-    func handleTouch(type: TouchType, hit: GameRayCastHitInfo) {
+    func handleTouch(_ type: TouchType) {
         guard !UserDefaults.standard.spectator else { return }
         touchEventsLock.lock(); defer { touchEventsLock.unlock() }
-        touchEvents.append(TouchEvent(type: type, hit: hit))
+        touchEvents.append(TouchEvent(type: type, camera: lastCameraInfo.ray))
     }
-    
+
+    var lastCameraInfo = CameraInfo(transform: .identity)
     func updateCamera(cameraInfo: CameraInfo) {
         if gameCamera == nil {
             // need the real render camera in order to set rendering state
@@ -187,6 +194,7 @@ class GameManager: NSObject {
         gameCamera?.transferProps()
 
         interactionManager.updateAll(cameraInfo: cameraInfo)
+        lastCameraInfo = cameraInfo
     }
 
     // MARK: - inbound from network
@@ -300,7 +308,7 @@ class GameManager: NSObject {
     }
 
     private func process(_ touch: TouchEvent) {
-        interactionManager.handleTouch(type: touch.type, hit: touch.hit)
+        interactionManager.handleTouch(touch.type, camera: touch.camera)
     }
 
     func queueAction(gameAction: GameAction) {
@@ -526,7 +534,8 @@ class GameManager: NSObject {
 
             catapult.updateProps()
             catapult.addComponent(RemoveWhenFallenComponent())
-
+            gameState.add(catapult)
+            
             physicsSyncData.addObject(catapult)
 
         case "ShadowPlane":
@@ -737,10 +746,6 @@ class GameManager: NSObject {
     
     func renderSpacePositionToSimulationSpace(pos: float3) -> float3 {
         return (renderToSimulationTransform * float4(pos, 1.0)).xyz
-    }
-    
-    func renderSpaceDirectionToSimulationSpace(dir: float3) -> float3 {
-        return (renderToSimulationTransform * float4(dir, 0.0)).xyz
     }
 
     func renderSpaceTransformToSimulationSpace(transform: float4x4) -> float4x4 {
@@ -958,6 +963,9 @@ extension GameManager: CatapultDelegate {
             sfxCoordinator.playCatapultBreak(catapult: catapult, vortex: vortex)
         }
         gameObjectManager.addBlockObject(block: catapult)
+        gameState.teamACatapults = catapults.filter { $0.teamID == .yellow && !$0.disabled }.count
+        gameState.teamBCatapults = catapults.filter { $0.teamID == .blue && !$0.disabled }.count
+        delegate?.manager(self, updated: gameState)
     }
 
     func catapultDidBeginGrab(_ catapult: Catapult) {

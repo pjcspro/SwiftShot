@@ -217,8 +217,8 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
             }
         }
     }
-    
-    func handleTouch(type: TouchType, hitInfo: GameRayCastHitInfo) {
+
+    func handleTouch(_ type: TouchType, camera: Ray) {
         
     }
 }

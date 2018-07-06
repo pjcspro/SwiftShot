@@ -86,38 +86,27 @@ class GameViewController: UIViewController {
     
     @IBOutlet var teamACatapultImages: [UIImageView]!
     @IBOutlet var teamBCatapultImages: [UIImageView]!
-    private var teamADisabledCatapultCount = 0 {
+
+    private var teamACatapultCount = 0 {
         didSet {
-            guard oldValue != teamADisabledCatapultCount else { return }
-            
-            var disabledCount = 0
-            for catapultImage in self.teamACatapultImages.reversed() {
-                if disabledCount < self.teamADisabledCatapultCount {
-                    catapultImage.isHighlighted = true
-                    disabledCount += 1
-                } else {
-                    break
-                }
-            }
-            
-        }
-    }
-    private var teamBDisabledCatapultCount = 0 {
-        didSet {
-            guard oldValue != teamBDisabledCatapultCount else { return }
-            
-            var disabledCount = 0
-            for catapultImage in self.teamBCatapultImages.reversed() {
-                if disabledCount < self.teamBDisabledCatapultCount {
-                    catapultImage.isHighlighted = true
-                    disabledCount += 1
-                } else {
-                    break
-                }
+            guard oldValue != teamACatapultCount else { return }
+
+            for (index, catapultImage) in teamACatapultImages.enumerated() where index > teamACatapultCount {
+                catapultImage.isHighlighted = true
             }
         }
     }
-    
+
+    private var teamBCatapultCount = 0 {
+        didSet {
+            guard oldValue != teamBCatapultCount else { return }
+
+            for (index, catapultImage) in teamBCatapultImages.enumerated() where index > teamBCatapultCount {
+                catapultImage.isHighlighted = true
+            }
+        }
+    }
+
     var gameManager: GameManager? {
         didSet {
             guard let manager = gameManager else {
@@ -691,15 +680,12 @@ extension GameViewController: SCNSceneRendererDelegate {
                 gameManager.copySimulationCamera()
                 
                 // these can use the pointOfView since the render thread scales/unscales the camera around rendering
-                let camPosition = gameManager.renderSpacePositionToSimulationSpace(pos: pointOfView.simdWorldPosition)
-                let camDirection = normalize(gameManager.renderSpaceDirectionToSimulationSpace(dir: pointOfView.simdWorldFront))
-                let cameraRay = Ray(position: camPosition, direction: camDirection)
                 let cameraTransform = gameManager.renderSpaceTransformToSimulationSpace(transform: pointOfView.simdTransform)
-                let cameraInfo = CameraInfo(transform: cameraTransform, ray: cameraRay)
+                let cameraInfo = CameraInfo(transform: cameraTransform)
                 
                 gameManager.updateCamera(cameraInfo: cameraInfo)
                 
-                let canGrabCatapult = gameManager.canGrabACatapult(cameraRay: cameraRay)
+                let canGrabCatapult = gameManager.canGrabACatapult(cameraRay: cameraInfo.ray)
                 let isGrabbingCatapult = gameManager.isCurrentPlayerGrabbingACatapult()
                 
                 DispatchQueue.main.async {
@@ -722,13 +708,6 @@ extension GameViewController: SCNSceneRendererDelegate {
             }
 
             gameManager.update(timeDelta: GameTime.deltaTime)
-            
-            DispatchQueue.main.async {
-                if self.sessionState == .gameInProgress {
-                    self.teamADisabledCatapultCount = gameManager.teamANumCatapultsDisabled
-                    self.teamBDisabledCatapultCount = gameManager.teamBNumCatapultsDisabled
-                }
-            }
         }
 
         os_signpost(.end, log: .render_loop, name: .logic_update, signpostID: .render_loop,
@@ -881,6 +860,15 @@ extension GameViewController: GameManagerDelegate {
         DispatchQueue.main.async {
             if UserDefaults.standard.showNetworkDebug {
                 self.networkDelayText.isHidden = !hasNetworkDelay
+            }
+        }
+    }
+
+    func manager(_ manager: GameManager, updated gameState: GameState) {
+        DispatchQueue.main.async {
+            if self.sessionState == .gameInProgress {
+                self.teamACatapultCount = gameState.teamACatapults
+                self.teamBCatapultCount = gameState.teamBCatapults
             }
         }
     }

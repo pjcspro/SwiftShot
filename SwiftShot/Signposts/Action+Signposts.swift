@@ -22,8 +22,6 @@ extension Action: CustomStringConvertible {
                 return "grabMove"
             case .grabbableStatus:
                 return "grabbableStatus"
-            case .pickup:
-                return "pickup"
             case .catapultKnockOut:
                 return "catapultKnockOut"
             case .oneHitKOPrepareAnimation:

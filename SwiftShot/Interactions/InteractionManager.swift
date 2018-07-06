@@ -42,9 +42,9 @@ class InteractionManager {
     }
     
     // MARK: - Touch Event Routing
-    func handleTouch(type: TouchType, hit: GameRayCastHitInfo) {
+    func handleTouch(_ type: TouchType, camera: Ray) {
         for interaction in interactions.values {
-            interaction.handleTouch(type: type, hitInfo: hit)
+            interaction.handleTouch(type, camera: camera)
         }
     }
     
