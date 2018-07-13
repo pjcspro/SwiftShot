@@ -223,7 +223,7 @@ class GameBoard: SCNNode {
     private func scaleToPlane(_ planeAnchor: ARPlaneAnchor) {
         // Determine if extent should be flipped (plane is 90 degrees rotated)
         let planeXAxis = planeAnchor.transform.columns.0.xyz
-        let axisFlipped = fabs(dot(planeXAxis, simdWorldRight)) < 0.5
+        let axisFlipped = abs(dot(planeXAxis, simdWorldRight)) < 0.5
         
         // Flip dimensions if necessary
         var planeExtent = planeAnchor.extent

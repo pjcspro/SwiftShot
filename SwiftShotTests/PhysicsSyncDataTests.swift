@@ -41,7 +41,7 @@ class PhysicsSyncDataTests: XCTestCase {
         let nodes = [PhysicsNodeData](repeating: nodeData, count: 154)
 
         var poolData = nodeData
-        poolData.teamID = .yellow
+        poolData.team = .yellow
         let pools = [PhysicsNodeData](repeating: poolData, count: 30)
 
         let packet = PhysicsSyncData(packetNumber: 0, nodeData: nodes, projectileData: pools, soundData: [])

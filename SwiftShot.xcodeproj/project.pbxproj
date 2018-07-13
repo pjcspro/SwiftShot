@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1189EAF320F014BD005F9065 /* Flag.metal in Sources */ = {isa = PBXBuildFile; fileRef = FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */; };
-		11BD8C1220C0AAFB00FAA0F8 /* Flag.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */; };
-		11E9720C209A6DCB006E3D26 /* SCNView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E9720B209A6DCB006E3D26 /* SCNView+Helpers.swift */; };
+		11BC5FA420F947A700D2C4DD /* Flag.metal in Sources */ = {isa = PBXBuildFile; fileRef = FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */; };
+		11BC5FA520F947A700D2C4DD /* Flag.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */; };
 		1C0FE64120B241EB00C96ED4 /* ComputedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0FE63E20B241EA00C96ED4 /* ComputedValue.swift */; };
 		1C0FE64320B241EB00C96ED4 /* SlingShotPose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0FE63F20B241EA00C96ED4 /* SlingShotPose.swift */; };
 		1C0FE64520B241EB00C96ED4 /* SlingShotSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0FE64020B241EA00C96ED4 /* SlingShotSimulation.swift */; };
@@ -45,7 +44,6 @@
 		2DF0B05F2091890A003F458E /* GameObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF0B05E2091890A003F458E /* GameObject.swift */; };
 		2DF0B061209189AD003F458E /* SCNNode+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF0B060209189AD003F458E /* SCNNode+Helpers.swift */; };
 		2DF1B96D209B8AD20089F255 /* GameTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1B96C209B8AD20089F255 /* GameTime.swift */; };
-		4415FF1D20B0C33F00256CCD /* FileManager+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4415FF1C20B0C33F00256CCD /* FileManager+Helpers.swift */; };
 		4415FF2020B0C36F00256CCD /* ARSCNView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */; };
 		441D101420B3A87000D7F796 /* ARWorldMap+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */; };
 		44AAE40D20B366F10097047B /* KeyPositionAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AAE40C20B366F10097047B /* KeyPositionAnchor.swift */; };
@@ -133,9 +131,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0CD2CA300CD701C000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		0F3BF2F00F3C0C8000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
-		11E9720B209A6DCB006E3D26 /* SCNView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNView+Helpers.swift"; sourceTree = "<group>"; };
+		106F68D0106F870000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		12E3B53012E3B38000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		1C0FE63E20B241EA00C96ED4 /* ComputedValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComputedValue.swift; sourceTree = "<group>"; };
 		1C0FE63F20B241EA00C96ED4 /* SlingShotPose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlingShotPose.swift; sourceTree = "<group>"; };
 		1C0FE64020B241EA00C96ED4 /* SlingShotSimulation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlingShotSimulation.swift; sourceTree = "<group>"; };
@@ -171,7 +168,6 @@
 		2DF0B05E2091890A003F458E /* GameObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameObject.swift; sourceTree = "<group>"; };
 		2DF0B060209189AD003F458E /* SCNNode+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNNode+Helpers.swift"; sourceTree = "<group>"; };
 		2DF1B96C209B8AD20089F255 /* GameTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameTime.swift; sourceTree = "<group>"; };
-		4415FF1C20B0C33F00256CCD /* FileManager+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Helpers.swift"; sourceTree = "<group>"; };
 		4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSCNView+Helpers.swift"; sourceTree = "<group>"; };
 		441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARWorldMap+Helpers.swift"; sourceTree = "<group>"; };
 		44AAE40C20B366F10097047B /* KeyPositionAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPositionAnchor.swift; sourceTree = "<group>"; };
@@ -266,21 +262,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0CD2C5E00CD2C5A000000001 /* Configuration */ = {
+		106F6C80106F6C4000000001 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				0CD2CA300CD701C000000001 /* SampleCode.xcconfig */,
+				106F68D0106F870000000001 /* SampleCode.xcconfig */,
 			);
 			name = Configuration;
-			sourceTree = "<group>";
-		};
-		0F3A5F100F3A5D8000000001 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				0F3BF2F00F3C0C8000000001 /* LICENSE.txt */,
-			);
-			name = LICENSE;
-			path = LICENSE;
 			sourceTree = "<group>";
 		};
 		117E8A8B20BF4FF100040314 /* Slingshot Behavior */ = {
@@ -341,6 +328,15 @@
 				7BD717D120BE466B0099C010 /* BoardAnchor.swift */,
 			);
 			path = "World Map Loading";
+			sourceTree = "<group>";
+		};
+		12E4E97012E4E70000000001 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				12E3B53012E3B38000000001 /* LICENSE.txt */,
+			);
+			name = LICENSE;
+			path = LICENSE;
 			sourceTree = "<group>";
 		};
 		23D44A1020BFEBB200D971A1 /* Signposts */ = {
@@ -451,8 +447,8 @@
 				D0066D4B2057259600A7E863 /* SwiftShotTests */,
 				D0066D332057259500A7E863 /* Products */,
 				91AD762420AF5E2F0049A0EF /* Tools */,
-				0CD2C5E00CD2C5A000000001 /* Configuration */,
-				0F3A5F100F3A5D8000000001 /* LICENSE */,
+				106F6C80106F6C4000000001 /* Configuration */,
+				12E4E97012E4E70000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -534,10 +530,8 @@
 				1C79610520BB778800CFEB85 /* SCNShadable+Helpers.swift */,
 				2DF0B060209189AD003F458E /* SCNNode+Helpers.swift */,
 				1C79610220BB772500CFEB85 /* SCNNode+Materials.swift */,
-				11E9720B209A6DCB006E3D26 /* SCNView+Helpers.swift */,
 				2D29A98420A0CBE40071BF11 /* SCNPhysicsBody+Helper.swift */,
 				D0BB871120866B19001000D0 /* Data+Compression.swift */,
-				4415FF1C20B0C33F00256CCD /* FileManager+Helpers.swift */,
 				4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */,
 				441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */,
 				C460440820B8EAC000AD4622 /* UIView+Helpers.swift */,
@@ -740,7 +734,6 @@
 				1C79610620BB778800CFEB85 /* SCNShadable+Helpers.swift in Sources */,
 				C460440920B8EAC000AD4622 /* UIView+Helpers.swift in Sources */,
 				1C0FE64120B241EB00C96ED4 /* ComputedValue.swift in Sources */,
-				11BD8C1220C0AAFB00FAA0F8 /* Flag.swift in Sources */,
 				44F2B33C20BC74BA008974CA /* CGPoint+Helpers.swift in Sources */,
 				D0066D362057259500A7E863 /* AppDelegate.swift in Sources */,
 				4415FF2020B0C36F00256CCD /* ARSCNView+Helpers.swift in Sources */,
@@ -750,7 +743,6 @@
 				D0DBEF15205B027E00FFFDB6 /* GameSession.swift in Sources */,
 				E302C54D20B7A6CC001F3417 /* GameLevel.swift in Sources */,
 				C43D1349209276D500A2C195 /* SFXCoordinator.swift in Sources */,
-				1189EAF320F014BD005F9065 /* Flag.metal in Sources */,
 				91CA8E3220B7F0B100DCDD0C /* ButtonBeep.swift in Sources */,
 				D0601A1F20E5999A00939460 /* RemoveWhenFallenComponent.swift in Sources */,
 				2DECAAB820C141D000007C36 /* HighlightInteraction.swift in Sources */,
@@ -765,14 +757,13 @@
 				74923801209DA97C00EC2542 /* PlayerTriggerComponent.swift in Sources */,
 				441D101420B3A87000D7F796 /* ARWorldMap+Helpers.swift in Sources */,
 				2D22D9A920ADEB220063D1B2 /* VortexInteraction.swift in Sources */,
-				4415FF1D20B0C33F00256CCD /* FileManager+Helpers.swift in Sources */,
 				746412F920B5D0190083A866 /* ResetSwitchComponent.swift in Sources */,
 				D0DBEF17205B033A00FFFDB6 /* Player.swift in Sources */,
 				2DB283EA20BD036900FFE90A /* VictoryInteraction.swift in Sources */,
 				74E4032B2092959A00884DE8 /* GameAudioComponent.swift in Sources */,
-				11E9720C209A6DCB006E3D26 /* SCNView+Helpers.swift in Sources */,
 				E318B43420A24B2700308AC6 /* ProximityManager.swift in Sources */,
 				91D8090420AD01D200861E97 /* CatapultAudioSampler.swift in Sources */,
+				11BC5FA520F947A700D2C4DD /* Flag.swift in Sources */,
 				1CA58F1120BBCDFE00F65F22 /* GameCamera.swift in Sources */,
 				2DF0B061209189AD003F458E /* SCNNode+Helpers.swift in Sources */,
 				9134A73E20B33517005F4DF8 /* CollisionAudioSampler.swift in Sources */,
@@ -794,6 +785,7 @@
 				23D44A1420BFEBC600D971A1 /* Action+Signposts.swift in Sources */,
 				74E40329209287BE00884DE8 /* GamePhysicsSmoothComponent.swift in Sources */,
 				2D73DB72209BACF0003A883C /* GameObjectManager.swift in Sources */,
+				11BC5FA420F947A700D2C4DD /* Flag.metal in Sources */,
 				2DB283ED20BD3B6000FFE90A /* CollisionSoundData.swift in Sources */,
 				D00F541320A3B26F0008F2C0 /* BitStreamCodable.swift in Sources */,
 			);
@@ -843,7 +835,7 @@
 /* Begin XCBuildConfiguration section */
 		D0066D4F2057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -906,7 +898,7 @@
 		};
 		D0066D502057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -963,7 +955,7 @@
 		};
 		D0066D522057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -990,7 +982,7 @@
 		};
 		D0066D532057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1016,7 +1008,7 @@
 		};
 		D0066D552057259600A7E863 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1041,7 +1033,7 @@
 		};
 		D0066D562057259600A7E863 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CD2CA300CD701C000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = 106F68D0106F870000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

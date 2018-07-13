@@ -183,7 +183,7 @@ class PhysicsSyncSceneData {
                 // Spawn the projectile if it is exists on the other side, but not here
                 if !projectile.isAlive {
                     projectile = delegate.spawnProjectile(objectIndex: projectile.index)
-                    projectile.team = nodeData.teamID
+                    projectile.team = nodeData.team
                     projectileList[arrayIndex] = projectile
                 }
 

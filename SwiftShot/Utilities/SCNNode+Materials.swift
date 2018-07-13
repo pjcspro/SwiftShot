@@ -198,7 +198,7 @@ extension SCNNode {
     func setPaintColors() {
         if let geometry = geometry {
             // paintColor can be UIColor or SCNVector4
-            let paintColor = teamID.color
+            let paintColor = team.color
             
             if geometry.hasUniform(SCNNode.paintMaskColorKey) {
                 geometry.setColor(SCNNode.paintMaskColorKey, paintColor)
@@ -218,10 +218,10 @@ extension SCNNode {
         }
     }
     
-    func setPaintColors(teamID: TeamID) {
+    func setPaintColors(team: Team) {
         if let geometry = geometry {
             // paintColor can be UIColor or SCNVector4
-            let paintColor = teamID.color
+            let paintColor = team.color
             
             if geometry.hasUniform(SCNNode.paintMaskColorKey) {
                 geometry.setColor(SCNNode.paintMaskColorKey, paintColor)
@@ -237,7 +237,7 @@ extension SCNNode {
         }
         
         for child in childNodes {
-            child.setPaintColors(teamID: teamID)
+            child.setPaintColors(team: team)
         }
     }
     

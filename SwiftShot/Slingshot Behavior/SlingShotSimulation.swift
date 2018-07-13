@@ -189,7 +189,7 @@ class SlingShotSimulation: NSObject {
             var u = l / originalTotalLength
             
             // remap the u value depending on the material (rubber vs leather)
-            let isRubber = fabs(0.5 - u) > originalLeatherRange * 0.5
+            let isRubber = abs(0.5 - u) > originalLeatherRange * 0.5
             if isRubber {
                 if u < 0.5 {
                     u = u / (0.5 - originalLeatherRange * 0.5)
@@ -379,7 +379,7 @@ class SlingShotSimulation: NSObject {
 
             // apply a force
             let u = Float(i) / Float(simulatedTransforms.count - 1)
-            let restPoseFactorAlongRope = 1.0 - fabs(u - 0.5) / 0.5
+            let restPoseFactorAlongRope = 1.0 - abs(u - 0.5) / 0.5
             
             simulatedTransforms[i].velocity = force * restPoseFactorAlongRope * strength
         }

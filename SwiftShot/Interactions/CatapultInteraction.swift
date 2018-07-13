@@ -54,7 +54,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         
         let projectile = TrailBallProjectile(prototypeNode: dummyBall.clone())
         projectile.isAlive = true
-        projectile.team = catapult.teamID
+        projectile.team = catapult.team
         
         guard let physicsNode = projectile.physicsNode else { fatalError("Projectile has no physicsNode") }
         physicsNode.physicsBody = nil
@@ -146,8 +146,8 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         catapult.serverGrab(cameraRay: cameraInfo.ray)
         
         // the player has committed to a side
-        if player.teamID == .none {
-            player.teamID = catapult.teamID
+        if player.team == .none {
+            player.team = catapult.team
         }
     }
     
@@ -171,7 +171,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
                 guard let physicsBody = node.physicsBody else { fatalError("Catapult has no physicsBody") }
                 
                 // Do not let projectile from the same team kill the catapult
-                if catapult.teamID == projectile.team {
+                if catapult.team == projectile.team {
                     physicsBody.simdVelocity = float3()
                     physicsBody.simdAngularVelocity = float4(0.0, 1.0, 0.0, 0.0)
                 }
@@ -193,7 +193,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
     func slingBall(catapult: Catapult, velocity: GameVelocity) {
         guard let delegate = delegate else { fatalError("No delegate") }
         let newProjectile = delegate.spawnProjectile()
-        newProjectile.team = catapult.teamID
+        newProjectile.team = catapult.team
         
         delegate.addNodeToLevel(newProjectile.objectRootNode)
         
@@ -208,7 +208,7 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         if let physicsNode = newProjectile.physicsNode, let physBody = physicsNode.physicsBody {
             physicsNode.setValue(catapult.catapultID, forKey: "Source")
             physBody.collisionBitMask = CollisionMask([.rigidBody, .glitterObject]).rawValue
-            if catapult.teamID == .blue {
+            if catapult.team == .blue {
                 physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
                 physBody.categoryBitMask |= CollisionMask.catapultBlue.rawValue
             } else {

@@ -243,7 +243,7 @@ class VortexInteraction: Interaction, LeverInteractionDelegate {
             // Scale the vortex
             // The higher position in the bound, more it should move upward to scale the vortex
             let normalizedPositionInBoundY = clamp((position.y - bottomBound) / vortexShape.y, 0.0, 1.0)
-            let heightMoveFactor = fabs(normalizedPositionInBoundY - 0.5)
+            let heightMoveFactor = abs(normalizedPositionInBoundY - 0.5)
             let newPositionY = position.y + vortexCenterYDelta + vortexHeightDelta * heightMoveFactor
 
             let positionXZ = float3(position.x, 0.0, position.z)

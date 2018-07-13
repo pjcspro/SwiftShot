@@ -17,7 +17,7 @@ struct GameState {
     var teamBCatapults = 0
 
     mutating func add(_ catapult: Catapult) {
-        switch catapult.teamID {
+        switch catapult.team {
         case .yellow: teamACatapults += 1
         case .blue: teamBCatapults += 1
         default: break
@@ -236,9 +236,8 @@ class GameManager: NSObject {
         gameObjectManager.update(deltaTime: timeDelta, isServer: isServer)
 
         for entity in gameObjects {
-            for component in entity.components where component is UpdatableComponent {
-                guard let updateableComponent = component as? UpdatableComponent else { continue }
-                updateableComponent.update(deltaTime: timeDelta, isServer: isServer)
+            for updatableComponent in entity.components(conformingTo: UpdatableComponent.self) {
+                updatableComponent.update(deltaTime: timeDelta, isServer: isServer)
             }
         }
     }
@@ -444,12 +443,8 @@ class GameManager: NSObject {
     func initBehaviors() {
         // after everything is setup, add the behaviors if any
         for gameObject in gameObjects {
-            
-            // update constraints
-            for component in gameObject.components where component is PhysicsBehaviorComponent {
-                if let behaviorComponent = component as? PhysicsBehaviorComponent {
-                    behaviorComponent.initBehavior(levelRoot: levelNode, world: physicsWorld)
-                }
+            for component in gameObject.components(conformingTo: PhysicsBehaviorComponent.self) {
+                component.initBehavior(levelRoot: levelNode, world: physicsWorld)
             }
         }
     }
@@ -769,19 +764,15 @@ class GameManager: NSObject {
         // let any collision handling components on nodeA respond to the collision with nodeB
 
         if let entity = nodeA.nearestParentGameObject() {
-            for component in entity.components where component is CollisionHandlerComponent {
-                if let handler = component as? CollisionHandlerComponent {
-                    handler.didCollision(manager: self, node: nodeA, otherNode: nodeB, pos: pos, impulse: impulse)
-                }
+            for collisionHandler in entity.components(conformingTo: CollisionHandlerComponent.self) {
+                collisionHandler.didCollision(manager: self, node: nodeA, otherNode: nodeB, pos: pos, impulse: impulse)
             }
         }
         
         // let any collision handling components in nodeB respond to the collision with nodeA
         if let entity = nodeB.nearestParentGameObject() {
-            for component in entity.components where component is CollisionHandlerComponent {
-                if let handler = component as? CollisionHandlerComponent {
-                    handler.didCollision(manager: self, node: nodeB, otherNode: nodeA, pos: pos, impulse: impulse)
-                }
+            for collisionHandler in entity.components(conformingTo: CollisionHandlerComponent.self) {
+                collisionHandler.didCollision(manager: self, node: nodeB, otherNode: nodeA, pos: pos, impulse: impulse)
             }
         }
         
@@ -963,8 +954,8 @@ extension GameManager: CatapultDelegate {
             sfxCoordinator.playCatapultBreak(catapult: catapult, vortex: vortex)
         }
         gameObjectManager.addBlockObject(block: catapult)
-        gameState.teamACatapults = catapults.filter { $0.teamID == .yellow && !$0.disabled }.count
-        gameState.teamBCatapults = catapults.filter { $0.teamID == .blue && !$0.disabled }.count
+        gameState.teamACatapults = catapults.filter { $0.team == .yellow && !$0.disabled }.count
+        gameState.teamBCatapults = catapults.filter { $0.team == .blue && !$0.disabled }.count
         delegate?.manager(self, updated: gameState)
     }
 

@@ -12,7 +12,7 @@ class VictoryInteraction: Interaction {
     weak var delegate: InteractionDelegate?
     private(set) var displayedVictory = false
     private(set) var gameDone = false
-    private var teamWon: TeamID = .none
+    private var teamWon: Team = .none
     
     private var victoryNode: SCNNode
     private var activationStartTime: TimeInterval = 0.0
@@ -44,7 +44,7 @@ class VictoryInteraction: Interaction {
         activationStartTime = GameTime.time
         
         // Set color to that of winning team
-        victoryNode.setPaintColors(teamID: teamWon)
+        victoryNode.setPaintColors(team: teamWon)
         
         delegate.playWinSound()
     }
@@ -78,7 +78,7 @@ class VictoryInteraction: Interaction {
         
         var teamToCatapultCount = [0, 0, 0]
         for catapult in catapults where !catapult.disabled {
-            teamToCatapultCount[catapult.teamID.rawValue] += 1
+            teamToCatapultCount[catapult.team.rawValue] += 1
         }
         
         gameDone = true

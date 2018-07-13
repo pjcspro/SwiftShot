@@ -220,6 +220,14 @@ struct ReadableBitStream {
         return result
     }
 
+    mutating func readEnum<T>() throws -> T where T: CaseIterable & RawRepresentable, T.RawValue == UInt32 {
+        let rawValue = try readUInt32(numberOfBits: T.bits)
+        guard let result = T(rawValue: rawValue) else {
+            throw BitStreamError.encodingError
+        }
+        return result
+    }
+
     mutating private func align() {
         let mod = currentBit % 8
         if mod != 0 {

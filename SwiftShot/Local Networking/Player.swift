@@ -21,7 +21,7 @@ class Player: Hashable {
     
     let peerID: MCPeerID
     var username: String { return peerID.displayName }
-    var teamID: TeamID = .none
+    var team: Team = .none
     
     init(peerID: MCPeerID) {
         self.peerID = peerID

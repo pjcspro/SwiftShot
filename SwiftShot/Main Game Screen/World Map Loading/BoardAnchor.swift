@@ -8,7 +8,7 @@ Custom anchor for saving the board location in an ARWorldMap.
 import ARKit
 
 class BoardAnchor: ARAnchor {
-    private(set) var size: CGSize
+    let size: CGSize
     
     init(transform: float4x4, size: CGSize) {
         self.size = size
@@ -23,16 +23,16 @@ class BoardAnchor: ARAnchor {
         self.size = aDecoder.decodeCGSize(forKey: "size")
         super.init(coder: aDecoder)
     }
-    
+
+    // this is guaranteed to be called with something of the same class
+    required init(anchor: ARAnchor) {
+        let other = anchor as! BoardAnchor
+        self.size = other.size
+        super.init(anchor: other)
+    }
+
     override func encode(with aCoder: NSCoder) {
         super.encode(with: aCoder)
         aCoder.encode(size, forKey: "size")
-    }
-    
-    override func copy(with zone: NSZone? = nil) -> Any {
-        // required by objc method override
-        let copy = super.copy(with: zone) as! BoardAnchor
-        copy.size = size
-        return copy
     }
 }

@@ -72,7 +72,7 @@ extension SCNNode {
         return findNodeWithGeometryHelper(node: self)
     }
     
-    var teamID: TeamID {
+    var team: Team {
         var parent = self.parent
         while let current = parent {
             if current.name == "_teamA" {

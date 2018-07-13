@@ -8,7 +8,7 @@ Custom projectile selection.
 import Foundation
 import SceneKit
 
-enum ProjectileType: Int, Codable {
+enum ProjectileType: UInt32, CaseIterable {
     case none = 0
     case cannonball
     case chicken
@@ -31,7 +31,7 @@ protocol ProjectileDelegate: class {
 
 class Projectile: GameObject {
     var physicsBody: SCNPhysicsBody?
-    var team: TeamID = .none {
+    var team: Team = .none {
         didSet {
             // we assume the geometry and lod are unique to geometry and lod here
             geometryNode?.geometry?.firstMaterial?.diffuse.contents = team.color
@@ -129,7 +129,7 @@ class Projectile: GameObject {
 
     override func generatePhysicsData() -> PhysicsNodeData? {
         guard var data = super.generatePhysicsData() else { return nil }
-        data.teamID = team
+        data.team = team
         return data
     }
 }

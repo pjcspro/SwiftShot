@@ -11,7 +11,7 @@ safetyCheck=$1
 
 numArgs=$#
 
-cd ${dir}
+cd "${dir}"
 
 # prevent this from being frun
 # if ktx exists, then remove the corresponding png if that exists

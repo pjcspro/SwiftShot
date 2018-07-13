@@ -22,6 +22,12 @@ struct CollisionMask: OptionSet {
     static let catapultYellow = CollisionMask(rawValue: 256)
 }
 
+extension GKEntity {
+    func components<P>(conformingTo: P.Type) -> [P] {
+        return components.compactMap { $0 as? P }
+    }
+}
+
 class GameObject: GKEntity {
     let objectRootNode: SCNNode
     let geometryNode: SCNNode?

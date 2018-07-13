@@ -46,10 +46,8 @@ class GameObjectManager {
     func update(deltaTime: TimeInterval, isServer: Bool) {
         for projectile in projectiles {
             projectile.update()
-            for component in projectile.components {
-                if let updateableCompoent = component as? UpdatableComponent {
-                    updateableCompoent.update(deltaTime: deltaTime, isServer: isServer)
-                }
+            for updatableComponent in projectile.components(conformingTo: UpdatableComponent.self) {
+                updatableComponent.update(deltaTime: deltaTime, isServer: isServer)
             }
         }
     }

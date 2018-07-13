@@ -8,8 +8,8 @@ Custom anchor for saving camera screenshots in an ARWorldMap.
 import ARKit
 
 class KeyPositionAnchor: ARAnchor {
-    private(set) var image: UIImage
-    private(set) var mappingStatus: ARFrame.WorldMappingStatus
+    let image: UIImage
+    let mappingStatus: ARFrame.WorldMappingStatus
     
     init(image: UIImage, transform: float4x4, mappingStatus: ARFrame.WorldMappingStatus) {
         self.image = image
@@ -25,24 +25,24 @@ class KeyPositionAnchor: ARAnchor {
         if let image = aDecoder.decodeObject(of: UIImage.self, forKey: "image") {
             self.image = image
             let mappingValue = aDecoder.decodeInteger(forKey: "mappingStatus")
-            self.mappingStatus = ARFrame.WorldMappingStatus(rawValue: mappingValue)!
+            self.mappingStatus = ARFrame.WorldMappingStatus(rawValue: mappingValue) ?? .notAvailable
         } else {
             return nil
         }
         super.init(coder: aDecoder)
     }
-    
+
+    // this is guaranteed to be called with something of the same class
+    required init(anchor: ARAnchor) {
+        let other = anchor as! KeyPositionAnchor
+        self.image = other.image
+        self.mappingStatus = other.mappingStatus
+        super.init(anchor: other)
+    }
+
     override func encode(with aCoder: NSCoder) {
         super.encode(with: aCoder)
         aCoder.encode(image, forKey: "image")
         aCoder.encode(mappingStatus.rawValue, forKey: "mappingStatus")
-    }
-    
-    override func copy(with zone: NSZone? = nil) -> Any {
-        // required by objc method override
-        let copy = super.copy(with: zone) as! KeyPositionAnchor
-        copy.image = image
-        copy.mappingStatus = mappingStatus
-        return copy
     }
 }

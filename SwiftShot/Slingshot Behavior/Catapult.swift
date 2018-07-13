@@ -20,7 +20,7 @@ extension UIColor {
     }
 }
 
-enum TeamID: Int {
+enum Team: Int {
     case none = 0 // default
     case blue
     case yellow
@@ -43,7 +43,9 @@ enum TeamID: Int {
     }
 }
 
-extension TeamID: BitStreamCodable {
+extension Team: BitStreamCodable {
+    // We do not use the stanard enum encoding here to implement a tiny
+    // optimization; 99% of blocks are on no team, so this safes us almost 1 bit per block.
     func encode(to bitStream: inout WritableBitStream) {
         switch self {
         case .none:
@@ -173,7 +175,7 @@ class Catapult: GameObject, Grabbable {
     // Each catapult has a unique index.
     // 1-3 are on one side, 4-6 are on the other side
     private(set) var catapultID: Int = 0
-    private(set) var teamID: TeamID = .none
+    private(set) var team: Team = .none
     private(set) var teamName: String
     
     // Grabbable ID to be set by GrabInteraction
@@ -335,10 +337,10 @@ class Catapult: GameObject, Grabbable {
         self.base = node
         self.audioEnvironment = sfxCoordinator.audioEnvironment
         
-        // Base teamID and name off looking up teamA or teamB folder in the level parents
+        // Base team and name off looking up teamA or teamB folder in the level parents
         // This won't work on the old levels.
-        self.teamID = base.teamID
-        self.teamName = base.teamID.description
+        self.team = base.team
+        self.teamName = base.team.description
     
         // have team id established
         base.setPaintColors()
@@ -406,12 +408,12 @@ class Catapult: GameObject, Grabbable {
         
         super.init(node: node, index: nil, gamedefs: gamedefs)
         
-        // use the teamID to set the collision category mask
+        // use the team to set the collision category mask
         if let physicsNode = physicsNode, let physBody = physicsNode.physicsBody {
-            if teamID == .blue {
+            if team == .blue {
                 physBody.categoryBitMask = CollisionMask.catapultBlue.rawValue
                 physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
-            } else if teamID == .yellow {
+            } else if team == .yellow {
                 physBody.categoryBitMask = CollisionMask.catapultYellow.rawValue
                 physBody.collisionBitMask |= CollisionMask.catapultBlue.rawValue
             }
@@ -432,7 +434,7 @@ class Catapult: GameObject, Grabbable {
         let projectilePaddingScale: Float = 1.0
         rope.setBallRadius(projectile.boundingSphere.radius * projectilePaddingScale)
         
-        // need ball to set a teamID, and then can color with same mechanism
+        // need ball to set a team, and then can color with same mechanism
         //projectile.setPaintColor()
         
         // will be made visible and drop when cooldown is exceeded,
@@ -540,7 +542,7 @@ class Catapult: GameObject, Grabbable {
         // Base below table?
         // Base tilted? base's up vector must maintain some amount of y to be determined as stable
         let baseUp = normalize(base.presentation.simdTransform.columns.1)
-        if position.y < -1.0 || fabs(baseUp.y) < minStableTiltBaseUpY {
+        if position.y < -1.0 || abs(baseUp.y) < minStableTiltBaseUpY {
             // Switch to knocked mode
             if !isCatapultKnocked {
                 catapultKnockedStartTime = GameTime.time
@@ -687,7 +689,7 @@ class Catapult: GameObject, Grabbable {
         
         // only use the 2d distance, so that user can gauage stretch indepdent of mtch
         var distance2D = targetBallPosition - pullWorldPosition
-        let stretchY = fabs(distance2D.y)
+        let stretchY = abs(distance2D.y)
         distance2D.y = 0
         
         var stretchDistance = length(distance2D)
