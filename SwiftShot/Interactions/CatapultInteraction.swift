@@ -144,11 +144,6 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
     func onServerGrab(grabbable: Grabbable, cameraInfo: CameraInfo, player: Player) {
         guard let catapult = grabbable as? Catapult else { return }
         catapult.serverGrab(cameraRay: cameraInfo.ray)
-        
-        // the player has committed to a side
-        if player.team == .none {
-            player.team = catapult.team
-        }
     }
     
     func onUpdateGrabStatus(grabbable: Grabbable, cameraInfo: CameraInfo) {
@@ -208,12 +203,12 @@ class CatapultInteraction: Interaction, GrabInteractionDelegate {
         if let physicsNode = newProjectile.physicsNode, let physBody = physicsNode.physicsBody {
             physicsNode.setValue(catapult.catapultID, forKey: "Source")
             physBody.collisionBitMask = CollisionMask([.rigidBody, .glitterObject]).rawValue
-            if catapult.team == .blue {
-                physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
-                physBody.categoryBitMask |= CollisionMask.catapultBlue.rawValue
+            if catapult.team == .teamA {
+                physBody.collisionBitMask |= CollisionMask.catapultTeamB.rawValue
+                physBody.categoryBitMask |= CollisionMask.catapultTeamA.rawValue
             } else {
-                physBody.collisionBitMask |= CollisionMask.catapultBlue.rawValue
-                physBody.categoryBitMask |= CollisionMask.catapultYellow.rawValue
+                physBody.collisionBitMask |= CollisionMask.catapultTeamA.rawValue
+                physBody.categoryBitMask |= CollisionMask.catapultTeamB.rawValue
             }
         }
     }

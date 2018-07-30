@@ -17,6 +17,7 @@ struct SwiftShotGameService {
 struct SwiftShotGameAttribute {
     static let name = "SwiftShotGameAttributeName"
     static let location = "LocationAttributeName"
+    static let appIdentifier = "AppIdentifierAttributeName"
 }
 
 protocol GameBrowserDelegate: class {
@@ -47,9 +48,9 @@ class GameBrowser: NSObject {
         serviceBrowser.stopBrowsingForPeers()
     }
 
-    func join(game: NetworkGame) -> GameSession? {
+    func join(game: NetworkGame) -> NetworkSession? {
         guard games.contains(game) else { return nil }
-        let session = GameSession(myself: myself, asServer: false, location: game.location, host: game.host)
+        let session = NetworkSession(myself: myself, asServer: false, location: game.location, host: game.host)
         serviceBrowser.invitePeer(game.host.peerID, to: session.session, withContext: nil, timeout: 30)
         return session
     }
@@ -62,6 +63,11 @@ extension GameBrowser: MCNearbyServiceBrowserDelegate {
         guard peerID != myself.peerID else {
             os_log(.info, "found myself, ignoring")
             return
+        }
+        guard let appIdentifier = info?[SwiftShotGameAttribute.appIdentifier],
+            appIdentifier == Bundle.main.appIdentifier else {
+                os_log(.info, "peer appIdentifier %s doesn't match, ignoring", info?[SwiftShotGameAttribute.appIdentifier] ?? "(nil)")
+                return
         }
         DispatchQueue.main.async {
             let player = Player(peerID: peerID)

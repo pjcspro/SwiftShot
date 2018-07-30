@@ -8,11 +8,6 @@ Protocols for GKComponents that require or provide certain behaviors.
 import Foundation
 import GameplayKit
 
-// Components that require an update call every frame
-protocol UpdatableComponent {
-    func update(deltaTime seconds: TimeInterval, isServer: Bool)
-}
-
 // Components that imply the object can be touched
 protocol TouchableComponent {}
 

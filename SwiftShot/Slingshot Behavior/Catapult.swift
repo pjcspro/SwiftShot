@@ -22,48 +22,47 @@ extension UIColor {
 
 enum Team: Int {
     case none = 0 // default
-    case blue
-    case yellow
+    case teamA
+    case teamB
     
     var description: String {
         switch self {
-        // Use Internationalization, as appropriate.
-        case .none: return "none"
-        case .blue: return "Blue"     // TeamA - blue
-        case .yellow: return "Yellow" // TeamB - orange
+        case .none: return NSLocalizedString("none", comment: "Team name")
+        case .teamA: return NSLocalizedString("Blue", comment: "Team name")
+        case .teamB: return NSLocalizedString("Yellow", comment: "Team name")
         }
     }
 
     var color: UIColor {
         switch self {
         case .none: return .white
-        case .blue: return UIColor(hexRed: 45, green: 128, blue: 208) // srgb
-        case .yellow: return UIColor(hexRed: 239, green: 153, blue: 55)
+        case .teamA: return UIColor(hexRed: 45, green: 128, blue: 208) // srgb
+        case .teamB: return UIColor(hexRed: 239, green: 153, blue: 55)
         }
     }
 }
 
 extension Team: BitStreamCodable {
     // We do not use the stanard enum encoding here to implement a tiny
-    // optimization; 99% of blocks are on no team, so this safes us almost 1 bit per block.
+    // optimization; 99% of blocks are on no team, so this saves us almost 1 bit per block.
     func encode(to bitStream: inout WritableBitStream) {
         switch self {
         case .none:
             bitStream.appendBool(false)
-        case .blue:
+        case .teamA:
+            bitStream.appendBool(true)
+            bitStream.appendBool(true)
+        case .teamB:
             bitStream.appendBool(true)
             bitStream.appendBool(false)
-        case .yellow:
-            bitStream.appendBool(true)
-            bitStream.appendBool(true)
         }
     }
 
     init(from bitStream: inout ReadableBitStream) throws {
         let hasTeam = try bitStream.readBool()
         if hasTeam {
-            let isYellow = try bitStream.readBool()
-            self = isYellow ? .yellow : .blue
+            let isTeamA = try bitStream.readBool()
+            self = isTeamA ? .teamA : .teamB
         } else {
             self = .none
         }
@@ -406,16 +405,16 @@ class Catapult: GameObject, Grabbable {
         
         audioPlayer = CatapultAudioSampler(node: base, sfxCoordinator: sfxCoordinator)
         
-        super.init(node: node, index: nil, gamedefs: gamedefs)
+        super.init(node: node, index: nil, gamedefs: gamedefs, alive: true, server: false)
         
         // use the team to set the collision category mask
         if let physicsNode = physicsNode, let physBody = physicsNode.physicsBody {
-            if team == .blue {
-                physBody.categoryBitMask = CollisionMask.catapultBlue.rawValue
-                physBody.collisionBitMask |= CollisionMask.catapultYellow.rawValue
-            } else if team == .yellow {
-                physBody.categoryBitMask = CollisionMask.catapultYellow.rawValue
-                physBody.collisionBitMask |= CollisionMask.catapultBlue.rawValue
+            if team == .teamA {
+                physBody.categoryBitMask = CollisionMask.catapultTeamA.rawValue
+                physBody.collisionBitMask |= CollisionMask.catapultTeamB.rawValue
+            } else if team == .teamB {
+                physBody.categoryBitMask = CollisionMask.catapultTeamB.rawValue
+                physBody.collisionBitMask |= CollisionMask.catapultTeamA.rawValue
             }
         }
     }

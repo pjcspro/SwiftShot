@@ -18,8 +18,8 @@ struct CollisionMask: OptionSet {
     static let ball = CollisionMask(rawValue: 4)
     static let phantom = CollisionMask(rawValue: 32)    // for detecting collisions with trigger volumes
     static let triggerVolume = CollisionMask(rawValue: 64)  // trigger behavior without affecting physics
-    static let catapultBlue = CollisionMask(rawValue: 128)
-    static let catapultYellow = CollisionMask(rawValue: 256)
+    static let catapultTeamA = CollisionMask(rawValue: 128)
+    static let catapultTeamB = CollisionMask(rawValue: 256)
 }
 
 extension GKEntity {
@@ -39,6 +39,7 @@ class GameObject: GKEntity {
     var isBlockObject = true
     var density: Float = 0.0
     var isAlive: Bool
+    var isServer: Bool
 
     static var indexCounter = 0
     var index = 0
@@ -50,7 +51,7 @@ class GameObject: GKEntity {
     }
 
     // init with index that can be used to replace an old node
-    init(node: SCNNode, index: Int?, gamedefs: [String: Any], alive: Bool = true) {
+    init(node: SCNNode, index: Int?, gamedefs: [String: Any], alive: Bool, server: Bool) {
         objectRootNode = node
         self.isAlive = alive
         
@@ -66,7 +67,8 @@ class GameObject: GKEntity {
         } else {
             geometryNode = nil
         }
-        
+
+        self.isServer = server
         super.init()
 
         if let physNode = node.findNodeWithPhysicsBody(),
@@ -80,14 +82,6 @@ class GameObject: GKEntity {
         if let def = node.name {
             initGameComponents(gamedefs: gamedefs, def: def)
         }
-    }
-    
-    convenience init(node: SCNNode) {
-        self.init(node: node, index: nil, gamedefs: [String: Any]())
-    }
-    
-    convenience init(node: SCNNode, gamedefs: [String: Any]) {
-        self.init(node: node, index: nil, gamedefs: gamedefs)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -288,6 +282,11 @@ class GameObject: GKEntity {
     }
 
     func setupWaypoints(value: Any) {
+        // only do animation waypoints on the server; clients will get
+        // their motion updates via physics sync
+        guard isServer else {
+            return
+        }
         if let properties = value as? [String: Any] {
             let animComponent = AnimWaypointComponent(node: objectRootNode, properties: properties)
             if animComponent.hasWaypoints {

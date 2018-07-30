@@ -10,16 +10,14 @@ import MultipeerConnectivity
 import simd
 import os.signpost
 
-private let locationKey = "LocationAttributeName"
-
-protocol GameSessionDelegate: class {
-    func gameSession(_ session: GameSession, received command: GameCommand)
-    func gameSession(_ session: GameSession, joining player: Player)
-    func gameSession(_ session: GameSession, leaving player: Player)
+protocol NetworkSessionDelegate: class {
+    func networkSession(_ session: NetworkSession, received command: GameCommand)
+    func networkSession(_ session: NetworkSession, joining player: Player)
+    func networkSession(_ session: NetworkSession, leaving player: Player)
 }
 
-/// - Tag: GameSession
-class GameSession: NSObject {
+/// - Tag: NetworkSession
+class NetworkSession: NSObject {
 
     let myself: Player
     private var peers: Set<Player> = []
@@ -28,8 +26,9 @@ class GameSession: NSObject {
     let session: MCSession
     var location: GameTableLocation?
     let host: Player
+    let appIdentifier: String
 
-    weak var delegate: GameSessionDelegate?
+    weak var delegate: NetworkSessionDelegate?
 
     private var serviceAdvertiser: MCNearbyServiceAdvertiser?
 
@@ -46,6 +45,10 @@ class GameSession: NSObject {
         self.isServer = asServer
         self.location = location
         self.host = host
+        // if the appIdentifier is missing from the main bundle, that's
+        // a significant build error and we should crash.
+        self.appIdentifier = Bundle.main.appIdentifier!
+        os_log("my appIdentifier is %s", self.appIdentifier)
         super.init()
         self.session.delegate = self
     }
@@ -55,11 +58,9 @@ class GameSession: NSObject {
         guard serviceAdvertiser == nil else { return } // already advertising
 
         os_log(.info, "ADVERTISING %@", myself.peerID)
-        let discoveryInfo: [String: String]?
+        var discoveryInfo: [String: String] = [SwiftShotGameAttribute.appIdentifier: appIdentifier]
         if let location = location {
-            discoveryInfo = [locationKey: String(location.identifier)]
-        } else {
-            discoveryInfo = nil
+            discoveryInfo[SwiftShotGameAttribute.location] = String(location.identifier)
         }
         let advertiser = MCNearbyServiceAdvertiser(peer: myself.peerID,
                                                    discoveryInfo: discoveryInfo,
@@ -155,7 +156,7 @@ class GameSession: NSObject {
             var bits = ReadableBitStream(data: data)
             let action = try Action(from: &bits)
             let command = GameCommand(player: player, action: action)
-            delegate?.gameSession(self, received: command)
+            delegate?.networkSession(self, received: command)
             if action.description != "physics" {
                 os_signpost(.event, log: .network_data_received, name: .network_action_received, signpostID: .network_data_received,
                             "Action : %s", action.description)
@@ -171,20 +172,20 @@ class GameSession: NSObject {
     }
 }
 
-/// - Tag: GameSession-MCSessionDelegate
-extension GameSession: MCSessionDelegate {
+/// - Tag: NetworkSession-MCSessionDelegate
+extension NetworkSession: MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         os_log(.info, "peer %@ state is now %d", peerID, state.rawValue)
         let player = Player(peerID: peerID)
         switch state {
         case .connected:
             peers.insert(player)
-            delegate?.gameSession(self, joining: player)
+            delegate?.networkSession(self, joining: player)
         case .connecting:
             break
         case.notConnected:
             peers.remove(player)
-            delegate?.gameSession(self, leaving: player)
+            delegate?.networkSession(self, leaving: player)
         }
     }
 
@@ -224,7 +225,7 @@ extension GameSession: MCSessionDelegate {
     }
 }
 
-extension GameSession: MCNearbyServiceAdvertiserDelegate {
+extension NetworkSession: MCNearbyServiceAdvertiserDelegate {
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser,
                     didReceiveInvitationFromPeer peerID: MCPeerID,
                     withContext context: Data?,

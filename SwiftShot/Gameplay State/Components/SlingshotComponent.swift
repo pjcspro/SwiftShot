@@ -8,7 +8,7 @@ Manages toggling physics behavior and user interaction for the slingshot.
 import Foundation
 import GameplayKit
 
-class SlingshotComponent: GKComponent, UpdatableComponent {
+class SlingshotComponent: GKComponent {
     var restPos: float3
     var currentPos: float3
     var vel: float3
@@ -36,9 +36,7 @@ class SlingshotComponent: GKComponent, UpdatableComponent {
         }
     }
     
-    func update(deltaTime seconds: TimeInterval, isServer: Bool) {
-        super.update(deltaTime: seconds)
-        
+    override func update(deltaTime seconds: TimeInterval) {
         if physicsMode {
             // add force in direction to rest point
             let offset = restPos - currentPos

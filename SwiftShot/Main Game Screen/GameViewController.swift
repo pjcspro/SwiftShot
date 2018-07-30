@@ -91,18 +91,22 @@ class GameViewController: UIViewController {
         didSet {
             guard oldValue != teamACatapultCount else { return }
 
-            for (index, catapultImage) in teamACatapultImages.enumerated() where index > teamACatapultCount {
-                catapultImage.isHighlighted = true
+            // The "highlighted" state actually means that the catapult has been disabled.
+            for (index, catapultImage) in teamACatapultImages.enumerated() {
+                let shouldAppear = index < teamACatapultCount
+                catapultImage.isHighlighted = !shouldAppear
             }
         }
     }
 
-    private var teamBCatapultCount = 0 {
+    private var teamBCatapultCountTemp = 0 {
         didSet {
-            guard oldValue != teamBCatapultCount else { return }
+            guard oldValue != teamBCatapultCountTemp else { return }
 
-            for (index, catapultImage) in teamBCatapultImages.enumerated() where index > teamBCatapultCount {
-                catapultImage.isHighlighted = true
+            // The "highlighted" state actually means that the catapult has been disabled.
+            for (index, catapultImage) in teamBCatapultImages.enumerated() {
+                let shouldAppear = index < teamBCatapultCountTemp
+                catapultImage.isHighlighted = !shouldAppear
             }
         }
     }
@@ -564,8 +568,8 @@ class GameViewController: UIViewController {
         gameManager.restWorld()
 
         if !UserDefaults.standard.disableInGameUI {
-            teamACatapultImages.forEach { $0.isHidden = false }
             teamBCatapultImages.forEach { $0.isHidden = false }
+            teamACatapultImages.forEach { $0.isHidden = false }
         }
 
         // stop ranging for beacons after placing board
@@ -614,7 +618,7 @@ class GameViewController: UIViewController {
         
         switch segueType {
         case .embeddedOverlay:
-            guard let overlayVC = segue.destination as? OverlayViewController else { return }
+            guard let overlayVC = segue.destination as? GameStartViewController else { return }
             overlayVC.delegate = self
             musicCoordinator.playMusic(name: "music_menu", fadeIn: 0.0)
         default:
@@ -868,15 +872,15 @@ extension GameViewController: GameManagerDelegate {
         DispatchQueue.main.async {
             if self.sessionState == .gameInProgress {
                 self.teamACatapultCount = gameState.teamACatapults
-                self.teamBCatapultCount = gameState.teamBCatapults
+                self.teamBCatapultCountTemp = gameState.teamBCatapults
             }
         }
     }
 }
 
-// MARK: - OverlayViewControllerDelegate
-extension GameViewController: OverlayViewControllerDelegate {
-    private func createGameManager(for session: GameSession?) {
+// MARK: - GameStartViewControllerDelegate
+extension GameViewController: GameStartViewControllerDelegate {
+    private func createGameManager(for session: NetworkSession?) {
         let level = UserDefaults.standard.selectedLevel
         selectedLevel = level
         gameManager = GameManager(sceneView: sceneView,
@@ -886,21 +890,21 @@ extension GameViewController: OverlayViewControllerDelegate {
                                   musicCoordinator: musicCoordinator)
     }
     
-    func overlayViewControllerSelectedSettings(_ overlayViewController: UIViewController) {
+    func gameStartViewControllerSelectedSettings(_ _: UIViewController) {
         performSegue(withIdentifier: GameSegue.showSettings.rawValue, sender: self)
     }
 
-    func overlayViewController(_ overlayViewController: UIViewController, didPressStartSoloGameButton: UIButton) {
+    func gameStartViewController(_ _: UIViewController, didPressStartSoloGameButton: UIButton) {
         hideOverlay()
         createGameManager(for: nil)
     }
     
-    func overlayViewController(_ overlayViewController: UIViewController, didStart game: GameSession) {
+    func gameStartViewController(_ _: UIViewController, didStart game: NetworkSession) {
         hideOverlay()
         createGameManager(for: game)
     }
     
-    func overlayViewController(_ overlayViewController: UIViewController, didSelect game: GameSession) {
+    func gameStartViewController(_ _: UIViewController, didSelect game: NetworkSession) {
         hideOverlay()
         createGameManager(for: game)
     }

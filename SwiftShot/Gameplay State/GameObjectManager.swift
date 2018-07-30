@@ -43,12 +43,9 @@ class GameObjectManager {
     }
     
     // MARK: - Shared Management
-    func update(deltaTime: TimeInterval, isServer: Bool) {
+    func update(deltaTime: TimeInterval) {
         for projectile in projectiles {
-            projectile.update()
-            for updatableComponent in projectile.components(conformingTo: UpdatableComponent.self) {
-                updatableComponent.update(deltaTime: deltaTime, isServer: isServer)
-            }
+            projectile.update(deltaTime: deltaTime)
         }
     }
 

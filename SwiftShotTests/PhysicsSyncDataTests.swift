@@ -26,10 +26,12 @@ class PhysicsSyncDataTests: XCTestCase {
         var nodeData = PhysicsNodeData()
         nodeData.isMoving = true
         nodeData.orientation = simd_quatf(ix: 1, iy: 1, iz: 1, r: 2)
+        nodeData.team = .teamA
 
         let newData = try roundTrip(nodeData)
 
         XCTAssertEqual(nodeData.isMoving, newData.isMoving)
+        XCTAssertEqual(nodeData.team, newData.team)
     }
 
     func testPhysicsPacket() throws {
@@ -41,18 +43,18 @@ class PhysicsSyncDataTests: XCTestCase {
         let nodes = [PhysicsNodeData](repeating: nodeData, count: 154)
 
         var poolData = nodeData
-        poolData.team = .yellow
+        poolData.team = .teamB
         let pools = [PhysicsNodeData](repeating: poolData, count: 30)
 
         let packet = PhysicsSyncData(packetNumber: 0, nodeData: nodes, projectileData: pools, soundData: [])
-        let action = Action.physics(packet)
+        let action = GameAction.physics(packet)
 
         var writeStream = WritableBitStream()
         try action.encode(to: &writeStream)
         let data = writeStream.packData()
 
         var readStream = ReadableBitStream(data: data)
-        let newAction = try Action(from: &readStream)
+        let newAction = try GameAction(from: &readStream)
 
         if case .physics(let newPacket) = newAction {
             XCTAssertEqual(packet.nodeData.count, newPacket.nodeData.count)

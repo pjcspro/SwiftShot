@@ -68,7 +68,7 @@ class Projectile: GameObject {
         physicsBody.contactTestBitMask = CollisionMask([.rigidBody, .glitterObject, .triggerVolume]).rawValue
         physicsBody.categoryBitMask = CollisionMask([.ball]).rawValue
         
-        super.init(node: node, index: index, gamedefs: gamedefs, alive: false)
+        super.init(node: node, index: index, gamedefs: gamedefs, alive: false, server: false)
         self.physicsNode = physicsNode
         self.physicsBody = physicsBody
     }
@@ -112,7 +112,8 @@ class Projectile: GameObject {
 
     }
 
-    func update() {
+    override func update(deltaTime: TimeInterval) {
+        super.update(deltaTime: deltaTime)
         // Projectile should fade and disappear after a while
         if age > lifeTime {
             objectRootNode.opacity = 1.0

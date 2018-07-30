@@ -18,8 +18,8 @@ struct GameState {
 
     mutating func add(_ catapult: Catapult) {
         switch catapult.team {
-        case .yellow: teamACatapults += 1
-        case .blue: teamBCatapults += 1
+        case .teamA: teamACatapults += 1
+        case .teamB: teamBCatapults += 1
         default: break
         }
     }
@@ -78,7 +78,7 @@ class GameManager: NSObject {
     private var gameCamera: GameCamera?
     private var gameLight: GameLight?
     
-    private let session: GameSession?
+    private let session: NetworkSession?
     private let sfxCoordinator: SFXCoordinator
     private let musicCoordinator: MusicCoordinator
     private let useWallClock: Bool
@@ -108,7 +108,7 @@ class GameManager: NSObject {
     let isNetworked: Bool
     let isServer: Bool
 
-    init(sceneView: SCNView, level: GameLevel, session: GameSession?,
+    init(sceneView: SCNView, level: GameLevel, session: NetworkSession?,
          audioEnvironment: AVAudioEnvironmentNode, musicCoordinator: MusicCoordinator) {
         
         // make our own scene instead of using the incoming one
@@ -203,14 +203,16 @@ class GameManager: NSObject {
                     "Action : %s", command.action.description)
         switch command.action {
         case .gameAction(let gameAction):
-            guard let player = command.player else { return }
-            interactionManager.handle(gameAction: gameAction, from: player)
+            if case let .physics(physicsData) = gameAction {
+                physicsSyncData.receive(packet: physicsData)
+            } else {
+                guard let player = command.player else { return }
+                interactionManager.handle(gameAction: gameAction, from: player)
+            }
         case .boardSetup(let boardAction):
             if let player = command.player {
                 delegate?.manager(self, received: boardAction, from: player)
             }
-        case .physics(let physicsData):
-            physicsSyncData.receive(packet: physicsData)
         case .startGameMusic(let timeData):
             // Start music at the correct place.
             if let player = command.player {
@@ -233,12 +235,10 @@ class GameManager: NSObject {
         flagSimulation.update(levelNode)
 #endif
         
-        gameObjectManager.update(deltaTime: timeDelta, isServer: isServer)
+        gameObjectManager.update(deltaTime: timeDelta)
 
         for entity in gameObjects {
-            for updatableComponent in entity.components(conformingTo: UpdatableComponent.self) {
-                updatableComponent.update(deltaTime: timeDelta, isServer: isServer)
-            }
+            entity.update(deltaTime: timeDelta)
         }
     }
 
@@ -321,7 +321,7 @@ class GameManager: NSObject {
         if isNetworked && physicsSyncData.isInitialized {
             if isServer {
                 let physicsData = physicsSyncData.generateData()
-                session?.send(action: .physics(physicsData))
+                session?.send(action: .gameAction(.physics(physicsData)))
             } else {
                 physicsSyncData.updateFromReceivedData()
             }
@@ -588,21 +588,21 @@ class GameManager: NSObject {
                 
                 if let physicsNode = gameObject.physicsNode,
                     let physicsBody = physicsNode.physicsBody {
-                        physicsBody.angularDamping = 0.03
-                        physicsBody.damping = 0.03
-                        physicsBody.mass = 3
-                        physicsBody.linearSleepingThreshold = 1.0
-                        physicsBody.angularSleepingThreshold = 1.0
-                        physicsBody.collisionBitMask |= CollisionMask([.ball]).rawValue
+                    physicsBody.angularDamping = 0.03
+                    physicsBody.damping = 0.03
+                    physicsBody.mass = 3
+                    physicsBody.linearRestingThreshold = 1.0
+                    physicsBody.angularRestingThreshold = 1.0
+                    physicsBody.collisionBitMask |= CollisionMask([.ball]).rawValue
                     
-                        let density = gameObject.density
-                        if density > 0 {
-                            physicsNode.calculateMassFromDensity(name: name, density: density)
-                        }
-                        physicsBody.resetTransform()
-                        if physicsBody.allowsResting {
-                            physicsBody.setResting(true)
-                        }
+                    let density = gameObject.density
+                    if density > 0 {
+                        physicsNode.calculateMassFromDensity(name: name, density: density)
+                    }
+                    physicsBody.resetTransform()
+                    if physicsBody.allowsResting {
+                        physicsBody.setResting(true)
+                    }
                 }
             }
         
@@ -752,7 +752,7 @@ class GameManager: NSObject {
     }
 
     func initGameObject(for node: SCNNode) -> GameObject {
-        let gameObject = GameObject(node: node, gamedefs: gamedefs)
+        let gameObject = GameObject(node: node, index: nil, gamedefs: gamedefs, alive: true, server: isServer)
         
         gameObjects.insert(gameObject)
         setupAudioComponent(for: gameObject)
@@ -918,8 +918,8 @@ class GameManager: NSObject {
     }
 }
 
-extension GameManager: GameSessionDelegate {
-    func gameSession(_ session: GameSession, received command: GameCommand) {
+extension GameManager: NetworkSessionDelegate {
+    func networkSession(_ session: NetworkSession, received command: GameCommand) {
         commandsLock.lock(); defer { commandsLock.unlock() }
         // Check if the action received is used to setup the board
         // If so, process it and don't wait for the next update cycle to unqueue the event
@@ -931,7 +931,7 @@ extension GameManager: GameSessionDelegate {
         }
     }
     
-    func gameSession(_ session: GameSession, joining player: Player) {
+    func networkSession(_ session: NetworkSession, joining player: Player) {
         if player == session.host {
             delegate?.manager(self, joiningHost: player)
         } else {
@@ -939,7 +939,7 @@ extension GameManager: GameSessionDelegate {
         }
     }
     
-    func gameSession(_ session: GameSession, leaving player: Player) {
+    func networkSession(_ session: NetworkSession, leaving player: Player) {
         if player == session.host {
             delegate?.manager(self, leavingHost: player)
         } else {
@@ -954,8 +954,9 @@ extension GameManager: CatapultDelegate {
             sfxCoordinator.playCatapultBreak(catapult: catapult, vortex: vortex)
         }
         gameObjectManager.addBlockObject(block: catapult)
-        gameState.teamACatapults = catapults.filter { $0.team == .yellow && !$0.disabled }.count
-        gameState.teamBCatapults = catapults.filter { $0.team == .blue && !$0.disabled }.count
+        gameState.teamACatapults = catapults.filter { $0.team == .teamA && !$0.disabled }.count
+        gameState.teamBCatapults = catapults.filter { $0.team == .teamB && !$0.disabled }.count
+        os_log(.info, "Sending new gameState %s", "\(gameState)")
         delegate?.manager(self, updated: gameState)
     }
 

@@ -17,7 +17,7 @@ struct Waypoint {
 
 let waypoint_prefix = "_waypoint"
 
-class AnimWaypointComponent: GKComponent, UpdatableComponent {
+class AnimWaypointComponent: GKComponent {
     private var wayPoints: [Waypoint] = []
     private var speed: Double = 1.0
     private var currentTime: TimeInterval = 0.0
@@ -135,34 +135,30 @@ class AnimWaypointComponent: GKComponent, UpdatableComponent {
     
     // MARK: - UpdatableComponent
     func update(deltaTime seconds: TimeInterval, isServer: Bool) {
-        super.update(deltaTime: seconds)
-        
-        // because animations are on kinematic physics objects, we only update on the server
-        // all clients will get updates through the physics sync
-        if !isServer {
-            return
-        }
-        
+        self.update(deltaTime: seconds)
+    }
+
+    override func update(deltaTime seconds: TimeInterval) {
         currentTime += TimeInterval(seconds)
         calcCurrentFrameIndex()
-        
+
         var alpha = Float((currentTime - wayPoints[currentFrame].time) / (wayPoints[currentFrame + 1].time - wayPoints[currentFrame].time))
         alpha = clamp(alpha, 0.0, 1.0)
-        
+
         let curPos = wayPoints[currentFrame].pos
         let curTan = wayPoints[currentFrame].tangent
         let curRot = wayPoints[currentFrame].rot
         let nextPos = wayPoints[currentFrame + 1].pos
         let nextTan = wayPoints[currentFrame + 1].tangent
         let nextRot = wayPoints[currentFrame + 1].rot
-        
+
         let newPosX = hermiteCurve(pos1: curPos.x, pos2: nextPos.x, tangent1: curTan.x, tangent2: nextTan.x, time: alpha)
         let newPosY = hermiteCurve(pos1: curPos.y, pos2: nextPos.y, tangent1: curTan.y, tangent2: nextTan.y, time: alpha)
         let newPosZ = hermiteCurve(pos1: curPos.z, pos2: nextPos.z, tangent1: curTan.z, tangent2: nextTan.z, time: alpha)
         let newQuat = simd_slerp(curRot, nextRot, alpha)
         node.simdWorldPosition = float3(newPosX, newPosY, newPosZ)
         node.simdWorldOrientation = newQuat
-        
+
         // update child rigid bodies to percolate into physics
         guard let entity = entity as? GameObject else { return }
         if let physicsNode = entity.physicsNode, let physicsBody = physicsNode.physicsBody {

@@ -76,9 +76,9 @@ extension SCNNode {
         var parent = self.parent
         while let current = parent {
             if current.name == "_teamA" {
-                return .blue
+                return .teamA
             } else if current.name == "_teamB" {
-                return .yellow // red?
+                return .teamB
             }
             parent = current.parent
         }

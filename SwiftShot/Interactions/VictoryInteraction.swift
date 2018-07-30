@@ -36,7 +36,7 @@ class VictoryInteraction: Interaction {
         delegate.addNodeToLevel(victoryNode)
         victoryNode.simdWorldPosition = float3(0.0, 15.0, 0.0)
         
-        victoryNode.simdEulerAngles.y = teamWon == .blue ? .pi : 0.0 // Rotate Victory to face in the right direction
+        victoryNode.simdEulerAngles.y = teamWon == .teamA ? .pi : 0.0 // Rotate Victory to face in the right direction
         for child in victoryNode.childNodes {
             child.physicsBody?.resetTransform()
         }
@@ -85,9 +85,9 @@ class VictoryInteraction: Interaction {
         if teamToCatapultCount[1] == 0 && teamToCatapultCount[2] == 0 {
             teamWon = .none
         } else if teamToCatapultCount[1] == 0 {
-            teamWon = .yellow
+            teamWon = .teamB
         } else if teamToCatapultCount[2] == 0 {
-            teamWon = .blue
+            teamWon = .teamA
         } else {
             gameDone = false
         }

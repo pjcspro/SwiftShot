@@ -12,7 +12,7 @@ class NetworkGameBrowserViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
 
-    var session: GameSession?
+    var session: NetworkSession?
 
     // must be set by parent
     var browser: GameBrowser? {
@@ -45,7 +45,7 @@ class NetworkGameBrowserViewController: UIViewController {
             os_log(.error, "could not join game")
             return
         }
-        guard let parent = parent as? OverlayViewController else { fatalError("unexpected parent") }
+        guard let parent = parent as? GameStartViewController else { fatalError("unexpected parent") }
         parent.joinGame(session: session)
     }
     var games: [NetworkGame] = []

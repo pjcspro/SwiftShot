@@ -8,7 +8,7 @@ Smooths correction of physics state from network sync vs local simulation.
 import Foundation
 import GameplayKit
 
-class GamePhysicsSmoothComponent: GKComponent, UpdatableComponent {
+class GamePhysicsSmoothComponent: GKComponent {
     let physicsNode: SCNNode
     let geometryNode: SCNNode
     let smoothStrength: Float = 0.2
@@ -85,8 +85,7 @@ class GamePhysicsSmoothComponent: GKComponent, UpdatableComponent {
         }
     }
     
-    func update(deltaTime seconds: TimeInterval, isServer: Bool) {
-        super.update(deltaTime: seconds)
+    override func update(deltaTime seconds: TimeInterval) {
         updateSmooth(deltaTime: seconds)
     }
     

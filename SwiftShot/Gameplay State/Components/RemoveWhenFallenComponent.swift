@@ -8,8 +8,8 @@ Removes nodes from the scene when they fall out of bounds.
 import GameplayKit
 import os.log
 
-class RemoveWhenFallenComponent: GKComponent, UpdatableComponent {
-    func update(deltaTime seconds: TimeInterval, isServer: Bool) {
+class RemoveWhenFallenComponent: GKComponent {
+    override func update(deltaTime seconds: TimeInterval) {
         guard GameTime.frameCount % 6 != 0 else { return }
         guard let gameObject = entity as? GameObject else { return }
         guard let physicsNode = gameObject.physicsNode else { return }

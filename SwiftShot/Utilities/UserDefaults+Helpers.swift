@@ -57,7 +57,7 @@ extension UserDefaults {
         // worldMap is used insead.
         case manual = 2
     }
-    
+
     static let applicationDefaults: [String: Any] = [
         UserDefaultsKeys.spectator: false,
         UserDefaultsKeys.musicVolume: 0.0,

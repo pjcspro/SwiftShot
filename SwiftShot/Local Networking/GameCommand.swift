@@ -328,6 +328,8 @@ enum GameAction {
     case catapultKnockOut(HitCatapult)
     case leverMove(LeverMove)
 
+    case physics(PhysicsSyncData)
+
     private enum CodingKey: UInt32, CaseIterable {
         case oneHitKOAnimate
         
@@ -342,6 +344,8 @@ enum GameAction {
         case knockoutSync
         case hitCatapult
         case leverMove
+
+        case physicsSyncData
     }
 }
 
@@ -382,6 +386,10 @@ extension GameAction: BitStreamCodable {
         case .leverMove:
             let data = try LeverMove(from: &bitStream)
             self = .leverMove(data)
+
+        case .physicsSyncData:
+            let data = try PhysicsSyncData(from: &bitStream)
+            self = .physics(data)
         }
     }
 
@@ -418,6 +426,9 @@ extension GameAction: BitStreamCodable {
         case .leverMove(let data):
             bitStream.appendEnum(CodingKey.leverMove)
             try data.encode(to: &bitStream)
+        case .physics(let data):
+            bitStream.appendEnum(CodingKey.physicsSyncData)
+            data.encode(to: &bitStream)
         }
     }
 }
@@ -466,7 +477,6 @@ extension StartGameMusicTime: CustomDebugStringConvertible {
 enum Action {
     case gameAction(GameAction)
     case boardSetup(BoardSetupAction)
-    case physics(PhysicsSyncData)
     case startGameMusic(StartGameMusicTime)
 }
 
@@ -474,7 +484,6 @@ extension Action: BitStreamCodable {
     private enum CodingKey: UInt32, CaseIterable {
         case gameAction
         case boardSetup
-        case physics
         case startGameMusic
     }
 
@@ -486,9 +495,6 @@ extension Action: BitStreamCodable {
         case .boardSetup(let boardSetup):
             bitStream.appendEnum(CodingKey.boardSetup)
             boardSetup.encode(to: &bitStream)
-        case .physics(let physicsData):
-            bitStream.appendEnum(CodingKey.physics)
-            physicsData.encode(to: &bitStream)
         case .startGameMusic(let timeData):
             bitStream.appendEnum(CodingKey.startGameMusic)
             timeData.encode(to: &bitStream)
@@ -504,9 +510,6 @@ extension Action: BitStreamCodable {
         case .boardSetup:
             let boardAction = try BoardSetupAction(from: &bitStream)
             self = .boardSetup(boardAction)
-        case .physics:
-            let physics = try PhysicsSyncData(from: &bitStream)
-            self = .physics(physics)
         case .startGameMusic:
             let timeData = try StartGameMusicTime(from: &bitStream)
             self = .startGameMusic(timeData)
