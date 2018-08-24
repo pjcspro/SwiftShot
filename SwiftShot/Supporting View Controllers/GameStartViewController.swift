@@ -21,6 +21,7 @@ enum GameSegue: String {
     case embeddedOverlay
     case showSettings
     case levelSelector
+    case worldMapSelector
 }
 
 class GameStartViewController: UIViewController {

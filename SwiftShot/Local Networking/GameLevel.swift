@@ -9,20 +9,30 @@ import Foundation
 import SceneKit
 
 private let levelsPath = "gameassets.scnassets/levels/"
+private let defaultSize = CGSize(width: 1.5, height: 2.7)
+private let defaultLevelName = "gateway"
+private let levelStrings = "levels"
 
 class GameLevel {
     
-    enum Key: String {
-        case gateway
-        case bridge
-        case farm
-        case archFort
-        case towers
+    struct Definition: Codable {
+        let key: String
+        let identifier: String
+        var name: String {
+            return NSLocalizedString(self.key,
+                                     tableName: levelStrings,
+                                     bundle: Bundle.main,
+                                     value: self.key,
+                                     comment: "Please make sure all strings from levels.strings are translated")
+        }
     }
     
-    let key: Key
-    let name: String
-    let identifier: String
+    static let defaultLevel = GameLevel.level(for: defaultLevelName)!
+
+    private let definition: Definition
+    var key: String { return definition.key }
+    var  name: String { return definition.name }
+    var identifier: String { return definition.identifier }
     
     // Size of the level in meters
     let targetSize: CGSize
@@ -94,27 +104,29 @@ class GameLevel {
     
     var path: String { return levelsPath + identifier }
     
-    static let gateway = GameLevel(key: .gateway, name: "Gateway", identifier: "level_gateway", targetSize: CGSize(width: 1.5, height: 2.7))
-    static let bridge = GameLevel(key: .bridge, name: "Bridge", identifier: "level_bridge", targetSize: CGSize(width: 1.5, height: 2.7))
-    static let farm = GameLevel(key: .farm, name: "Farm", identifier: "level_farm", targetSize: CGSize(width: 1.5, height: 2.7))
-    static let archFort = GameLevel(key: .archFort, name: "Fort", identifier: "level_archFort", targetSize: CGSize(width: 1.5, height: 2.7))
-    static let towers = GameLevel(key: .towers, name: "Towers", identifier: "level_towers", targetSize: CGSize(width: 1.5, height: 2.7))
+    static var allLevels: [GameLevel] = {
+        guard let url = Bundle.main.url(forResource: "gameassets.scnassets/data/levels", withExtension: "json") else {
+            fatalError("Could not find levels.json")
+        }
+        do {
+            let data = try Data(contentsOf: url)
+            let definitions = try JSONDecoder().decode([Definition].self, from: data)
+            return definitions.map { GameLevel(definition: $0) }
+        } catch {
+            fatalError("Could not find level information at \(url): \(error.localizedDescription)")
+        }
+    }()
     
-    static let defaultLevel = gateway
-    static let allLevels = [gateway, bridge, farm, archFort, towers]
-    
-    init(key: Key, name: String, identifier: String, targetSize: CGSize) {
-        self.key = key
-        self.name = name
-        self.identifier = identifier
-        self.targetSize = targetSize
+    private init(definition: Definition) {
+        self.definition = definition
+        self.targetSize = defaultSize
     }
     
     static func level(at index: Int) -> GameLevel? {
         return index < allLevels.count ? allLevels[index] : nil
     }
     
-    static func level(for key: Key) -> GameLevel? {
+    static func level(for key: String) -> GameLevel? {
         return allLevels.first(where: { $0.key == key })
     }
     

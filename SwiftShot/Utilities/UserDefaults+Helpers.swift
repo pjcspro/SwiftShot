@@ -141,15 +141,14 @@ extension UserDefaults {
     var selectedLevel: GameLevel {
         get {
             if let levelName = string(forKey: UserDefaultsKeys.selectedLevel),
-                let key = GameLevel.Key(rawValue: levelName),
-                let level = GameLevel.level(for: key) {
+                let level = GameLevel.level(for: levelName) {
                 return level
             } else {
                 return GameLevel.defaultLevel
             }
         }
         set {
-            set(newValue.key.rawValue, forKey: UserDefaultsKeys.selectedLevel)
+            set(newValue.key, forKey: UserDefaultsKeys.selectedLevel)
         }
     }
 

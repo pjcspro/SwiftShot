@@ -201,15 +201,7 @@ extension GameViewController {
             }
         }
     }
-    
-    @IBAction func loadPressed(_ sender: Any) {
-        let typeIdentifier = Bundle.main.bundleIdentifier! + ".worldmap"
-        let picker = UIDocumentPickerViewController(documentTypes: [typeIdentifier], in: .open)
-        picker.allowsMultipleSelection = false
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
-    }
-    
+
     private func showSaveDialog(for data: Data) {
         let dialog = UIAlertController(title: "Save World Map", message: nil, preferredStyle: .alert)
         dialog.addTextField(configurationHandler: nil)
@@ -276,18 +268,17 @@ extension GameViewController {
     }
 }
 
-extension GameViewController: UIDocumentPickerDelegate {
-    
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        os_log(.info, "Selected external WorldMap")
-        guard let selected = urls.first else { return }
-        fetchArchivedWorldMap(from: selected, { data, error in
+// MARK: - WorldMapSelectorDelegate
+extension GameViewController: WorldMapSelectorDelegate {
+    func worldMapSelector(_ worldMapSelector: WorldMapSelectorViewController, selectedMap: URL) {
+        os_log(.info, "loading saved map %s", selectedMap.lastPathComponent)
+        fetchArchivedWorldMap(from: selectedMap) { data, error in
             if let error = error {
-                os_log(.error, "Failed to load the external WorldMap! %s", "\(error)")
+                os_log(.error, "Failed to load saved map %s: %s", selectedMap.lastPathComponent, "\(error)")
                 return
             }
-            guard let data = data else { os_log(.error, "No data received while loading an external WorldMap"); return }
+            guard let data = data else { os_log(.error, "No data received while loading %s", selectedMap.lastPathComponent); return }
             self.loadWorldMap(from: data)
-        })
+        }
     }
 }

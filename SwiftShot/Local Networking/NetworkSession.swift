@@ -16,6 +16,10 @@ protocol NetworkSessionDelegate: class {
     func networkSession(_ session: NetworkSession, leaving player: Player)
 }
 
+// kMCSessionMaximumNumberOfPeers is the maximum number in a session; because we only track
+// others and not ourself, decrement the constant for our purposes.
+private let maxPeers = kMCSessionMaximumNumberOfPeers - 1
+
 /// - Tag: NetworkSession
 class NetworkSession: NSObject {
 
@@ -31,13 +35,6 @@ class NetworkSession: NSObject {
     weak var delegate: NetworkSessionDelegate?
 
     private var serviceAdvertiser: MCNearbyServiceAdvertiser?
-
-    private lazy var encoder: PropertyListEncoder = {
-        let encoder = PropertyListEncoder()
-        encoder.outputFormat = .binary
-        return encoder
-    }()
-    private lazy var decoder = PropertyListDecoder()
 
     init(myself: Player, asServer: Bool, location: GameTableLocation?, host: Player) {
         self.myself = myself
@@ -187,6 +184,13 @@ extension NetworkSession: MCSessionDelegate {
             peers.remove(player)
             delegate?.networkSession(self, leaving: player)
         }
+        // on the server, check to see if we're at the max number of players
+        guard isServer else { return }
+        if peers.count >= maxPeers {
+            stopAdvertising()
+        } else {
+            startAdvertising()
+        }
     }
 
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -230,7 +234,12 @@ extension NetworkSession: MCNearbyServiceAdvertiserDelegate {
                     didReceiveInvitationFromPeer peerID: MCPeerID,
                     withContext context: Data?,
                     invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        os_log(.info, "got request from %@, accepting!", peerID)
-        invitationHandler(true, session)
+        if peers.count >= maxPeers {
+            os_log(.error, "game full, refusing connection from %@", peerID)
+            invitationHandler(false, nil)
+        } else {
+            os_log(.info, "accepting request from %@", peerID)
+            invitationHandler(true, session)
+        }
     }
 }

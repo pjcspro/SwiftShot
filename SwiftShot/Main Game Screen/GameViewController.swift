@@ -559,6 +559,8 @@ class GameViewController: UIViewController {
 
         os_signpost(.begin, log: .setup_level, name: .setup_level, signpostID: .setup_level,
                     "Setting up Level")
+        defer { os_signpost(.end, log: .setup_level, name: .setup_level, signpostID: .setup_level,
+                            "Finished Setting Up Level") }
 
         sessionState = .gameInProgress
         
@@ -579,9 +581,6 @@ class GameViewController: UIViewController {
                 gameManager.updateSessionLocation(location)
             }
         }
-
-        os_signpost(.end, log: .setup_level, name: .setup_level, signpostID: .setup_level,
-                    "Finished Setting Up Level")
     }
 
     func sendWorldTo(peer: Player) {
@@ -621,6 +620,9 @@ class GameViewController: UIViewController {
             guard let overlayVC = segue.destination as? GameStartViewController else { return }
             overlayVC.delegate = self
             musicCoordinator.playMusic(name: "music_menu", fadeIn: 0.0)
+        case .worldMapSelector:
+            guard let selectorVC = segue.destination as? WorldMapSelectorViewController else { return }
+            selectorVC.delegate = self
         default:
             break
         }
@@ -909,4 +911,3 @@ extension GameViewController: GameStartViewControllerDelegate {
         createGameManager(for: game)
     }
 }
-

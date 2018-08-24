@@ -201,6 +201,9 @@ class GameManager: NSObject {
     private func process(command: GameCommand) {
         os_signpost(.begin, log: .render_loop, name: .process_command, signpostID: .render_loop,
                     "Action : %s", command.action.description)
+        defer { os_signpost(.end, log: .render_loop, name: .process_command, signpostID: .render_loop,
+                            "Action : %s", command.action.description) }
+
         switch command.action {
         case .gameAction(let gameAction):
             if case let .physics(physicsData) = gameAction {
@@ -219,8 +222,6 @@ class GameManager: NSObject {
                 handleStartGameMusic(timeData, from: player)
             }
         }
-        os_signpost(.end, log: .render_loop, name: .process_command, signpostID: .render_loop,
-                    "Action : %s", command.action.description)
     }
     
     // MARK: update
@@ -318,6 +319,9 @@ class GameManager: NSObject {
     private func syncPhysics() {
         os_signpost(.begin, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
                     "Physics sync started")
+        defer { os_signpost(.end, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
+                            "Physics sync finished") }
+
         if isNetworked && physicsSyncData.isInitialized {
             if isServer {
                 let physicsData = physicsSyncData.generateData()
@@ -326,9 +330,6 @@ class GameManager: NSObject {
                 physicsSyncData.updateFromReceivedData()
             }
         }
-        os_signpost(.end, log: .render_loop, name: .physics_sync, signpostID: .render_loop,
-                    "Physics sync finished")
-        
     }
     
     func playWinSound() {
@@ -370,6 +371,9 @@ class GameManager: NSObject {
         
         level.placeLevel(on: node, gameScene: scene, boardScale: gameBoard.scale.x)
         
+        // Initialize table box object
+        createTableTopOcclusionBox(level: levelNode)
+
         updateRenderTransform()
         
         if let activeLevel = level.activeLevel {
@@ -419,7 +423,6 @@ class GameManager: NSObject {
         // Initialize interactions that add objects to the level
         initializeInteractions()
 
-        tableBoxObject = addTableTopOcclusionBox(level: levelNode)
         physicsSyncData.delegate = self
         
         // Start advertising game
@@ -452,25 +455,13 @@ class GameManager: NSObject {
     // MARK: - Table Occlusion
 
     // Create an opaque object representing the table used to occlude falling objects
-    private func addTableTopOcclusionBox(level: SCNNode) -> GameObject {
-        let height: Float = 20
-        let tableBoxShape = SCNBox(width: 15, height: CGFloat(height), length: 27, chamferRadius: 0.01)
-        let tableBoxNode = SCNNode(geometry: tableBoxShape)
+    private func createTableTopOcclusionBox(level: SCNNode) {
+        guard let tableBoxNode = scene.rootNode.childNode(withName: "OcclusionBox", recursively: true) else {
+            fatalError("Table node not found")
+        }
         
-        tableBoxNode.setNodeToOccluder()
-        level.addChildNode(tableBoxNode)
-        tableBoxNode.simdPosition = float3(0.0, -height * 0.5 - 0.05, 0.0) // avoid z-fight with ShadowPlane
-        
-        // scale up the physics shape scale so that objects land on the shadow plane
-        let physicsShape = SCNPhysicsShape(geometry: tableBoxShape, options: [.scale: 1.0025])
-        let physicsBody = SCNPhysicsBody(type: .static, shape: physicsShape)
-        physicsBody.contactTestBitMask = CollisionMask([.ball, .rigidBody]).rawValue
-        tableBoxNode.physicsBody = physicsBody
-        tableBoxNode.name = "table"
-
         // make a table object so we can attach audio component to it
-        let tableObject = initGameObject(for: tableBoxNode)
-        return tableObject
+        tableBoxObject = initGameObject(for: tableBoxNode)
     }
 
     // MARK: - Initialize Game Functions
@@ -533,7 +524,7 @@ class GameManager: NSObject {
             
             physicsSyncData.addObject(catapult)
 
-        case "ShadowPlane":
+        case "ShadowPlane", "OcclusionBox":
             // don't add a game object, but don't visit it either
             return
             
@@ -992,7 +983,6 @@ extension GameManager: InteractionDelegate {
     }
     
     func removeTableBoxNodeFromLevel() {
-        tableBoxObject?.objectRootNode.removeFromParentNode()
         guard let shadowPlane = levelNode.childNode(withName: "ShadowPlane", recursively: true) else { return }
         shadowPlane.runAction(.fadeOut(duration: 0.5))
     }

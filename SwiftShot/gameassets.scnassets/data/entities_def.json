@@ -12,7 +12,9 @@
                 "maximumImpulse": 2.5,
                 "velocityMinimum": 45,
                 "velocityMaximum": 127,
-                "collision": true
+                "collision": true,
+                "pooled": true,
+                "poolCount": 10,
             }
         },
         "block_boxA":{
@@ -50,6 +52,8 @@
                 "velocityMinimum": 40,
                 "velocityMaximum": 127,
                 "collision": true,
+                "pooled": true,
+                "poolCount": 4
             },
         },
         // a light above the table

@@ -57,9 +57,9 @@ class GameAudioComponent: GKComponent, CollisionHandlerComponent, TouchableCompo
 
         let names = [node.name, otherNode.name]
         let withBall = names.contains("ball")
-        let withTable = names.contains("table")
+        let withTable = names.contains("OcclusionBox")
 
-        if node.name == "table" {
+        if node.name == "OcclusionBox" {
             // don't play any sounds on the table.
             return
         }
