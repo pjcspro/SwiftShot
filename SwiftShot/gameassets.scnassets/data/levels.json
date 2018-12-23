@@ -19,5 +19,9 @@
     {
         "key": "towers",
         "identifier": "level_towers"
+    },
+    {
+        "key": "practice 1",
+        "identifier": "practice1"
     }
 ]

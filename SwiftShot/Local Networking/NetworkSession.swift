@@ -31,17 +31,19 @@ class NetworkSession: NSObject {
     var location: GameTableLocation?
     let host: Player
     let appIdentifier: String
-
+    var level: GameLevel
+    
     weak var delegate: NetworkSessionDelegate?
 
     private var serviceAdvertiser: MCNearbyServiceAdvertiser?
 
-    init(myself: Player, asServer: Bool, location: GameTableLocation?, host: Player) {
+    init(myself: Player, asServer: Bool, location: GameTableLocation?, host: Player, level: GameLevel? = UserDefaults.standard.selectedLevel) {
         self.myself = myself
         self.session = MCSession(peer: myself.peerID, securityIdentity: nil, encryptionPreference: .required)
         self.isServer = asServer
         self.location = location
         self.host = host
+        self.level = level ?? UserDefaults.standard.selectedLevel
         // if the appIdentifier is missing from the main bundle, that's
         // a significant build error and we should crash.
         self.appIdentifier = Bundle.main.appIdentifier!

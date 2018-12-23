@@ -883,7 +883,7 @@ extension GameViewController: GameManagerDelegate {
 // MARK: - GameStartViewControllerDelegate
 extension GameViewController: GameStartViewControllerDelegate {
     private func createGameManager(for session: NetworkSession?) {
-        let level = UserDefaults.standard.selectedLevel
+        let level = session?.level ?? UserDefaults.standard.selectedLevel
         selectedLevel = level
         gameManager = GameManager(sceneView: sceneView,
                                   level: level,

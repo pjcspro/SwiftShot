@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -464,6 +464,20 @@
                                     <action selector="joinButtonPressed:" destination="WqM-N9-aRJ" eventType="touchUpInside" id="iSv-EX-eFO"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lWx-Ql-NCp">
+                                <rect key="frame" x="195" y="493" width="164" height="60"/>
+                                <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="qLR-UA-3tP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Practice">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="practiceButtonPressed:" destination="WqM-N9-aRJ" eventType="touchUpInside" id="mYs-2w-rWx"/>
+                                </connections>
+                            </button>
                             <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5KK-An-e0p">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="VQs-Aa-OkL">
@@ -527,6 +541,7 @@
                             <constraint firstItem="5KK-An-e0p" firstAttribute="bottom" secondItem="s9r-SZ-cwA" secondAttribute="bottom" id="8oG-K6-MFw"/>
                             <constraint firstItem="Q5q-2i-fZT" firstAttribute="leading" secondItem="t2Q-gl-UIr" secondAttribute="trailing" constant="8" id="BDH-i6-Jn7"/>
                             <constraint firstItem="Yhz-CT-xyf" firstAttribute="top" secondItem="s9r-SZ-cwA" secondAttribute="top" constant="15" id="E9A-lf-meU"/>
+                            <constraint firstItem="lWx-Ql-NCp" firstAttribute="width" secondItem="Q2e-w6-mur" secondAttribute="width" id="EID-99-1Va"/>
                             <constraint firstItem="YQp-L8-g0c" firstAttribute="top" secondItem="s9r-SZ-cwA" secondAttribute="topMargin" constant="20" id="Eer-lt-amm"/>
                             <constraint firstItem="Q2e-w6-mur" firstAttribute="centerY" secondItem="blE-xz-CCY" secondAttribute="centerY" id="GFf-mC-T22"/>
                             <constraint firstItem="t2Q-gl-UIr" firstAttribute="bottom" secondItem="uqo-l6-bMm" secondAttribute="top" constant="-30" id="JPY-AR-vRg"/>
@@ -541,9 +556,11 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="46"/>
                             </constraint>
                             <constraint firstItem="Q2e-w6-mur" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dge-yI-GAI" secondAttribute="trailing" constant="8" symbolic="YES" id="RPQ-la-cdC"/>
+                            <constraint firstItem="Q2e-w6-mur" firstAttribute="top" secondItem="lWx-Ql-NCp" secondAttribute="bottom" constant="20" id="SLz-oX-NL8"/>
                             <constraint firstItem="5KK-An-e0p" firstAttribute="leading" secondItem="s9r-SZ-cwA" secondAttribute="leading" id="UTn-x2-3Wj"/>
                             <constraint firstItem="VTu-EF-i8X" firstAttribute="trailing" secondItem="s9r-SZ-cwA" secondAttribute="trailing" id="UVy-ej-YS2"/>
                             <constraint firstItem="5KK-An-e0p" firstAttribute="trailing" secondItem="s9r-SZ-cwA" secondAttribute="trailing" id="alx-GE-dd8"/>
+                            <constraint firstItem="lWx-Ql-NCp" firstAttribute="trailing" secondItem="Q2e-w6-mur" secondAttribute="trailing" id="bfz-C7-dh4"/>
                             <constraint firstItem="Q2e-w6-mur" firstAttribute="leading" secondItem="s9r-SZ-cwA" secondAttribute="centerX" constant="7.5" id="cg4-vv-bjT">
                                 <variation key="heightClass=regular-widthClass=regular" constant="11"/>
                             </constraint>
@@ -571,6 +588,7 @@
                         <outlet property="hostButton" destination="Q2e-w6-mur" id="f3h-Vz-TmJ"/>
                         <outlet property="joinButton" destination="blE-xz-CCY" id="Yaz-KW-nVF"/>
                         <outlet property="nearbyGamesLabel" destination="t2Q-gl-UIr" id="XsV-l3-5iB"/>
+                        <outlet property="practiceButton" destination="lWx-Ql-NCp" id="NLf-tF-v2R"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cdn-Wu-e0I" userLabel="First Responder" sceneMemberID="firstResponder"/>

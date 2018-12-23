@@ -11,6 +11,7 @@ import SceneKit
 private let levelsPath = "gameassets.scnassets/levels/"
 private let defaultSize = CGSize(width: 1.5, height: 2.7)
 private let defaultLevelName = "gateway"
+private let defaultPracticeName = "practice 1"
 private let levelStrings = "levels"
 
 class GameLevel {
@@ -28,7 +29,8 @@ class GameLevel {
     }
     
     static let defaultLevel = GameLevel.level(for: defaultLevelName)!
-
+    static let practiceLevel = GameLevel.level(for: defaultPracticeName)!
+    
     private let definition: Definition
     var key: String { return definition.key }
     var  name: String { return definition.name }

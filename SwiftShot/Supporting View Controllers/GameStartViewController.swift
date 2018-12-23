@@ -30,6 +30,7 @@ class GameStartViewController: UIViewController {
     @IBOutlet weak var hostButton: UIButton!
     @IBOutlet weak var joinButton: UIButton!
     @IBOutlet weak var backButton: UIButton!
+    @IBOutlet weak var practiceButton: UIButton!
     @IBOutlet weak var browserContainerView: UIView!
     @IBOutlet weak var blurView: UIVisualEffectView!
     @IBOutlet weak var nearbyGamesLabel: UILabel!
@@ -50,6 +51,10 @@ class GameStartViewController: UIViewController {
         
         joinButton.clipsToBounds = true
         joinButton.layer.cornerRadius = 30.0
+        
+        
+        practiceButton.clipsToBounds = true
+        practiceButton.layer.cornerRadius = 30.0
 
         buttonBeep = ButtonBeep(name: "button_forward.wav", volume: 0.5)
         backButtonBeep = ButtonBeep(name: "button_backward.wav", volume: 0.5)
@@ -106,6 +111,12 @@ class GameStartViewController: UIViewController {
         showViews(forSetup: false)
     }
     
+    
+    @IBAction func practiceButtonPressed(_ sender: Any) {
+        buttonBeep.play()
+        startGame(with: myself, gameLevel: GameLevel.practiceLevel)
+    }
+    
     @IBAction func backButtonPressed(_ sender: Any) {
         backButtonBeep.play()
         setupOverlayVC()
@@ -127,7 +138,7 @@ class GameStartViewController: UIViewController {
         }, completion: nil)
     }
     
-    func startGame(with player: Player) {
+    func startGame(with player: Player, gameLevel: GameLevel? = nil) {
         let location: GameTableLocation?
         if UserDefaults.standard.gameRoomMode {
             location = proximityManager.closestLocation
@@ -135,7 +146,7 @@ class GameStartViewController: UIViewController {
             location = nil
         }
         
-        let gameSession = NetworkSession(myself: player, asServer: true, location: location, host: myself)
+        let gameSession = NetworkSession(myself: player, asServer: true, location: location, host: myself, level: gameLevel)
         delegate?.gameStartViewController(self, didStart: gameSession)
         setupOverlayVC()
     }
