@@ -533,7 +533,7 @@
                                         <rect key="frame" x="20" y="258" width="335" height="379"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
-                                            <segue destination="pxQ-Hh-zw9" kind="embed" id="z9E-Vh-hY7"/>
+                                            <segue destination="pxQ-Hh-zw9" kind="embed" identifier="multiplayerCard" id="z9E-Vh-hY7"/>
                                         </connections>
                                     </containerView>
                                 </subviews>
@@ -572,8 +572,8 @@
                                     <segue destination="rY5-0K-0XT" kind="embed" identifier="embeddedGameBrowser" id="uKd-FI-xJf"/>
                                 </connections>
                             </containerView>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dge-yI-GAI">
-                                <rect key="frame" x="30" y="585.5" width="54" height="38"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dge-yI-GAI">
+                                <rect key="frame" x="30" y="599" width="54" height="38"/>
                                 <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                 <state key="normal" title="Back">
                                     <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -588,6 +588,7 @@
                                     <constraint firstAttribute="height" constant="44" id="Ng4-cW-e4z"/>
                                     <constraint firstAttribute="width" constant="44" id="hin-81-KcM"/>
                                 </constraints>
+                                <color key="tintColor" red="0.054901960780000002" green="0.71764705880000002" blue="0.68235294120000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                 <state key="normal" image="cogwheel_gr@512x-8"/>
                                 <variation key="heightClass=regular-widthClass=regular">
@@ -610,6 +611,7 @@
                             <constraint firstItem="Q5q-2i-fZT" firstAttribute="centerY" secondItem="t2Q-gl-UIr" secondAttribute="centerY" id="OJa-Tc-FNi"/>
                             <constraint firstItem="uqo-l6-bMm" firstAttribute="centerY" secondItem="s9r-SZ-cwA" secondAttribute="centerY" id="OOj-Vc-Yu6"/>
                             <constraint firstItem="t2Q-gl-UIr" firstAttribute="centerX" secondItem="uqo-l6-bMm" secondAttribute="centerX" id="P0o-nb-3pX"/>
+                            <constraint firstItem="TWE-GA-W5f" firstAttribute="bottom" secondItem="dge-yI-GAI" secondAttribute="bottom" constant="30" id="QjF-ap-NmC"/>
                             <constraint firstItem="5KK-An-e0p" firstAttribute="leading" secondItem="s9r-SZ-cwA" secondAttribute="leading" id="UTn-x2-3Wj"/>
                             <constraint firstItem="TWE-GA-W5f" firstAttribute="trailing" secondItem="9mO-wj-evU" secondAttribute="trailing" id="VHt-lN-hKc"/>
                             <constraint firstItem="5KK-An-e0p" firstAttribute="trailing" secondItem="s9r-SZ-cwA" secondAttribute="trailing" id="alx-GE-dd8"/>
@@ -1818,7 +1820,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wjc-1T-ThP">
                                 <rect key="frame" x="0.0" y="0.0" width="335" height="379"/>
                                 <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ykk-Se-x9A">
+                                    <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Join" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ykk-Se-x9A">
                                         <rect key="frame" x="238" y="20" width="77" height="20"/>
                                         <color key="backgroundColor" red="0.054901960784313725" green="0.71764705882352942" blue="0.68235294117647061" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -1840,7 +1842,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="aNc-lo-Y1I">
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="aNc-lo-Y1I">
                                         <rect key="frame" x="20" y="90.5" width="295" height="288.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="7Gb-x0-Rsh">
@@ -1946,6 +1948,7 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="aNc-lo-Y1I" id="wwv-vP-Edt"/>
+                        <outlet property="joinButton" destination="Ykk-Se-x9A" id="oWd-KB-qKe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1ea-Gq-dGX" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1964,7 +1967,7 @@
         <image name="healthTeamBEmpty" width="44" height="44"/>
         <image name="ic_arrow" width="8" height="11"/>
         <image name="ic_unlocked" width="12" height="15"/>
-        <image name="level_farm" width="518" height="506"/>
+        <image name="level_farm" width="357.5" height="356.5"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Can-X1-5II"/>

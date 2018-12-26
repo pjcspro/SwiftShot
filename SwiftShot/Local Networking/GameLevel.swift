@@ -19,6 +19,7 @@ class GameLevel {
     struct Definition: Codable {
         let key: String
         let identifier: String
+        let previewImage: String
         var name: String {
             return NSLocalizedString(self.key,
                                      tableName: levelStrings,
@@ -35,6 +36,7 @@ class GameLevel {
     var key: String { return definition.key }
     var  name: String { return definition.name }
     var identifier: String { return definition.identifier }
+    var previewImage: String { return definition.previewImage }
     
     // Size of the level in meters
     let targetSize: CGSize

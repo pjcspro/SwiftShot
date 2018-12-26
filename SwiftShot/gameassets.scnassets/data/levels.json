@@ -1,27 +1,33 @@
 
 [
     {
-        "key": "gateway",
-        "identifier": "level_gateway",
-    },
-    {
         "key": "bridge",
+        "previewImage": "level_bridge",
         "identifier": "level_bridge"
     },
     {
         "key": "farm",
+        "previewImage": "level_farm",
         "identifier": "level_farm"
     },
     {
         "key": "fort",
+        "previewImage": "level_fort",
         "identifier": "level_archFort"
     },
     {
+        "key": "gateway",
+        "previewImage": "level_gateway",
+        "identifier": "level_gateway",
+    },
+    {
         "key": "towers",
+        "previewImage": "level_tower",
         "identifier": "level_towers"
     },
     {
         "key": "practice 1",
+        "previewImage": "level_practice1",
         "identifier": "practice1"
     }
 ]

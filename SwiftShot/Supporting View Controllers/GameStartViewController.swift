@@ -22,6 +22,7 @@ enum GameSegue: String {
     case showSettings
     case levelSelector
     case worldMapSelector
+    case multiplayerCard
 }
 
 class GameStartViewController: UIViewController {
@@ -70,6 +71,11 @@ class GameStartViewController: UIViewController {
             gameBrowser = GameBrowser(myself: myself)
             browser.browser = gameBrowser
             browser.proximityManager = proximityManager
+            break
+        case .multiplayerCard:
+            guard let card = segue.destination as? MultiplayerCardViewController else { return }
+            card.delegate = self
+            break
         default:
             break
         }
@@ -79,32 +85,22 @@ class GameStartViewController: UIViewController {
         delegate?.gameStartViewController(self, didSelect: session)
         setupOverlayVC()
     }
-    
+   
+    /*
     @IBAction func startSoloGamePressed(_ sender: UIButton) {
         delegate?.gameStartViewController(self, didPressStartSoloGameButton: sender)
     }
-    
-    @IBAction func startGamePressed(_ sender: UIButton) {
-        buttonBeep.play()
 
-        startGame(with: myself)
+    @IBAction func practiceButtonPressed(_ sender: Any) {
+        buttonBeep.play()
+        startGame(with: myself, gameLevel: GameLevel.practiceLevel)
     }
+    */
     
     @IBAction func settingsPressed(_ sender: Any) {
         delegate?.gameStartViewControllerSelectedSettings(self)
     }
    
-    @IBAction func joinButtonPressed(_ sender: Any) {
-        buttonBeep.play()
-        showViews(forSetup: false)
-    }
-    
-    
-    @IBAction func practiceButtonPressed(_ sender: Any) {
-        buttonBeep.play()
-        startGame(with: myself, gameLevel: GameLevel.practiceLevel)
-    }
-    
     @IBAction func backButtonPressed(_ sender: Any) {
         backButtonBeep.play()
         setupOverlayVC()
@@ -146,4 +142,25 @@ extension GameStartViewController: ProximityManagerDelegate {
     func proximityManager(_ manager: ProximityManager, didChange authorization: Bool) {
 
     }
+}
+
+extension GameStartViewController: MultiplayerCardViewControllerDelegate {
+    
+    func multiplayerCardViewController(_ multiplayerCardViewController: MultiplayerCardViewController, didPressJoinGameButton: UILabel) {
+        
+        buttonBeep.play()
+        showViews(forSetup: false)
+        
+    }
+    
+    func multiplayerCardViewController(_ multiplayerCardViewController: MultiplayerCardViewController, didPressHostGameForLevel level: GameLevel) {
+        
+        buttonBeep.play()
+        startGame(with: myself, gameLevel: level)
+        
+    }
+    
+    
+    
+    
 }

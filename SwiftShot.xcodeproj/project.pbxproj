@@ -52,6 +52,7 @@
 		3A0ECB3F21D298600075AEF5 /* CareerCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0ECB3E21D298600075AEF5 /* CareerCardViewController.swift */; };
 		3A0ECB4121D2D6390075AEF5 /* MultiplayerCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0ECB4021D2D6390075AEF5 /* MultiplayerCardViewController.swift */; };
 		3AA5318C21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA5318B21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift */; };
+		3AA5318D21D41960003CDF8C /* levels.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3F8E2E2211517670060C434 /* levels.strings */; };
 		4415FF2020B0C36F00256CCD /* ARSCNView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */; };
 		441D101420B3A87000D7F796 /* ARWorldMap+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */; };
 		44AAE40D20B366F10097047B /* KeyPositionAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AAE40C20B366F10097047B /* KeyPositionAnchor.swift */; };
@@ -263,7 +264,7 @@
 		E302C54E20B80C80001F3417 /* SCNPlane+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNPlane+Helpers.swift"; sourceTree = "<group>"; };
 		E31309A6208F820900E7C7B2 /* LevelSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectorViewController.swift; sourceTree = "<group>"; };
 		E318B43320A24B2700308AC6 /* ProximityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityManager.swift; sourceTree = "<group>"; };
-		E3F8E2E1211517670060C434 /* en */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/levels.strings; sourceTree = "<group>"; };
+		E3F8E2E1211517670060C434 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/levels.strings; sourceTree = "<group>"; };
 		FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Flag.swift; path = ../Flag.swift; sourceTree = "<group>"; };
 		FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Flag.metal; path = ../Flag.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -711,6 +712,7 @@
 				91E5C7EA20AD393E00161B8F /* Sounds in Resources */,
 				1C3F0F9E20853FFE00A468E1 /* gameassets.scnassets in Resources */,
 				3A0ECB3D21D296630075AEF5 /* Media.xcassets in Resources */,
+				3AA5318D21D41960003CDF8C /* levels.strings in Resources */,
 				D087648320AF4CD400262D06 /* Assets.xcassets in Resources */,
 				C422F5D320B5F84600CB0A8D /* iPhone_Portrait.png in Resources */,
 				3A0ECB2D21D2928F0075AEF5 /* Montserrat-Regular.otf in Resources */,
