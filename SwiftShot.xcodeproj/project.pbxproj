@@ -44,6 +44,14 @@
 		2DF0B05F2091890A003F458E /* GameObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF0B05E2091890A003F458E /* GameObject.swift */; };
 		2DF0B061209189AD003F458E /* SCNNode+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF0B060209189AD003F458E /* SCNNode+Helpers.swift */; };
 		2DF1B96D209B8AD20089F255 /* GameTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF1B96C209B8AD20089F255 /* GameTime.swift */; };
+		3A0ECB2B21D2928F0075AEF5 /* Montserrat-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A0ECB1921D2928D0075AEF5 /* Montserrat-SemiBold.otf */; };
+		3A0ECB2D21D2928F0075AEF5 /* Montserrat-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A0ECB1B21D2928E0075AEF5 /* Montserrat-Regular.otf */; };
+		3A0ECB2E21D2928F0075AEF5 /* Montserrat-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A0ECB1C21D2928E0075AEF5 /* Montserrat-Bold.otf */; };
+		3A0ECB3021D2928F0075AEF5 /* Montserrat-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A0ECB1E21D2928E0075AEF5 /* Montserrat-Light.otf */; };
+		3A0ECB3D21D296630075AEF5 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A0ECB3C21D296630075AEF5 /* Media.xcassets */; };
+		3A0ECB3F21D298600075AEF5 /* CareerCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0ECB3E21D298600075AEF5 /* CareerCardViewController.swift */; };
+		3A0ECB4121D2D6390075AEF5 /* MultiplayerCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0ECB4021D2D6390075AEF5 /* MultiplayerCardViewController.swift */; };
+		3AA5318C21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA5318B21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift */; };
 		4415FF2020B0C36F00256CCD /* ARSCNView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */; };
 		441D101420B3A87000D7F796 /* ARWorldMap+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */; };
 		44AAE40D20B366F10097047B /* KeyPositionAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44AAE40C20B366F10097047B /* KeyPositionAnchor.swift */; };
@@ -168,6 +176,14 @@
 		2DF0B05E2091890A003F458E /* GameObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameObject.swift; sourceTree = "<group>"; };
 		2DF0B060209189AD003F458E /* SCNNode+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNNode+Helpers.swift"; sourceTree = "<group>"; };
 		2DF1B96C209B8AD20089F255 /* GameTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameTime.swift; sourceTree = "<group>"; };
+		3A0ECB1921D2928D0075AEF5 /* Montserrat-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-SemiBold.otf"; sourceTree = "<group>"; };
+		3A0ECB1B21D2928E0075AEF5 /* Montserrat-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.otf"; sourceTree = "<group>"; };
+		3A0ECB1C21D2928E0075AEF5 /* Montserrat-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.otf"; sourceTree = "<group>"; };
+		3A0ECB1E21D2928E0075AEF5 /* Montserrat-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Light.otf"; sourceTree = "<group>"; };
+		3A0ECB3C21D296630075AEF5 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		3A0ECB3E21D298600075AEF5 /* CareerCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerCardViewController.swift; sourceTree = "<group>"; };
+		3A0ECB4021D2D6390075AEF5 /* MultiplayerCardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplayerCardViewController.swift; sourceTree = "<group>"; };
+		3AA5318B21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiplayerCardCollectionViewCell.swift; sourceTree = "<group>"; };
 		4415FF1F20B0C36F00256CCD /* ARSCNView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARSCNView+Helpers.swift"; sourceTree = "<group>"; };
 		441D101320B3A87000D7F796 /* ARWorldMap+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARWorldMap+Helpers.swift"; sourceTree = "<group>"; };
 		44AAE40C20B366F10097047B /* KeyPositionAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPositionAnchor.swift; sourceTree = "<group>"; };
@@ -295,6 +311,7 @@
 				D0066D432057259600A7E863 /* Info.plist */,
 				E369CD922112A5F900A5E555 /* Localizable.strings */,
 				E369CD8F2112A5F900A5E555 /* InfoPlist.strings */,
+				3A0ECB3C21D296630075AEF5 /* Media.xcassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -315,6 +332,7 @@
 		117E8A8E20BF516600040314 /* Supporting View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3AA5318821D3FB94003CDF8C /* Home */,
 				D0DBEF102059FA1600FFFDB6 /* NetworkGameBrowserViewController.swift */,
 				C4F7877220853EAE00E47400 /* GameStartViewController.swift */,
 				D04D68512087F25B00CBEEB1 /* DeveloperSettingsTableViewController.swift */,
@@ -372,6 +390,27 @@
 				2DB283EF20BD5C7C00FFE90A /* Go321Interaction.swift */,
 			);
 			path = Interactions;
+			sourceTree = "<group>";
+		};
+		3A0ECB1721D292610075AEF5 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3A0ECB1C21D2928E0075AEF5 /* Montserrat-Bold.otf */,
+				3A0ECB1E21D2928E0075AEF5 /* Montserrat-Light.otf */,
+				3A0ECB1B21D2928E0075AEF5 /* Montserrat-Regular.otf */,
+				3A0ECB1921D2928D0075AEF5 /* Montserrat-SemiBold.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		3AA5318821D3FB94003CDF8C /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				3A0ECB3E21D298600075AEF5 /* CareerCardViewController.swift */,
+				3A0ECB4021D2D6390075AEF5 /* MultiplayerCardViewController.swift */,
+				3AA5318B21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		44F2B33120BC73FF008974CA /* Gesture Recognizers */ = {
@@ -476,6 +515,7 @@
 		D0066D342057259500A7E863 /* SwiftShot */ = {
 			isa = PBXGroup;
 			children = (
+				3A0ECB1721D292610075AEF5 /* Fonts */,
 				117E8A8D20BF512600040314 /* Main Game Screen */,
 				117E8A8E20BF516600040314 /* Supporting View Controllers */,
 				D0A2FA202078176D00BC221C /* Gameplay State */,
@@ -670,13 +710,18 @@
 			files = (
 				91E5C7EA20AD393E00161B8F /* Sounds in Resources */,
 				1C3F0F9E20853FFE00A468E1 /* gameassets.scnassets in Resources */,
+				3A0ECB3D21D296630075AEF5 /* Media.xcassets in Resources */,
 				D087648320AF4CD400262D06 /* Assets.xcassets in Resources */,
 				C422F5D320B5F84600CB0A8D /* iPhone_Portrait.png in Resources */,
+				3A0ECB2D21D2928F0075AEF5 /* Montserrat-Regular.otf in Resources */,
 				D0066D422057259600A7E863 /* LaunchScreen.storyboard in Resources */,
 				C422F5D520B5F84600CB0A8D /* iPad.png in Resources */,
+				3A0ECB2E21D2928F0075AEF5 /* Montserrat-Bold.otf in Resources */,
+				3A0ECB2B21D2928F0075AEF5 /* Montserrat-SemiBold.otf in Resources */,
 				C422F5CD20B5F84600CB0A8D /* iPhone_X_Landscape.png in Resources */,
 				C422F5D720B5F84600CB0A8D /* iPhone_Landscape.png in Resources */,
 				D0066D3D2057259500A7E863 /* Main.storyboard in Resources */,
+				3A0ECB3021D2928F0075AEF5 /* Montserrat-Light.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,6 +772,7 @@
 				D0DBEF112059FA1600FFFDB6 /* NetworkGameBrowserViewController.swift in Sources */,
 				D09FE52820FFE3170086006D /* Bundle+Helpers.swift in Sources */,
 				2D298FF020C08C7E00447E67 /* CatapultDisableInteraction.swift in Sources */,
+				3A0ECB4121D2D6390075AEF5 /* MultiplayerCardViewController.swift in Sources */,
 				7BC5346220B876DC0002C901 /* GameBoardBorderSegment.swift in Sources */,
 				44AAE40D20B366F10097047B /* KeyPositionAnchor.swift in Sources */,
 				1C4095C1209045BE00D9770C /* Catapult.swift in Sources */,
@@ -738,10 +784,12 @@
 				44F2B33920BC7432008974CA /* ThresholdRotationGestureRecognizer.swift in Sources */,
 				D0066D3A2057259500A7E863 /* GameViewController.swift in Sources */,
 				7458E8562094067F00240E81 /* GameObjectComponent.swift in Sources */,
+				3AA5318C21D3FBE6003CDF8C /* MultiplayerCardCollectionViewCell.swift in Sources */,
 				9134A74120B3352D005F4DF8 /* AUSamplerNode.swift in Sources */,
 				44F2B33F20BC756F008974CA /* GameViewController+Gestures.swift in Sources */,
 				7467F65520AA3F5A00B6A306 /* ConstrainHierarchyComponent.swift in Sources */,
 				2D97B57420A4D3E40081C4C8 /* CatapultInteraction.swift in Sources */,
+				3A0ECB3F21D298600075AEF5 /* CareerCardViewController.swift in Sources */,
 				1CA58F0F20BBCDFE00F65F22 /* GameLight.swift in Sources */,
 				D0A2FA25207BD07600BC221C /* SCNMaterial+Helpers.swift in Sources */,
 				7BD717D620BE57820099C010 /* GameViewController+Maps.swift in Sources */,

@@ -27,10 +27,7 @@ enum GameSegue: String {
 class GameStartViewController: UIViewController {
     weak var delegate: GameStartViewControllerDelegate?
     
-    @IBOutlet weak var hostButton: UIButton!
-    @IBOutlet weak var joinButton: UIButton!
     @IBOutlet weak var backButton: UIButton!
-    @IBOutlet weak var practiceButton: UIButton!
     @IBOutlet weak var browserContainerView: UIView!
     @IBOutlet weak var blurView: UIVisualEffectView!
     @IBOutlet weak var nearbyGamesLabel: UILabel!
@@ -46,16 +43,7 @@ class GameStartViewController: UIViewController {
         super.viewDidLoad()
         
         proximityManager.delegate = self
-        hostButton.clipsToBounds = true
-        hostButton.layer.cornerRadius = 30.0
         
-        joinButton.clipsToBounds = true
-        joinButton.layer.cornerRadius = 30.0
-        
-        
-        practiceButton.clipsToBounds = true
-        practiceButton.layer.cornerRadius = 30.0
-
         buttonBeep = ButtonBeep(name: "button_forward.wav", volume: 0.5)
         backButtonBeep = ButtonBeep(name: "button_backward.wav", volume: 0.5)
     }
@@ -133,8 +121,6 @@ class GameStartViewController: UIViewController {
             self.backButton.isHidden = forSetup
             self.nearbyGamesLabel.isHidden = forSetup
             
-            self.joinButton.isHidden = !forSetup
-            self.hostButton.isHidden = !forSetup
         }, completion: nil)
     }
     
