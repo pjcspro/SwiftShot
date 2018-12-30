@@ -10,15 +10,9 @@ import Foundation
 struct NetworkGame: Hashable {
     var name: String
     var host: Player
-    private var locationId: Int
-    
-    var location: GameTableLocation {
-        return GameTableLocation.location(with: locationId)
-    }
 
-    init(host: Player, name: String? = nil, locationId: Int = 0) {
+    init(host: Player, name: String? = nil) {
         self.host = host
         self.name = name ?? "\(host.username)'s Game"
-        self.locationId = locationId
     }
 }

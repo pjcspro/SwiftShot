@@ -125,7 +125,6 @@
 		E302C54D20B7A6CC001F3417 /* GameLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E302C54C20B7A6CC001F3417 /* GameLevel.swift */; };
 		E302C54F20B80C80001F3417 /* SCNPlane+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = E302C54E20B80C80001F3417 /* SCNPlane+Helpers.swift */; };
 		E31309A7208F820900E7C7B2 /* LevelSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31309A6208F820900E7C7B2 /* LevelSelectorViewController.swift */; };
-		E318B43420A24B2700308AC6 /* ProximityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E318B43320A24B2700308AC6 /* ProximityManager.swift */; };
 		FD4E4BA420AA284500AE8296 /* gameassets.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C3F0F9D20853FFE00A468E1 /* gameassets.scnassets */; };
 		FD4E4BA520AA284500AE8296 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0066D402057259600A7E863 /* LaunchScreen.storyboard */; };
 		FD4E4BA820AA284500AE8296 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0066D3B2057259500A7E863 /* Main.storyboard */; };
@@ -263,7 +262,6 @@
 		E302C54C20B7A6CC001F3417 /* GameLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLevel.swift; sourceTree = "<group>"; };
 		E302C54E20B80C80001F3417 /* SCNPlane+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SCNPlane+Helpers.swift"; sourceTree = "<group>"; };
 		E31309A6208F820900E7C7B2 /* LevelSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectorViewController.swift; sourceTree = "<group>"; };
-		E318B43320A24B2700308AC6 /* ProximityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityManager.swift; sourceTree = "<group>"; };
 		E3F8E2E1211517670060C434 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/levels.strings; sourceTree = "<group>"; };
 		FDDC7D1C20BCB4D300E9D3F9 /* Flag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Flag.swift; path = ../Flag.swift; sourceTree = "<group>"; };
 		FDDC7D1D20BCB4D300E9D3F9 /* Flag.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = Flag.metal; path = ../Flag.metal; sourceTree = "<group>"; };
@@ -612,7 +610,6 @@
 				D0DBEF14205B027E00FFFDB6 /* NetworkSession.swift */,
 				D0168A9D206431D800F582B0 /* NetworkGame.swift */,
 				D0DBEF16205B033A00FFFDB6 /* Player.swift */,
-				E318B43320A24B2700308AC6 /* ProximityManager.swift */,
 				E302C54C20B7A6CC001F3417 /* GameLevel.swift */,
 			);
 			path = "Local Networking";
@@ -832,7 +829,6 @@
 				D0DBEF17205B033A00FFFDB6 /* Player.swift in Sources */,
 				2DB283EA20BD036900FFE90A /* VictoryInteraction.swift in Sources */,
 				74E4032B2092959A00884DE8 /* GameAudioComponent.swift in Sources */,
-				E318B43420A24B2700308AC6 /* ProximityManager.swift in Sources */,
 				91D8090420AD01D200861E97 /* CatapultAudioSampler.swift in Sources */,
 				11BC5FA520F947A700D2C4DD /* Flag.swift in Sources */,
 				1CA58F1120BBCDFE00F65F22 /* GameCamera.swift in Sources */,

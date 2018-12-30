@@ -10,7 +10,6 @@ import UIKit
 class DeveloperSettingsTableViewController: UITableViewController {
     // misc
     @IBOutlet weak var antialiasingMode: UISwitch!
-    @IBOutlet weak var gameRoomModeSwitch: UISwitch! // called Look for Beacons in UI
     @IBOutlet weak var useAutofocusSwitch: UISwitch!
     @IBOutlet weak var allowGameBoardAutoSizeSwitch: UISwitch!
     
@@ -48,7 +47,6 @@ class DeveloperSettingsTableViewController: UITableViewController {
     @IBOutlet weak var trailLengthTextField: UITextField!
     
     let defaults = UserDefaults.standard
-    let proximityManager = ProximityManager.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,11 +57,7 @@ class DeveloperSettingsTableViewController: UITableViewController {
             object: nil)
 
         antialiasingMode.isOn = defaults.antialiasingMode
-        // if user turns of location permissions in settings after enabling them, we should turn off gameRoomMode
-        if !proximityManager.isAuthorized {
-            defaults.gameRoomMode = false
-        }
-        gameRoomModeSwitch.isOn = defaults.gameRoomMode
+        
         useAutofocusSwitch.isOn = defaults.autoFocus
         allowGameBoardAutoSizeSwitch.isOn = defaults.allowGameBoardAutoSize
         
@@ -85,11 +79,8 @@ class DeveloperSettingsTableViewController: UITableViewController {
 
     @objc
     func appplicationDidBecomeActive(notification: NSNotification ) {
-        // check for permission changes after becoming active again
-        if !proximityManager.isAuthorized {
-            defaults.gameRoomMode = false
-        }
-        gameRoomModeSwitch.isOn = defaults.gameRoomMode
+        
+        
     }
 
     func configureUISwitches() {
@@ -163,24 +154,6 @@ class DeveloperSettingsTableViewController: UITableViewController {
     
     @IBAction func antialiasingMode(_ sender: UISwitch) {
         defaults.antialiasingMode = sender.isOn
-    }
-
-    @IBAction func enableGameRoomModeChanged(_ sender: UISwitch) {
-        defaults.gameRoomMode = sender.isOn
-        if !proximityManager.isAuthorized && sender.isOn {
-            // if trying to enable beacons without location permissions, display alert
-            let alertController = UIAlertController(title:
-                NSLocalizedString("Insufficient Location Permissions For Beacons", comment: "User didn't enable location services"),
-                                                    message:
-                NSLocalizedString("Please go to Settings and enable location services for SwiftShot to look for nearby beacons",
-                                  comment: "Steps the user can take to activate beacon"),
-                                                    preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: ""),
-                                                    style: .default, handler: nil))
-            self.present(alertController, animated: true, completion: nil)
-            defaults.gameRoomMode = false
-            gameRoomModeSwitch.setOn(false, animated: true)
-        }
     }
     
     @IBAction func showSettingsChanged(_ sender: UISwitch) {

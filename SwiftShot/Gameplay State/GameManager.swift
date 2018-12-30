@@ -904,9 +904,6 @@ class GameManager: NSObject {
         }
     }
 
-    func updateSessionLocation(_ location: GameTableLocation) {
-        session?.updateLocation(newLocation: location)
-    }
 }
 
 extension GameManager: NetworkSessionDelegate {

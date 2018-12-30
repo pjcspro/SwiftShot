@@ -176,10 +176,7 @@ class GameViewController: UIViewController {
             }
         }
     }
-
-    // Proximity manager for beacons
-    let proximityManager = ProximityManager.shared
-
+    
     var canAdjustBoard: Bool {
         return sessionState == .placingBoard || sessionState == .adjustingBoard
     }
@@ -359,8 +356,6 @@ class GameViewController: UIViewController {
     @IBAction func exitGamePressed(_ sender: UIButton) {
         let leaveAction = UIAlertAction(title: NSLocalizedString("Leave", comment: ""), style: .cancel) { _ in
             self.exitGame()
-            // start looking for beacons again
-            self.proximityManager.start()
         }
         let stayAction = UIAlertAction(title: NSLocalizedString("Stay", comment: ""), style: .default)
         let actions = [stayAction, leaveAction]
@@ -574,13 +569,6 @@ class GameViewController: UIViewController {
             teamACatapultImages.forEach { $0.isHidden = false }
         }
 
-        // stop ranging for beacons after placing board
-        if UserDefaults.standard.gameRoomMode {
-            proximityManager.stop()
-            if let location = proximityManager.closestLocation {
-                gameManager.updateSessionLocation(location)
-            }
-        }
     }
 
     func sendWorldTo(peer: Player) {

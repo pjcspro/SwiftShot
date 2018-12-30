@@ -104,9 +104,6 @@
 /* Class = "UIButton"; normalTitle = "Join"; ObjectID = "blE-xz-CCY"; */
 "blE-xz-CCY.normalTitle" = "Join";
 
-/* Class = "UILabel"; text = "Look for Beacons"; ObjectID = "cKT-gA-KnF"; */
-"cKT-gA-KnF.text" = "Look for Beacons";
-
 /* Class = "UILabel"; text = "Spectator Mode"; ObjectID = "cuj-sr-Qpw"; */
 "cuj-sr-Qpw.text" = "Spectator Mode";
 

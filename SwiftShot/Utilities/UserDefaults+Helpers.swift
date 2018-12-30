@@ -32,7 +32,6 @@ struct UserDefaultsKeys {
     static let selectedLevel = "SelectedLevel"
     static let hasOnboarded = "HasOnboarded"
     static let boardLocatingMode = "BoardLocatingMode"
-    static let gameRoomMode = "GameRoomMode"
     static let autoFocus = "AutoFocus"
     static let spectator = "Spectator"
 
@@ -63,7 +62,6 @@ extension UserDefaults {
         UserDefaultsKeys.musicVolume: 0.0,
         UserDefaultsKeys.effectsVolume: 1.0,
         UserDefaultsKeys.antialiasingMode: true,
-        UserDefaultsKeys.gameRoomMode: false,
         UserDefaultsKeys.autoFocus: true,
         UserDefaultsKeys.allowGameBoardAutoSize: false,
         UserDefaultsKeys.showReset: false,
@@ -172,11 +170,6 @@ extension UserDefaults {
         set { set(newValue.rawValue, forKey: UserDefaultsKeys.boardLocatingMode) }
     }
 
-    var gameRoomMode: Bool {
-        get { return bool(forKey: UserDefaultsKeys.gameRoomMode) }
-        set { set(newValue, forKey: UserDefaultsKeys.gameRoomMode) }
-    }
-    
     var showSettingsInGame: Bool {
         get { return bool(forKey: UserDefaultsKeys.showSettingsInGame) }
         set { set(newValue, forKey: UserDefaultsKeys.showSettingsInGame) }

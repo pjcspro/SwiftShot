@@ -21,9 +21,6 @@ class NetworkGameBrowserViewController: UIViewController {
         }
     }
     
-    // must be set by parent
-    var proximityManager: ProximityManager?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,13 +52,6 @@ class NetworkGameBrowserViewController: UIViewController {
 extension NetworkGameBrowserViewController: GameBrowserDelegate {
     func gameBrowser(_ browser: GameBrowser, sawGames games: [NetworkGame]) {
         os_log(.info, "saw %d games!", games.count)
-        
-        if UserDefaults.standard.gameRoomMode, let location = proximityManager?.closestLocation {
-            self.games = games.filter { $0.location == location }
-        } else {
-            self.games = games
-        }
-        
         tableView.reloadData()
     }
 }

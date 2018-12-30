@@ -14,9 +14,6 @@
 /* No comment provided by engineer. */
 "Find a flat surface to place the game." = "Find a flat surface to place the game.";
 
-/* User didn't enable location services */
-"Insufficient Location Permissions For Beacons" = "Insufficient Location Permissions For Beacons";
-
 /* No comment provided by engineer. */
 "Leave" = "Leave";
 
@@ -28,9 +25,6 @@
 
 /* Team name */
 "none" = "none";
-
-/* Steps the user can take to activate beacon */
-"Please go to Settings and enable location services for SwiftShot to look for nearby beacons" = "Please go to Settings and enable location services for SwiftShot to look for nearby beacons";
 
 /* No comment provided by engineer. */
 "Point the camera towards the table." = "Point the camera towards the table.";

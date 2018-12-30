@@ -16,7 +16,6 @@ struct SwiftShotGameService {
 
 struct SwiftShotGameAttribute {
     static let name = "SwiftShotGameAttributeName"
-    static let location = "LocationAttributeName"
     static let appIdentifier = "AppIdentifierAttributeName"
 }
 
@@ -50,7 +49,7 @@ class GameBrowser: NSObject {
 
     func join(game: NetworkGame) -> NetworkSession? {
         guard games.contains(game) else { return nil }
-        let session = NetworkSession(myself: myself, asServer: false, location: game.location, host: game.host)
+        let session = NetworkSession(myself: myself, asServer: false, host: game.host)
         serviceBrowser.invitePeer(game.host.peerID, to: session.session, withContext: nil, timeout: 30)
         return session
     }
@@ -73,15 +72,7 @@ extension GameBrowser: MCNearbyServiceBrowserDelegate {
             let player = Player(peerID: peerID)
             let gameName = info?[SwiftShotGameAttribute.name]
             
-            let location: GameTableLocation?
-            if let info = info,
-                let locationIdString = info[SwiftShotGameAttribute.location],
-                let locationId = Int(locationIdString) {
-                location = GameTableLocation.location(with: locationId)
-            } else {
-                location = nil
-            }
-            let game = NetworkGame(host: player, name: gameName, locationId: location?.identifier ?? 0)
+            let game = NetworkGame(host: player, name: gameName)
             self.games.insert(game)
             self.delegate?.gameBrowser(self, sawGames: Array(self.games))
         }

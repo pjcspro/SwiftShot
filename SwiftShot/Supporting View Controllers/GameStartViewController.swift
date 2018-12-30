@@ -37,25 +37,15 @@ class GameStartViewController: UIViewController {
     
     private let myself = UserDefaults.standard.myself
     
-    let proximityManager = ProximityManager.shared
     var gameBrowser: GameBrowser?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        proximityManager.delegate = self
-        
         buttonBeep = ButtonBeep(name: "button_forward.wav", volume: 0.5)
         backButtonBeep = ButtonBeep(name: "button_backward.wav", volume: 0.5)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if UserDefaults.standard.gameRoomMode {
-            os_log(.debug, "Will start beacon ranging")
-            proximityManager.start()
-        }
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         os_log(.info, "segue!")
@@ -70,7 +60,6 @@ class GameStartViewController: UIViewController {
             guard let browser = segue.destination as? NetworkGameBrowserViewController else { return }
             gameBrowser = GameBrowser(myself: myself)
             browser.browser = gameBrowser
-            browser.proximityManager = proximityManager
             break
         case .multiplayerCard:
             guard let card = segue.destination as? MultiplayerCardViewController else { return }
@@ -121,26 +110,9 @@ class GameStartViewController: UIViewController {
     }
     
     func startGame(with player: Player, gameLevel: GameLevel? = nil) {
-        let location: GameTableLocation?
-        if UserDefaults.standard.gameRoomMode {
-            location = proximityManager.closestLocation
-        } else {
-            location = nil
-        }
-        
-        let gameSession = NetworkSession(myself: player, asServer: true, location: location, host: myself, level: gameLevel)
+        let gameSession = NetworkSession(myself: player, asServer: true, host: myself, level: gameLevel)
         delegate?.gameStartViewController(self, didStart: gameSession)
         setupOverlayVC()
-    }
-}
-
-extension GameStartViewController: ProximityManagerDelegate {
-    func proximityManager(_ manager: ProximityManager, didChange location: GameTableLocation?) {
-        gameBrowser?.refresh()
-    }
-    
-    func proximityManager(_ manager: ProximityManager, didChange authorization: Bool) {
-
     }
 }
 

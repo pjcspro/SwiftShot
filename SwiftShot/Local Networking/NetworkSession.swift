@@ -28,7 +28,6 @@ class NetworkSession: NSObject {
 
     let isServer: Bool
     let session: MCSession
-    var location: GameTableLocation?
     let host: Player
     let appIdentifier: String
     var level: GameLevel
@@ -37,11 +36,10 @@ class NetworkSession: NSObject {
 
     private var serviceAdvertiser: MCNearbyServiceAdvertiser?
 
-    init(myself: Player, asServer: Bool, location: GameTableLocation?, host: Player, level: GameLevel? = UserDefaults.standard.selectedLevel) {
+    init(myself: Player, asServer: Bool, host: Player, level: GameLevel? = UserDefaults.standard.selectedLevel) {
         self.myself = myself
         self.session = MCSession(peer: myself.peerID, securityIdentity: nil, encryptionPreference: .required)
         self.isServer = asServer
-        self.location = location
         self.host = host
         self.level = level ?? UserDefaults.standard.selectedLevel
         // if the appIdentifier is missing from the main bundle, that's
@@ -57,10 +55,7 @@ class NetworkSession: NSObject {
         guard serviceAdvertiser == nil else { return } // already advertising
 
         os_log(.info, "ADVERTISING %@", myself.peerID)
-        var discoveryInfo: [String: String] = [SwiftShotGameAttribute.appIdentifier: appIdentifier]
-        if let location = location {
-            discoveryInfo[SwiftShotGameAttribute.location] = String(location.identifier)
-        }
+        let discoveryInfo: [String: String] = [SwiftShotGameAttribute.appIdentifier: appIdentifier]
         let advertiser = MCNearbyServiceAdvertiser(peer: myself.peerID,
                                                    discoveryInfo: discoveryInfo,
                                                    serviceType: SwiftShotGameService.playerService)
@@ -74,12 +69,7 @@ class NetworkSession: NSObject {
         serviceAdvertiser?.stopAdvertisingPeer()
         serviceAdvertiser = nil
     }
-
-    // for beacon use
-    func updateLocation(newLocation: GameTableLocation) {
-        location = newLocation
-    }
-
+    
     // MARK: Actions
     func send(action: Action) {
         guard !peers.isEmpty else { return }

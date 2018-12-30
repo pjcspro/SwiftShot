@@ -33,8 +33,6 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This application will use the camera for Augmented Reality.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This game will use location services to look for beacons in order to locate the pre-created game tables at WWDC. Your geographic location will not be tracked.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
